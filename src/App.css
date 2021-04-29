@@ -1,0 +1,61 @@
+.custom-logo {
+	width: 90%;
+	height: 90%;
+}
+
+.product-thumbnail {
+	width: 70%;
+	height: 70%;
+}
+
+.custom-thumbnail {
+	width: 90%;
+}
+
+.col {
+	padding: 10px;
+}
+
+.border-line {
+	border-right: 1px solid #000;
+}
+
+.flex-container {
+	display: flex;
+	flex-wrap: wrap;
+	min-height: 100vh;
+}
+
+.flex-item {
+	min-width: 50%;
+	min-height: 50%;
+}
+
+.custom-t1 {
+	font-size: 50px;
+}
+
+.custom-t2 {
+	font-size: 40px;
+}
+
+.bg-smv {
+	background-color: #f15993;
+}
+
+.set-wh {
+	width: 49vw;
+	height: 50vh;
+}
+
+.set-mtop {
+	margin-top: 22%;
+}
+
+.set-mtop2 {
+	margin-top: 19%;
+}
+
+.modal-en {
+	width: 80vw !important;
+}
