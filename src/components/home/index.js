@@ -5,6 +5,7 @@ import btn_press from '../../assets/static_images/button.gif';
 import '../../App.css';
 
 class Home extends React.Component {
+
 	render () {
 		return (
 			<>

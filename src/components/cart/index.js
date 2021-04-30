@@ -1,5 +1,5 @@
 import React from "react";
-import { ActionCable } from 'actioncable';
+import ActionCable from 'actioncable';
 import { Link } from "react-router-dom";
 import '../../App.css';
 import btn_gopay from '../../assets/static_images/gopay.png';
@@ -11,6 +11,8 @@ class Cart extends React.Component {
 
 		this.addHtmlEntities = this.addHtmlEntities.bind(this);
 		this.cable = ActionCable.createConsumer('ws://localhost:3000/cable');
+
+		console.log(this.cable);
 	}
 
 	componentDidMount() {
