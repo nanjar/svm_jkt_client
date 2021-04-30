@@ -39,8 +39,12 @@
 	font-size: 40px;
 }
 
-.bg-smv {
-	background-color: #f15993;
+.bg-smvprimary {
+	background-color: #42b5c6;
+}
+
+.bg-smvsecondary {
+	background-color: #f37aa8;
 }
 
 .set-wh {
@@ -59,3 +63,24 @@
 .modal-en {
 	width: 80vw !important;
 }
+
+.btn-thumbnail {
+	height: 350px !important;
+}
+
+/* HIDE RADIO */
+.radio-product input[type="radio"] { 
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.card-checked {
+	border: 3px solid red!important;
+}
+
+
+/* .radio-product input[type="radio"]:checked + label > .card {
+	border: 3px solid red!important;
+} */

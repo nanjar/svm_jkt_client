@@ -129,7 +129,7 @@ class AutoTopup extends React.Component {
 								<div className="row col-12">
 									<div className="col-4 d-flex flex-column justify-content-center">
 										<div className="p-2 align-self-center">
-											<img src="http://localhost:3000/assets/images/coco_dummy.jpg" className="img-thumbnail border-0" alt="product" />
+											<img src="http://localhost:3000/assets/images/cola.jpg" className="img-thumbnail border-0" alt="product" />
 										</div>
 									</div>
 

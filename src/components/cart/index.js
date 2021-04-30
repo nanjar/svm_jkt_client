@@ -1,4 +1,5 @@
 import React from "react";
+import { ActionCable } from 'actioncable';
 import { Link } from "react-router-dom";
 import '../../App.css';
 import btn_gopay from '../../assets/static_images/gopay.png';
@@ -9,6 +10,7 @@ class Cart extends React.Component {
 		this.state = { cart_data: {} };
 
 		this.addHtmlEntities = this.addHtmlEntities.bind(this);
+		this.cable = ActionCable.createConsumer('ws://localhost:3000/cable');
 	}
 
 	componentDidMount() {
@@ -48,15 +50,15 @@ class Cart extends React.Component {
 							<div className="row col-12">
 
 								<div className="col-5">
-									<h1 className="text-center display-4 mb-3">Kamu telah memilih</h1>
-									<h1 className="text-center">{name}</h1>
-									<img src={product_url} className="img-thumbnail border-0 d-block mx-auto" alt="product" />
-									<h1 className="text-center mt-3"><strong>{price}</strong></h1>
+									<h1 className="text-center display-3 mb-3">Kamu telah memilih</h1><br/>
+									<h1 className="text-center custom-t1">{name}</h1>
+									<img src={product_url} className="img-thumbnail custom-thumbnail border-0 d-block mx-auto" alt="product" />
+									<h1 className="text-center mt-3 custom-t1"><strong>{price}</strong></h1>
 								</div>
 
 								<div className="col-7 d-flex flex-column justify-content-center">
 									<div className="p-2 align-self-center mb-3">
-										<h1 className="text-center display-4">Silahkan pilih metoda pembayaran</h1>
+										<h1 className="text-center display-3">Silahkan pilih metoda pembayaran</h1>
 									</div>
 									<div className="p-2 align-self-center m-3">
 										<img src={btn_gopay} className="img-fluid" alt="TEKAN TOMBOL UNTUK MEMULAI"></img>
