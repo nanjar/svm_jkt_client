@@ -8,11 +8,9 @@ class Cart extends React.Component {
 	constructor(props) {
 		super(props); 
 		this.state = { cart_data: {} };
+		this.matchMakingChannel = {}
 
-		this.addHtmlEntities = this.addHtmlEntities.bind(this);
-		this.cable = ActionCable.createConsumer('ws://localhost:3000/cable');
-
-		console.log(this.cable);
+		this.cable = ActionCable.createConsumer('ws://localhost:3001/cable');
 	}
 
 	componentDidMount() {
@@ -33,12 +31,22 @@ class Cart extends React.Component {
 			})
 			.then(response => this.setState({ cart_data: response }))
 			.catch(() => this.props.history.push("/"));
-	}
 
-	addHtmlEntities(str) {
-		return String(str)
-			.replace(/&lt;/g, "<")
-			.replace(/&gt;/g, ">");
+		// this.cable.subscriptions.create({ channel: "cart_channel",
+		// 	connected: () => {
+		// 		console.log('connected');
+		// 	},
+		// 	rejected: () => {
+		// 		console.log('rejected');
+		// 	},
+		// 	disconnected: () => {
+		// 		console.log('disconnected');
+		// 	},
+		// 	received: (data) => {
+		// 		console.log("data");
+		// 		console.log(data);
+		// 	},
+		// });
 	}
 
 	render() {
@@ -66,7 +74,7 @@ class Cart extends React.Component {
 										<img src={btn_gopay} className="img-fluid" alt="TEKAN TOMBOL UNTUK MEMULAI"></img>
 									</div>
 									<div className="p-2 align-self-center mt-3">
-										<Link to={"/pay_by_gopay/" + price}  className="btn btn-primary btn-lg btn-info">
+										<Link to={"/payment/gopay/" + price}  className="btn btn-primary btn-lg btn-info">
 											<h2 className="display-4">Klik Disini</h2>
 										</Link>
 									</div>

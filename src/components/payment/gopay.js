@@ -8,11 +8,11 @@ class GoPay extends React.Component {
 	constructor(props) {
 		super(props); 
 		this.state = { gopay_data: {} };
-
-		this.addHtmlEntities = this.addHtmlEntities.bind(this);
 	}
 
 	componentDidMount() {
+
+		console.log("price");
 		const {
 			match: {
 				params: { price }
@@ -32,12 +32,6 @@ class GoPay extends React.Component {
 				this.setState({ gopay_data: response });
 			})
 			.catch(() => this.props.history.push("/"));
-	}
-
-	addHtmlEntities(str) {
-		return String(str)
-			.replace(/&lt;/g, "<")
-			.replace(/&gt;/g, ">");
 	}
 
 	render() {
