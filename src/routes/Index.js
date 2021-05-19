@@ -7,12 +7,12 @@ import DispenseError from "../components/dispense/dispense_error";
 import DispenseNoStock from "../components/dispense/no_stock";
 import DispenseSuccess from "../components/dispense/dispense_success";
 
-import PaymentCancelled from "../components/payment/payment_cancelled";
-import PaymentError from "../components/payment/payment_error";
-import PaymentExpired from "../components/payment/payment_expired";
-import PaymentExpiryCheck from "../components/payment/payment_expiry_check";
-import PaymentSuccess from "../components/payment/payment_success";
-import PaymentStatusError from "../components/payment/payment_status_error";
+import PaymentCancelled from "../components/payment/cancelled";
+import PaymentError from "../components/payment/error";
+import PaymentExpired from "../components/payment/expired";
+import PaymentExpiryCheck from "../components/payment/expiry_check";
+import PaymentSuccess from "../components/payment/success";
+import PaymentStatusError from "../components/payment/status_error";
 import PaymentGoPay from "../components/payment/gopay";
 import PaymentOvo from "../components/payment/ovo";
 

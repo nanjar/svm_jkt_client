@@ -58,7 +58,7 @@ class GoPay extends React.Component {
 										<h1 className="text-center display-4">Anda telah memilih untuk membayar dengan <strong>{price}</strong> menggunakan</h1>
 									</div>
 									<div className="p-2 align-self-center">
-										<Link to="/payment_cancelled" className="btn btn-lg btn-warning">
+										<Link to="/payment/cancelled" className="btn btn-lg btn-warning">
 											<h2 className="text-center display-4">Batal</h2>
 										</Link>
 									</div>

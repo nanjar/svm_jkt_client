@@ -50,7 +50,8 @@ class Cart extends React.Component {
 	}
 
 	render() {
-		const { name, product_url, price } = this.state.cart_data;
+		const product = this.state.cart_data;
+		console.log(product)
 
 		return (
 			<>
@@ -61,9 +62,9 @@ class Cart extends React.Component {
 
 								<div className="col-5">
 									<h1 className="text-center display-3 mb-3">Kamu telah memilih</h1><br/>
-									<h1 className="text-center custom-t1">{name}</h1>
-									<img src={product_url} className="img-thumbnail custom-thumbnail border-0 d-block mx-auto" alt="product" />
-									<h1 className="text-center mt-3 custom-t1"><strong>{price}</strong></h1>
+									<h1 className="text-center custom-t1">{}</h1>
+									<img src={product.image_url} className="img-thumbnail custom-thumbnail border-0 d-block mx-auto" alt="product" />
+									<h1 className="text-center mt-3 custom-t1"><strong>{3500}</strong></h1>
 								</div>
 
 								<div className="col-7 d-flex flex-column justify-content-center">
@@ -74,7 +75,7 @@ class Cart extends React.Component {
 										<img src={btn_gopay} className="img-fluid" alt="TEKAN TOMBOL UNTUK MEMULAI"></img>
 									</div>
 									<div className="p-2 align-self-center mt-3">
-										<Link to={"/payment/gopay/" + price}  className="btn btn-primary btn-lg btn-info">
+										<Link to={"/payment/gopay/" + 3500}  className="btn btn-primary btn-lg btn-info">
 											<h2 className="display-4">Klik Disini</h2>
 										</Link>
 									</div>

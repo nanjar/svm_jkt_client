@@ -1,7 +1,7 @@
 import React from "react";
 import '../../App.css';
 
-class PaymentExpired extends React.Component {
+class ExpiryCheck extends React.Component {
 	render() {
 		return (
       		<>
@@ -10,17 +10,15 @@ class PaymentExpired extends React.Component {
 						<div className="m-3">
 							<div className="row col-12 d-flex flex-column justify-content-center">
 								<div className="p-2 align-self-center mb-2">
-									<h2 className="text-center display-1">Request Pembayaran expired!</h2>
-								</div>
-								<div className="p-2 align-self-center"></div>
-									<h3 className="text-center display-2">Silahkan dicoba kembali!</h3>
+									<h1 className="text-center display-3">Mohon ditunggu, kami akan mengecek status pembayaran anda</h1>
 								</div>
 							</div>
 						</div>
+					</div>
 				</div>
 			</>
     	);
 	}
 }
 
-export default PaymentExpired;
+export default ExpiryCheck;

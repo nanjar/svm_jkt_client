@@ -2,7 +2,7 @@ import React from "react";
 import '../../App.css';
 import img_payment_error from '../../assets/static_images/payment_error.jpeg';
 
-class PaymentError extends React.Component {
+class Error extends React.Component {
 	render() {
 		return (
       		<>
@@ -28,4 +28,4 @@ class PaymentError extends React.Component {
 	}
 }
 
-export default PaymentError;
+export default Error;

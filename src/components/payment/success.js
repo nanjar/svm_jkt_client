@@ -1,7 +1,8 @@
 import React from "react";
 import '../../App.css';
+import img_payment_success from '../../assets/static_images/success.gif';
 
-class PaymentStatusError extends React.Component {
+class Success extends React.Component {
 	render() {
 		return (
       		<>
@@ -10,14 +11,13 @@ class PaymentStatusError extends React.Component {
 						<div className="m-3">
 							<div className="row col-12 d-flex flex-column justify-content-center">
 										<div className="p-2 align-self-center mb-3">
-											<h1 className="text-center display-3">Request pembayaran tidak dapat dibatalkan karena alasan yang tidak diketahui!</h1>
-											<br/>
+											<h1 className="text-center display-2">Pembayaran anda telah berhasil!</h1>
 										</div>
 										<div className="p-2 align-self-center mb-3">
-											<h1 className="display-4">Maaf atas ketidak nyamanan ini</h1>
+											<h1 className="text-center display-3">Mengambil barang anda!</h1>
 										</div>
 										<div className="p-2 align-self-center">
-											<h1 className="display-4">Jika anda sudah membayar, tolong hubungi helpline kami!</h1>
+											<img src={img_payment_success} className="img-thumbnail border-0" alt="Pembayaran anda telah berhasil!"></img>
 										</div>
 								</div>
 							</div>
@@ -28,4 +28,4 @@ class PaymentStatusError extends React.Component {
 	}
 }
 
-export default PaymentStatusError;
+export default Success;
