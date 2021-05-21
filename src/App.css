@@ -31,12 +31,22 @@
 	min-height: 50%;
 }
 
+.custom-t0 {
+	font-size: 90px;
+}
+
 .custom-t1 {
 	font-size: 50px;
 }
 
 .custom-t2 {
 	font-size: 40px;
+}
+
+.custom-spinner {
+	width: 5rem; 
+	height: 5rem;
+	font-size: 25px;
 }
 
 .bg-smvprimary {
