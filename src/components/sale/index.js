@@ -5,16 +5,43 @@ import '../../App.css';
 import btn_gopay from '../../assets/static_images/gopay.png';
 import product_img from '../../assets/static_images/cola.jpg';
 
-class Cart extends React.Component {
+class Sale extends React.Component {
 	constructor(props) {
 		super(props); 
-		this.state = { cart_data: {} };
-		this.matchMakingChannel = {}
-
-		// this.cable = ActionCable.createConsumer('ws://localhost:3001/cable');
+		this.state = { 
+			sale_data: {},
+			qrCodeURL: btn_gopay,
+		};
+		// this.matchMakingChannel = {};
 	}
 
 	componentDidMount() {
+		const url = 'http://vending.smartvending.com/api/sales/payment.json';
+		const amount = 10;
+		const product_id = 1;
+
+		const params = new FormData();
+		params.set('amount', amount)
+		params.set('product_id', product_id)
+
+		fetch(url, {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'default',
+			body: params
+		})
+			.then(response => {
+				console.log(response);
+				if (response.ok) {
+					return response.json();
+				} 
+			})
+			.then(response => { 
+				this.props.history.push("/")
+				const qr = response.actions.find( a => a.name === "generate-qr-code" )
+				this.setState({qrCodeURL: requestAnimationFrame.url}) 
+			})
+			.catch(error => console.log(error.message));
 		// const {
 		// 	match: {
 		// 		params: { id }
@@ -35,8 +62,7 @@ class Cart extends React.Component {
 	}
 
 	render() {
-		const product = this.state.cart_data;
-		console.log(product)
+		const qrCodeURL = this.state.qrCodeURL;
 
 		return (
 			<>
@@ -57,7 +83,7 @@ class Cart extends React.Component {
 										<h1 className="text-center display-3">Silahkan pilih metoda pembayaran</h1>
 									</div>
 									<div className="p-2 align-self-center m-3">
-										<img src={btn_gopay} className="img-fluid" alt="TEKAN TOMBOL UNTUK MEMULAI"></img>
+										<img src={qrCodeURL} className="img-fluid" alt="TEKAN TOMBOL UNTUK MEMULAI"></img>
 									</div>
 									<div className="p-2 align-self-center mt-3">
 										<Link to={"/payment/gopay/" + 3500}  className="btn btn-primary btn-lg btn-info">
@@ -71,8 +97,8 @@ class Cart extends React.Component {
 					</div>
 				</div>
 			</>
-    	);
+    );
 	}
 }
 
-export default Cart;
+export default Sale;

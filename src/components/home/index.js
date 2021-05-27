@@ -52,35 +52,6 @@ class Home extends React.Component {
 		</div>;
 	}
 
-	handleBtnMainConfirmOnClick = (event) => {
-		const url = '/api/sales/payment';
-		const amount = 3000;
-		const product_id = 1;
-
-		const body = {
-			amount,
-			product_id
-		}
-
-		const myHeaders = new Headers();
-		myHeaders.append('Content-Type', 'application/json');
-		fetch(url, {
-			method: 'POST',
-			headers: myHeaders,
-			mode: 'cors',
-			cache: 'default',
-			body: JSON.stringify(body)
-		})
-			.then(response => {
-				console.log(response);
-				if (response.ok) {
-					return response.json();
-				} 
-			})
-			.then(response => { this.props.history.push("/") })
-			.catch(error => console.log(error.message));
-	}
-
 	MachineStart = () => {
 		return <div className="m-3">
 			<div className='row col-12'>
@@ -91,9 +62,9 @@ class Home extends React.Component {
 				</div>
 				<div className='col-5 d-flex flex-column justify-content-center'>
 					<div className='p-2 align-self-center'>
-						<button onClick={this.handleBtnMainConfirmOnClick}>
-							<img src={btn_press} className='img-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
-						</button>
+						<Link to='/sale/1'>
+ 							<img src={btn_press} className='img-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
+ 						</Link>
 					</div>
 				</div>
 			</div>

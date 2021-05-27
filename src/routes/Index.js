@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "../components/home/index";
-import Cart from "../components/cart/index";
+import Sale from "../components/sale/index";
 
 import DispenseError from "../components/dispense/dispense_error";
 import DispenseNoStock from "../components/dispense/no_stock";
@@ -33,8 +33,8 @@ export default (
 		{/* Index */}
 		<Route path="/" exact component={Home} />
 
-		{/* Cart */}
-		<Route path="/cart/:id" exact component={Cart} />
+		{/* Sale */}
+		<Route path="/sale/:id" exact component={Sale} />
 
 		{/* Dispense */}
 		<Route path="/dispense/error" exact component={DispenseError} />
