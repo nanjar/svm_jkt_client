@@ -1,8 +1,9 @@
 import React from "react";
-import ActionCable from 'actioncable';
+// import ActionCable from 'actioncable';
 import { Link } from "react-router-dom";
 import '../../App.css';
 import btn_gopay from '../../assets/static_images/gopay.png';
+import product_img from '../../assets/static_images/cola.jpg';
 
 class Cart extends React.Component {
 	constructor(props) {
@@ -10,43 +11,27 @@ class Cart extends React.Component {
 		this.state = { cart_data: {} };
 		this.matchMakingChannel = {}
 
-		this.cable = ActionCable.createConsumer('ws://localhost:3001/cable');
+		// this.cable = ActionCable.createConsumer('ws://localhost:3001/cable');
 	}
 
 	componentDidMount() {
-		const {
-			match: {
-				params: { id }
-			}
-		} = this.props;
+		// const {
+		// 	match: {
+		// 		params: { id }
+		// 	}
+		// } = this.props;
 
-		const url = '/cart/' + id; // id would be the selected product_id
+		// const url = '/api/cart/' + id; // id would be the selected product_id
 
-		fetch(url)
-			.then(response => {
-				if (response.ok) {
-					return response.json();
-				}
-				throw new Error("Network response was not ok.");
-			})
-			.then(response => this.setState({ cart_data: response }))
-			.catch(() => this.props.history.push("/"));
-
-		// this.cable.subscriptions.create({ channel: "cart_channel",
-		// 	connected: () => {
-		// 		console.log('connected');
-		// 	},
-		// 	rejected: () => {
-		// 		console.log('rejected');
-		// 	},
-		// 	disconnected: () => {
-		// 		console.log('disconnected');
-		// 	},
-		// 	received: (data) => {
-		// 		console.log("data");
-		// 		console.log(data);
-		// 	},
-		// });
+		// fetch(url)
+		// 	.then(response => {
+		// 		if (response.ok) {
+		// 			return response.json();
+		// 		}
+		// 		throw new Error("Network response was not ok.");
+		// 	})
+		// 	.then(response => this.setState({ cart_data: response }))
+		// 	.catch(() => this.props.history.push("/"));
 	}
 
 	render() {
@@ -63,7 +48,7 @@ class Cart extends React.Component {
 								<div className="col-5">
 									<h1 className="text-center display-3 mb-3">Kamu telah memilih</h1><br/>
 									<h1 className="text-center custom-t1">{}</h1>
-									<img src={product.image_url} className="img-thumbnail custom-thumbnail border-0 d-block mx-auto" alt="product" />
+									<img src={product_img} className="img-thumbnail custom-thumbnail border-0 d-block mx-auto" alt="product" />
 									<h1 className="text-center mt-3 custom-t1"><strong>{3500}</strong></h1>
 								</div>
 

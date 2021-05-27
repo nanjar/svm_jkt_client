@@ -91,11 +91,11 @@ class AutoTopup extends React.Component {
 		const stocks = this.state.stocks;
 		// const products = this.state.products;
 
-		let getProductId = 0;
+		// let getProductId = 0;
 		if (stocks.length < 0 ) {
 			stocks.forEach( stock => {
 				if (stock.id === parseInt(stockId)) {
-					getProductId = stock.product_id;
+					// getProductId = stock.product_id;
 				}
 			});
 		}
@@ -173,7 +173,7 @@ class AutoTopup extends React.Component {
 		const stocks = this.state.stocks;
 		const slots = this.state.slots;
 		const layoutDetail = this.state.layoutDetail;
-		const templateDetail = this.state.templateDetail;
+		// const templateDetail = this.state.templateDetail;
 		// const maxQty = this.state.maxQty;
 		let slotData = [];
 

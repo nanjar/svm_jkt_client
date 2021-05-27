@@ -1,12 +1,12 @@
 import React from "react";
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import logo from '../../assets/static_images/Logo.png';
 import btn_press from '../../assets/static_images/button.gif';
 import '../../App.css';
 
 class Home extends React.Component {
-	constructor (props) {
-		super (props);
+	constructor(props) {
+		super(props);
 		this.state = {
 			data: [],
 			machine_code: ""
@@ -14,7 +14,7 @@ class Home extends React.Component {
 	}
 
 	componentDidMount() {
-		const url = "/home";
+		const url = "/api/home";
 
 		fetch(url)
 			.then(response => {
@@ -25,7 +25,7 @@ class Home extends React.Component {
 			})
 			.then(response => {
 				console.log(response);
-				this.setState({ 
+				this.setState({
 					data: response.data,
 					machine_code: response.machine_code
 				});
@@ -33,8 +33,7 @@ class Home extends React.Component {
 			.catch(() => this.props.history.push("/"));
 	}
 
-
-	machineSetup = () => {
+	MachineSetup = () => {
 		const machine_code = this.state.machine_code;
 		let code;
 		if (machine_code) {
@@ -42,7 +41,7 @@ class Home extends React.Component {
 		} else {
 			code = <h1 className='text-center display-1 align-self-center'><strong>Machine Setup ... </strong></h1>;
 		}
-		return  <div className="m-3">
+		return <div className="m-3">
 			<div className='row d-flex justify-content-center'>
 				<div className='spinner-border custom-spinner' role='status'>
 					<span className='sr-only'>Setting up ...</span>
@@ -53,7 +52,36 @@ class Home extends React.Component {
 		</div>;
 	}
 
-	machineStart = () => {
+	handleBtnMainConfirmOnClick = (event) => {
+		const url = '/api/sales/payment';
+		const amount = 3000;
+		const product_id = 1;
+
+		const body = {
+			amount,
+			product_id
+		}
+
+		const myHeaders = new Headers();
+		myHeaders.append('Content-Type', 'application/json');
+		fetch(url, {
+			method: 'POST',
+			headers: myHeaders,
+			mode: 'cors',
+			cache: 'default',
+			body: JSON.stringify(body)
+		})
+			.then(response => {
+				console.log(response);
+				if (response.ok) {
+					return response.json();
+				} 
+			})
+			.then(response => { this.props.history.push("/") })
+			.catch(error => console.log(error.message));
+	}
+
+	MachineStart = () => {
 		return <div className="m-3">
 			<div className='row col-12'>
 				<div className='col-7 d-flex flex-column justify-content-center'>
@@ -63,9 +91,9 @@ class Home extends React.Component {
 				</div>
 				<div className='col-5 d-flex flex-column justify-content-center'>
 					<div className='p-2 align-self-center'>
-						<Link to='/cart/1'>
+						<button onClick={this.handleBtnMainConfirmOnClick}>
 							<img src={btn_press} className='img-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
-						</Link>
+						</button>
 					</div>
 				</div>
 			</div>
@@ -75,23 +103,21 @@ class Home extends React.Component {
 		</div>;
 	}
 
-	machine = () => {
-		const config_statuses = this.state.data;
-		if (config_statuses.length !== 0) {
-			return <this.machineSetup />;
-		}
-		return <this.machineStart />;
-	}	
+	Machine = () => {
+		// const config_statuses = this.state.data;
+		// const Machine = config_statuses.length !== 0 ? this.MachineSetup : this.MachineStart;
+		const Machine = this.MachineStart;
+		return <Machine />
+	}
 
-	render () {
+	render() {
+		const Machine = this.Machine;
 		return (
-			<>
-				<div className="vw-100 vh-100 d-flex align-items-center">
-					<div className="container-fluid">
-						<this.machine />
-					</div>
+			<div className="vw-100 vh-100 d-flex align-items-center">
+				<div className="container-fluid">
+					<Machine />
 				</div>
-			</>
+			</div>
 		);
 	}
 }
