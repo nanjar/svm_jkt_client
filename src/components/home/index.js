@@ -62,7 +62,7 @@ class Home extends React.Component {
 				</div>
 				<div className='col-5 d-flex flex-column justify-content-center'>
 					<div className='p-2 align-self-center'>
-						<Link to='/sale/1'>
+						<Link to='/sale'>
  							<img src={btn_press} className='img-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
  						</Link>
 					</div>
@@ -75,9 +75,9 @@ class Home extends React.Component {
 	}
 
 	Machine = () => {
-		// const config_statuses = this.state.data;
-		// const Machine = config_statuses.length !== 0 ? this.MachineSetup : this.MachineStart;
-		const Machine = this.MachineStart;
+		const config_statuses = this.state.data;
+		const Machine = config_statuses.length !== 0 ? this.MachineSetup : this.MachineStart;
+		// const Machine = this.MachineStart;
 		return <Machine />
 	}
 

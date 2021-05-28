@@ -8,19 +8,9 @@ class AutoTopup extends React.Component {
 		super(props);
 	
 		this.state = { 
-			currentStocks: {},
-			stocks: {},
-			slots: {},
-			// products: {},
-			restockQty: 0,
-			stockId: 0,
+			slotData: {},
 			productURL: "/assets/images/cola.jpg",
-			productName: "Coca Cola",
-			maxQty: 12,
-			error: null,
-			restockData: {},
-			layoutDetail: {},
-			templateDetail: {}
+			productName: "Coca Cola"
 		};
 
 		this.handlePlus = this.handlePlus.bind(this);
@@ -32,8 +22,9 @@ class AutoTopup extends React.Component {
 	}
 
 	componentDidMount = () => {
-		const url = "/stock/topup"; 
-
+		// const url = "/stock/topup"; 
+		const url = "http://vending.smartvending.com/api/topups/layouts.json"; 
+		
 		fetch(url)
 			.then(response => {
 				if (response.ok) {
@@ -43,13 +34,7 @@ class AutoTopup extends React.Component {
 			})
 			.then(response => {
 				this.setState({
-					currentStocks: response.current_stocks,
-					stocks: response.stocks,
-					slots: response.slots,
-					// products: response.products,
-					restockData: response.current_stocks,
-					layoutDetail: response.layout_detail,
-					templateDetail: response.template_detail
+					slotData: response.data
 				});
 			})
 			.catch(() => this.props.history.push("/management"));
@@ -170,57 +155,16 @@ class AutoTopup extends React.Component {
 	}
 
 	render() {
-		const stocks = this.state.stocks;
-		const slots = this.state.slots;
-		const layoutDetail = this.state.layoutDetail;
-		// const templateDetail = this.state.templateDetail;
-		// const maxQty = this.state.maxQty;
-		let slotData = [];
-
-		Object.values(layoutDetail).forEach((lDetail) => {
-			// Object.values(templateDetail).forEach((tDetail) => {
-				// if (tDetail.layout_detail_id === lDetail.id) {
-					Object.values(slots).forEach((slot) => {
-						if (lDetail.slot_id === slot.id) {
-							if (stocks.length !== 0) {
-								Object.values(stocks).forEach((stock) => {
-									if (slot.id === stock.slot_id) {
-										slotData.push({layout_detail_id: lDetail.id, slot_id: slot.id, stock_id: stock.id, stock_qty: stock.stock_qty, is_active: lDetail.is_active, product_id: slot.product_id});
-									}
-								});
-							} else {
-								let data = {
-									layout_detail_id: lDetail.id, 
-									slot_id: slot.id, 
-									stock_id: 0, 
-									stock_qty: 0, 
-									is_active: lDetail.is_active, 
-									product_id: slot.product_id
-								}
-								slotData.push(data);
-							}
-						}
-					});
-				// }
-			// });
-		});
-
+		const slotData = this.state.slotData;
 		let slotList = [];
-		Object.values(slotData).forEach((data) => {
-			console.log(data)
-			slotList.push(<div key={data.slot_id} id={'cs_' + data.slot_id} onClick={this.handleBtnSlotOnClick} className="col align-self-center text-center border border-dark border-3 bg-slot btn-slot" data-restockqty={data.stock_qty} data-stockid={data.stock_id}><h2 className="text-uppercase display-4 mt-3 mb-3" data-restockqty={data.stock_qty} data-stockid={data.stock_id}>{data.stock_qty}/12</h2></div>);
-		});
-		// Object.entries(slots).forEach((slot, index) => {
-		// 	if (stocks.length !== 0) {
-		// 		Object.entries(stocks).forEach((stock, index) => {
-		// 			slotList.push(<div key={index} id={'cs_' + index} onClick={this.handleBtnSlotOnClick} className="col align-self-center text-center border border-dark border-3 bg-slot btn-slot" data-restockqty={stock[1].stock_qty} data-stockid={stock[1].id}><h2 className="text-uppercase display-4 mt-3 mb-3" data-restockqty={stock[1].stock_qty} data-stockid={stock[1].id}>{stock[1].stock_qty}/{maxQty}</h2></div>);
-		// 		});
-		// 	} else {
-		// 		slotList.push(<div key={index} id={'cs_' + index} onClick={this.handleBtnSlotOnClick} className="col align-self-center text-center border border-dark border-3 bg-slot btn-slot" data-restockqty={0} data-stockid={slot[1].id}><h2 className="text-uppercase display-4 mt-3 mb-3" data-restockqty={0} data-stockid={slot[1].id}>{0}/{maxQty}</h2></div>);
-		// 	}
-		// });
 
-		// console.log(slotList)
+		// let level1_slotList, level2_slotList, level3_slotList, level4_slotList, level5_slotList, level6_slotList = [];
+
+		Object.values(slotData).forEach((data) => {
+			console.log("Slot Data");
+			console.log(data.slot_id);
+			slotList.push(<div key={data.slot_id} id={'cs_' + data.slot_id} onClick={this.handleBtnSlotOnClick} className="col align-self-center text-center border border-dark border-3 bg-slot btn-slot" data-restockqty={6} data-stockid={data.stock_id}><h2 className="text-uppercase display-4 mt-3 mb-3" data-restockqty={6} data-stockid={data.stock_id}>{6}/{data.max_qty}</h2></div>);
+		});
 
 		let level1_slotList, level2_slotList, level3_slotList, level4_slotList, level5_slotList, level6_slotList = [];
 

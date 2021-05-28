@@ -1,20 +1,13 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "../components/home/index";
+
 import Sale from "../components/sale/index";
+import SaleSucces from "../components/sale/success";
 
 import DispenseError from "../components/dispense/dispense_error";
 import DispenseNoStock from "../components/dispense/no_stock";
 import DispenseSuccess from "../components/dispense/dispense_success";
-
-import PaymentCancelled from "../components/payment/cancelled";
-import PaymentError from "../components/payment/error";
-import PaymentExpired from "../components/payment/expired";
-import PaymentExpiryCheck from "../components/payment/expiry_check";
-import PaymentSuccess from "../components/payment/success";
-import PaymentStatusError from "../components/payment/status_error";
-import PaymentGoPay from "../components/payment/gopay";
-import PaymentOvo from "../components/payment/ovo";
 
 import ManagementLogin from "../components/management/login";
 import ManagementIndex from "../components/management/index";
@@ -34,22 +27,13 @@ export default (
 		<Route path="/" exact component={Home} />
 
 		{/* Sale */}
-		<Route path="/sale/:id" exact component={Sale} />
+		<Route path="/sale" exact component={Sale} />
+		<Route path="/sale_success" exact component={SaleSucces} />
 
 		{/* Dispense */}
 		<Route path="/dispense/error" exact component={DispenseError} />
 		<Route path="/dispense/no_stock" exact component={DispenseNoStock} />
 		<Route path="/dispense/success" exact component={DispenseSuccess} />
-
-		{/* Payment */}
-		<Route path="/payment/cancelled" exact component={PaymentCancelled} />
-		<Route path="/payment/error" exact component={PaymentError} />
-		<Route path="/payment/expired" exact component={PaymentExpired} />
-		<Route path="/payment/expiry_check" exact component={PaymentExpiryCheck} />
-		<Route path="/payment/status_error" exact component={PaymentStatusError} />
-		<Route path="/payment/success" exact component={PaymentSuccess} />
-		<Route path="/payment/gopay/:price" exact component={PaymentGoPay} />
-		<Route path="/payment/ovo" exact component={PaymentOvo} />
 
 		{/* Management */}
 		<Route path="/management/login" exact component={ManagementLogin} />
