@@ -1,34 +1,31 @@
 import React from "react";
 import { Link } from 'react-router-dom';
 import '../../App.css';
-import productImg from '../../assets/static_images/button.gif';
+import NumPad from 'react-numpad';
+// import responseData from '../response_data';
 
 class ManualTopup extends React.Component {
 	constructor(props) {
 		super(props);
 
 		this.state = { 
-			currentStocks: {},
-			stocks: {},
-			slots: {},
-			products: {},
-			restockQty: 0,
+			slotData: {},
+			productURL: "/assets/images/cola.jpg",
+			productName: "Coca Cola",
+			toStockQty: 0,
 			stockId: 0,
-			productURL: productImg,
-			productName: "",
-			maxQty: 12,
-			error: null,
-			restockData: {}
+			maxQty: 0,
+			toStockData: {}
 		};
 
 		this.handlePlus = this.handlePlus.bind(this);
 		this.handleMinus = this.handleMinus.bind(this);
 		this.handleValueChange = this.handleValueChange.bind(this);
-		this.handleOptionChange = this.handleOptionChange.bind(this);
 	}
 
 	componentDidMount = () => {
-		const url = "/stock/topup"; 
+		const url = "/api/topups/layouts.json"; 
+		// const url = "http://vending.smartvending.com/api/topups/layouts.json"; 
 
 		fetch(url)
 			.then(response => {
@@ -38,105 +35,57 @@ class ManualTopup extends React.Component {
 				throw new Error("Network response was not ok.");
 			})
 			.then(response => {
-				this.setState({
-					currentStocks: response.current_stocks,
-					stocks: response.stocks,
-					slots: response.slots,
-					products: response.products,
-					restockData: response.current_stocks
-				});
+				this.setState({ slotData: response.data });
 			})
 			.catch(() => this.props.history.push("/management"));
+		// this.setState({ slotData: responseData.data });
 	}
 
 	handlePlus = () => {
-		if (this.state.restockQty < this.state.maxQty) {
-			this.setState({ restockQty: this.state.restockQty + 1 });
-		} else {
-			this.setState({ error: "No stock" });
-		}
+		const toStockQty = parseInt(this.state.toStockQty);
+		const maxQty = (parseInt(this.state.maxQty) === 0) ? 12 : parseInt(this.state.maxQty);
+
+		if (toStockQty < maxQty) {
+			this.setState({ toStockQty: toStockQty + 1 });
+		} 
 	}
 
 	handleMinus = () => {
-		if (this.state.restockQty > 0) {
-			this.setState({ restockQty: this.state.restockQty - 1 });
-		} else {
-			this.setState({ error: "No items" });
+		const toStockQty = parseInt(this.state.toStockQty);
+
+		if (toStockQty > 0) {
+			this.setState({ toStockQty: toStockQty - 1 });
 		}
 	}
 
 	handleValueChange = (event) => {
 		const x = Number(event.target.value);
-
-		if (isNaN(x) || x < 1 || x > this.state.maxQty) {
-			this.setState({ error: "Input not valid" });
-		} else {
-			this.setState({ 
-				restockQty: x,
-				error: "Quantity updated" 
-			});
-		}
+		this.setState({ toStockQty: x });
 	}
 
-	handleOptionChange = (event) => {
-		const getProductId = event.target.value;
-		const products = this.state.products;
-		const stocks = this.state.stocks;
-		const currentStocks = this.state.currentStocks;
+	handleSlotOnChange = (event) => {
+		const slotData = this.state.slotData;
 
-		if (getProductId !== "default") {
-			products.forEach(product => {
-				if (product.id === parseInt(getProductId)) {
-					this.setState({ 
-						productName: product.name,
-						productURL: product.image_url,
-					});
-
-					stocks.forEach(stock => {
-						if (stock.product_id === parseInt(getProductId)) {
-							currentStocks.forEach(currentStock => {
-								if (currentStock.stock_id === stock.id) {
-									this.setState({ 
-										stockId: stock.id,
-										restockQty: currentStock.stock_qty 
-									});
-								}
-							});
-						}
-					});
-				}
-			});
-		} else {
-			this.setState({ 
-				productName: "Choose the slot ...",
-				productURL: productImg,
-				restockQty: 0
-			});
-		}
+		slotData.forEach(slot => {
+			this.setState({ toStockQty: 0 });
+			if (parseInt(event) === slot.slot_id) {
+				this.setState({ toStockQty: slot.to_stock });
+			} 
+		});
+		
+		this.setState({slotId: event});	
 	}
 
 	handleBtnConfirmOnClick = (event) => {
-		const url = "/stock/restock";
-
-		let preparedData = [];
-		const restockData = this.state.restockData;
-
-		restockData.forEach(element => {
-			preparedData.push({stock_id: element.stock_id, stock_qty: element.stock_qty});
-		});
+		const url = "/api/stock/restock.json";
 
 		const body = {
-			restock: [{
-				stock_id: this.state.stockId,
-				stock_qty: this.state.restockQty
-			}]
+			slot_id: this.state.slotId, 
+			to_stock: this.state.toStockQty
 		};
 		
-		const myHeaders = new Headers();
-		myHeaders.append('Content-Type', 'application/json');
 		fetch(url, {
 			method: 'POST',
-			headers: myHeaders,
 			mode: 'cors',
 			cache: 'default',
 			body: JSON.stringify(body)
@@ -151,11 +100,14 @@ class ManualTopup extends React.Component {
 	}
 
 	render() {
-		const stocks = this.state.stocks;
+		const slotData = this.state.slotData;
+		const slotId = this.state.slotId;
+
+		// const limitValidator = (value) => parseInt(value, 10) > -1 && parseInt(value, 10) <= 60;
 		
-		let stockList = [];
-		Object.entries(stocks).forEach((stock, index) => {
-			stockList.push(<option key={index} value={stock[1].product_id}>{stock[1].slot_id}</option>);
+		let slotList = [];
+		Object.values(slotData).forEach((slot) => {
+			slotList.push(<option key={slot.slot_id} value={slot.product_id}>{slot.slot_id}</option>);
 		});
 
 		return (
@@ -178,21 +130,23 @@ class ManualTopup extends React.Component {
 
 								<div className="row col-7">
 									<div className="row col-12 d-flex flex-column justify-content-center mb-5">
-										<div className="p-2 align-self-center col-10">
-											<label className="lead text-uppercase custom-t1">Slot</label><br/>
-											<select className="form-control border border-dark border-3 form-control-lg custom-t1" aria-label="Select product ..." onChange={this.handleOptionChange}>
-												<option value="default">Choose the slot ...</option>
-												{stockList}
-											</select>
+										<div id="manual-slot" className="align-self-center col-10 text-uppercase custom-t1">
+											<NumPad.Number
+												decimal={false}
+												negative={false}
+												onChange={this.handleSlotOnChange}
+												label={'SLOT'}
+												placeholder={'TYPE THE SLOT'}
+												value={slotId}/>
 										</div>
 									</div>
 
 									<div className="row col-12 d-flex flex-column justify-content-center mb-5">
 										<div className="p-2 align-self-center col-10">
-											<label className="lead text-uppercase custom-t1">Quantity</label><br/>
+											<label className="text-uppercase custom-t1">Quantity</label><br/>
 											<div className="form-inline">
 												<input type="button" value="-" className="form-control col-2 btn border border-dark border-3 form-control-lg font-weight-bold custom-t1" onClick={this.handleMinus}></input>
-												<input type="number" value={this.state.restockQty} className="form-control col-8 border border-dark border-3 form-control-lg custom-t1" onChange={this.handleValueChange}></input>
+												<input type="number" value={this.state.toStockQty} className="form-control col-8 border border-dark border-3 form-control-lg custom-t1" onChange={this.handleValueChange} readOnly={true}></input>
 												<input type="button" value="+" className="form-control col-2 btn border border-dark border-3  form-control-lg font-weight-bold custom-t1" onClick={this.handlePlus}></input>
 											</div>
 										</div>

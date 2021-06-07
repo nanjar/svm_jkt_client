@@ -1,6 +1,6 @@
 import React from "react";
 // import ActionCable from 'actioncable';
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import '../../App.css';
 import btn_gopay from '../../assets/static_images/gopay.png';
 import product_img from '../../assets/static_images/cola.jpg';
@@ -13,10 +13,11 @@ class Sale extends React.Component {
 			qrCodeURL: btn_gopay,
 			transactionId: "",
 			timer: null,
-			interval: null,
+			duration: 1000,
 			titleMsg: "",
 			contentMsg: "",
-			btnStatus: "",
+			statusChanged: "initial",
+			redirectURL: "/",
 		}
 
 		this.handleButtonOk = this.handleButtonOk.bind(this);
@@ -41,43 +42,63 @@ class Sale extends React.Component {
 			if (response.ok) {
 				return response.json();
 			} 
+			// throw new Error("Network response was not ok.");
+			throw this.state.timer = setInterval(() => this.handleConnectionTimeout(), this.state.duration);
 		})
 		.then(response => { 
-			console.log(response);
-			if (response.transaction_status === "pending") {
-				const qr = response.actions.find( a => a.name === "generate-qr-code" );
-				this.setState({
-					qrCodeURL: qr.url,
-					transactionId: response.transaction_id
-				});
+			// if (response) {
+				if (response.transaction_status === "pending") {
+					const qr = response.actions.find( a => a.name === "generate-qr-code" );
+					this.setState({
+						qrCodeURL: qr.url,
+						transactionId: response.transaction_id,
+						duration: 120000 // set qr code life span to 2 minutes - get data from machine config
+					});
 
-				this.state.timer = setTimeout(() => this.warningTimeOut(), 5000);
-			}
+					this.state.timer = setInterval(() => this.warningTimeOut(), this.state.duration);
+				}
+			// }
 		})
 		.catch(error => console.log(error.message));
-
-		// this.state.interval = setInterval(() => this.checkPaymentStatus(), 1000);
 	}
 
 	warningTimeOut() {
 		this.setState({
 			titleMsg: "Payment Expiry Warning",
 			contentMsg: "Your payment is going to expire soon. Click OK if you still need time to pay.",
-			btnStatus: "warned"
+			statusChanged: "warned"
 		});
-		console.log("Timer " + this.state.timer);
+		console.log("Duration " + this.state.duration);
 		document.getElementById("open-modal").click();
+	}
+
+	handleConnectionTimeout() {
+		console.log("conn timed out");
+		if (this.state.statusChanged === "initial") {
+			this.setState({
+				titleMsg: "Connection timed out",
+				contentMsg: "Your payment connection is timed out. Please try again!",
+				statusChanged: "timeout"
+			});
+			document.getElementById("open-modal").click();
+			this.setState({ duration: 5000 }); // Redirect to Home page after 3 secs if user doesn't click OK button
+		} else { // To redirect to Home page after 3 seconds
+			document.getElementById("close-modal").click();
+			this.props.history.push(this.state.redirectURL);
+		}
 	}
 
 	handleButtonOk(event) {
 		let chkStatus = event.target.getAttribute("data-status");
-		console.log(this);
-		if (chkStatus === "warned") {
-			clearTimeout(this.state.timer);
-			this.state.timer = setTimeout(() => this.cancelAtTimeOut(), 2000);
-		}
-		console.log(chkStatus);
 		document.getElementById("close-modal").click();
+		if (chkStatus === "warned") {
+			this.setState({ duration: 60000 });
+			console.log("Duration " + this.state.duration);
+			this.state.timer = setInterval(() => this.cancelAtTimeOut(), this.state.duration);
+		} else if (chkStatus === "timeout") {
+			this.props.history.push(this.state.redirectURL);
+		}
+		console.log("Btn Status" + chkStatus);
 	}
 
 	cancelAtTimeOut() {
@@ -100,7 +121,7 @@ class Sale extends React.Component {
 		})
 		.then(response => { 
 			console.log(response);
-			if (response.transaction_status === "cancel") {
+			if (response.status_code === "202") { // successful cancel transaction and transaction_status="cancel"
 				this.setState({
 					titleMsg: "Payment Expired",
 					contentMsg: "Please try again"
@@ -134,15 +155,14 @@ class Sale extends React.Component {
 	}
 
 	componentWillUnmount() {
-    clearTimeout(this.state.timer);
-    clearInterval(this.state.interval);
+    clearInterval(this.state.timer);
   }
 
 	render() {
 		const qrCodeURL = this.state.qrCodeURL;
 		const titleMsg = this.state.titleMsg;
 		const contentMsg = this.state.contentMsg;
-		const btnStatus = this.state.btnStatus;
+		const statusChanged = this.state.statusChanged;
 
 		return (
 			<>
@@ -190,8 +210,8 @@ class Sale extends React.Component {
 
 										<div className="modal-footer p-2">
 											<div className="text-center">
-												<button type="button" data-status={btnStatus} onClick={this.handleButtonOk} className="btn btn-lg btn-warning text-uppercase font-weight-bold ">
-													<h2 data-status={btnStatus} className="text-center text-uppercase custom-t2">Ok</h2>
+												<button type="button" data-status={statusChanged} onClick={this.handleButtonOk} className="btn btn-lg btn-warning text-uppercase font-weight-bold ">
+													<h2 data-status={statusChanged} className="text-center text-uppercase custom-t2">Ok</h2>
 												</button>
 											</div>
 										</div>
