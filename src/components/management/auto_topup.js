@@ -10,7 +10,11 @@ class AutoTopup extends React.Component {
 		this.state = { 
 			slotData: {},
 			productURL: "/assets/images/cola.jpg",
-			productName: "Coca Cola"
+			productName: "Coca Cola",
+			toStockQty: 0,
+			slotId: 0,
+			maxQty: 0,
+			toStockData: []
 		};
 
 		this.handlePlus = this.handlePlus.bind(this);
@@ -22,8 +26,7 @@ class AutoTopup extends React.Component {
 	}
 
 	componentDidMount = () => {
-		// const url = "/stock/topup"; 
-		const url = "http://vending.smartvending.com/api/topups/layouts.json"; 
+		const url = "/api/topups/layouts.json"; 
 		
 		fetch(url)
 			.then(response => {
@@ -33,117 +36,80 @@ class AutoTopup extends React.Component {
 				throw new Error("Network response was not ok.");
 			})
 			.then(response => {
-				this.setState({
-					slotData: response.data
-				});
+				this.setState({ slotData: response.data });
 			})
 			.catch(() => this.props.history.push("/management"));
 	}
 
 	handlePlus = () => {
-		if (this.state.restockQty < this.state.maxQty) {
-			this.setState({ restockQty: parseInt(this.state.restockQty) + 1 });
-		} else {
-			this.setState({ error: "No stock" });
-		}
+		const toStockQty = parseInt(this.state.toStockQty);
+		const maxQty = (parseInt(this.state.maxQty) === 0) ? 12 : parseInt(this.state.maxQty);
+
+		if (toStockQty < maxQty) {
+			this.setState({ toStockQty: toStockQty + 1 });
+		} 
 	}
 
 	handleMinus = () => {
-		if (this.state.restockQty > 0) {
-			this.setState({ restockQty: parseInt(this.state.restockQty) - 1 });
-		} else {
-			this.setState({ error: "No items" });
+		const toStockQty = parseInt(this.state.toStockQty);
+
+		if (toStockQty > 0) {
+			this.setState({ toStockQty: toStockQty - 1 });
 		}
 	}
 
 	handleValueChange = (event) => {
 		const x = Number(event.target.value);
-
-		if (isNaN(x) || x < 1 || x > this.state.maxQty) {
-			this.setState({ error: "Input not valid" });
-		} else {
-			this.setState({ 
-				restockQty: x,
-				error: "Quantity updated" 
-			});
-		}
+		this.setState({ toStockQty: x });
 	}
 
 	handleBtnSlotOnClick = (event) => {
 		event.preventDefault();
-		const stockId = event.target.getAttribute("data-stockid");
-
-		const stocks = this.state.stocks;
-		// const products = this.state.products;
-
-		// let getProductId = 0;
-		if (stocks.length < 0 ) {
-			stocks.forEach( stock => {
-				if (stock.id === parseInt(stockId)) {
-					// getProductId = stock.product_id;
-				}
-			});
-		}
-
-		// products.forEach( product => {
-		// 	if (product.id === parseInt(getProductId)) {
-		// 		this.setState({ 
-		// 			productName: product.name,
-		// 			productURL: product.image_url,
-		// 		});
-		// 	}
-		// });
-
 		this.setState({ 
-			restockQty: event.target.getAttribute("data-restockqty"),
-			stockId: event.target.getAttribute("data-stockid")
+			toStockQty: event.target.getAttribute("data-tostockqty"),
+			slotId: event.target.getAttribute("data-slotid"),
+			maxQty: event.target.getAttribute("data-maxqty"),
+			productURL: event.target.getAttribute("data-producturl"),
+			productName: event.target.getAttribute("data-productname")
 		});
 
 		document.getElementById("open-modal").click();
 	} 
 
 	handleBtnSubConfirmOnClick = (event) => {
-		const stockId = this.state.stockId;
-		const restockQty = this.state.restockQty;
-		const currentStocks = this.state.currentStocks;
-		
-		let preparedData = [];
+		const slotId = this.state.slotId;
+		const toStockQty = this.state.toStockQty;
 
-		currentStocks.forEach(element => {
-			if (element.stock_id === parseInt(stockId)) {
-				preparedData.push({stock_id: element.stock_id, stock_qty: restockQty});
-			} else {
-				preparedData.push({stock_id: element.stock_id, stock_qty: element.stock_qty});
-			}
-		});
-
-		this.setState({ restockData: preparedData });
+		this.state.toStockData.push({slot_id: slotId, tostock_qty: toStockQty});
 
 		document.getElementById("close-modal").click();
 	}
 
 	handleBtnMainConfirmOnClick = (event) => {
-		const url = "/stock/restock";
+		const url = "/stock/restock.json";
 
 		let preparedData = [];
-		const restockData = this.state.restockData;
+		const slotData = this.state.slotData;
+		const toStockData = this.state.toStockData;
 
-		restockData.forEach(element => {
-			preparedData.push({stock_id: element.stock_id, stock_qty: element.stock_qty});
+		slotData.forEach(element => {
+			let x, y;
+			x = element.slot_id;
+			y = element.to_stock;
+			toStockData.forEach(tostock => {
+				if (parseInt(tostock.slot_id) === parseInt(element.slot_id) && parseInt(tostock.tostock_qty) !== parseInt(element.slot_id)) {
+					x = element.slot_id; 
+					y = tostock.tostock_qty;
+				}
+			});
+			preparedData.push({slot_id: x, to_stock: y});
 		});
 
-		const body = {
-			restock: preparedData.slice(0, 1)
-		};
-		
-		const myHeaders = new Headers();
-		myHeaders.append('Content-Type', 'application/json');
 		fetch(url, {
 			method: 'POST',
-			headers: myHeaders,
 			mode: 'cors',
 			cache: 'default',
-			body: JSON.stringify(body)
+			body: JSON.stringify(preparedData)
 		})
 			.then(response => {
 				if (response.ok) {
@@ -152,29 +118,29 @@ class AutoTopup extends React.Component {
 			})
 			.then(response => { this.props.history.push("/management") })
 			.catch(error => console.log(error.message));
-	}
+		}
 
 	render() {
 		const slotData = this.state.slotData;
-		let slotList = [];
-
-		// let level1_slotList, level2_slotList, level3_slotList, level4_slotList, level5_slotList, level6_slotList = [];
+		let slotList = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []};
 
 		Object.values(slotData).forEach((data) => {
-			console.log("Slot Data");
-			console.log(data.slot_id);
-			slotList.push(<div key={data.slot_id} id={'cs_' + data.slot_id} onClick={this.handleBtnSlotOnClick} className="col align-self-center text-center border border-dark border-3 bg-slot btn-slot" data-restockqty={6} data-stockid={data.stock_id}><h2 className="text-uppercase display-4 mt-3 mb-3" data-restockqty={6} data-stockid={data.stock_id}>{6}/{data.max_qty}</h2></div>);
+			if (data.slot_active) {
+				slotList[data.tied].push(<div key={data.slot_id} id={'cs_' + data.slot_id} onClick={this.handleBtnSlotOnClick} className="col align-self-center text-center border border-dark border-3 bg-slot btn-slot" data-tostockqty={data.to_stock} data-slotid={data.slot_id} data-maxqty={data.max_qty} data-productname={data.product_name} data-producturl={data.image}><h2 className="text-uppercase display-4 mt-3 mb-3" data-slotid={data.slot_id} data-tostockqty={data.to_stock} data-maxqty={data.max_qty} data-productname={data.product_name} data-producturl={data.image}>{data.to_stock}/{data.max_qty ===  0 ? 12 : data.max_qty}</h2></div>);
+			} else {
+				slotList[data.tied].push(<div key={data.slot_id} id={'cs_' + data.slot_id} className="col align-self-center text-center border border-dark border-3 bg-slot btn-slot disable-div"><h2 className="text-uppercase display-4 mt-3 mb-3">{data.to_stock ? data.to_stock : "-" }/{data.max_qty ? data.max_qty : "-"}</h2></div>);
+			}
 		});
 
-		let level1_slotList, level2_slotList, level3_slotList, level4_slotList, level5_slotList, level6_slotList = [];
-
-		level1_slotList = slotList.slice(0, 9);
-		level2_slotList = slotList.slice(10, 19);
-		level3_slotList = slotList.slice(20, 29);
-		level4_slotList = slotList.slice(0, 9);
-		level5_slotList = slotList.slice(10, 19);
-		level6_slotList = slotList.slice(20, 29);
-
+		Object.values(slotList).forEach((data) => { 
+			if (data.length < 10) {
+				while (data.length < 10) {
+					let genKey = Date.now().toString(36) + Math.random().toString(36).substring(2);
+					data.push(<div key={genKey} className="col align-self-center text-center border border-dark border-3 bg-slot btn-slot disable-div"><h2 className="text-uppercase display-4 mt-3 mb-3">-</h2></div>)
+				}
+			}
+		});
+		
 		return (
 			<>
 				<div className="vw-100 vh-100 d-flex align-items-center text-uppercase">
@@ -186,27 +152,27 @@ class AutoTopup extends React.Component {
 							</div>
 
 							<div className="row justify-content-center">
-								{level1_slotList}
+								{slotList[1]}
 							</div>
 
 							<div className="row justify-content-center">
-								{level2_slotList}
+								{slotList[2]}
 							</div>
 
 							<div className="row justify-content-center">
-								{level3_slotList}
+								{slotList[3]}
 							</div>
 
 							<div className="row justify-content-center">
-								{level4_slotList}
+								{slotList[4]}
 							</div>
 
 							<div className="row justify-content-center">
-								{level5_slotList}
+								{slotList[5]}
 							</div>
 
 							<div className="row justify-content-center">
-								{level6_slotList}
+								{slotList[6]}
 							</div>
 
 							<div className="row col-12 d-flex justify-content-center mt-5">
@@ -253,7 +219,7 @@ class AutoTopup extends React.Component {
 												<h1 className="lead text-uppercase custom-t2">Quantity</h1><br/>
 												<div className="form-inline">
 													<input type="button" value="-" className="form-control col-2 btn border border-dark border-3 form-control-lg font-weight-bold custom-t2" onClick={this.handleMinus}></input>
-													<input type="number" value={this.state.restockQty} className="form-control col-8 border border-dark border-3 form-control-lg font-weight-bold custom-t2" onChange={this.handleValueChange}></input>
+													<input type="number" value={this.state.toStockQty} className="form-control col-8 border border-dark border-3 form-control-lg font-weight-bold custom-t2" onChange={this.handleValueChange} readOnly={true}></input>
 													<input type="button" value="+" className="form-control col-2 btn  border border-dark border-3 form-control-lg font-weight-bold custom-t2" onClick={this.handlePlus}></input>
 												</div>
 											</div>
@@ -277,6 +243,7 @@ class AutoTopup extends React.Component {
 						</div>
 					</div>
 				</div>
+
 			</>
 		);
 	}

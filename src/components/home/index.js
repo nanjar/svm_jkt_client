@@ -8,7 +8,7 @@ class Home extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			data: [],
+			reply_status: false,
 			machine_code: ""
 		}
 	}
@@ -24,9 +24,8 @@ class Home extends React.Component {
 				throw new Error("Network response was not ok.");
 			})
 			.then(response => {
-				console.log(response);
 				this.setState({
-					data: response.data,
+					reply_status: response.success,
 					machine_code: response.machine_code
 				});
 			})
@@ -37,7 +36,7 @@ class Home extends React.Component {
 		const machine_code = this.state.machine_code;
 		let code;
 		if (machine_code) {
-			code = <h1 className='text-center display-1 align-self-center'>MACHINE CODE - <span class="custom-t0"><strong> {machine_code} </strong></span></h1>;
+			code = <h1 className='text-center display-1 align-self-center'>MACHINE CODE - <span className="custom-t0"><strong> {machine_code} </strong></span></h1>;
 		} else {
 			code = <h1 className='text-center display-1 align-self-center'><strong>Machine Setup ... </strong></h1>;
 		}
@@ -75,9 +74,9 @@ class Home extends React.Component {
 	}
 
 	Machine = () => {
-		const config_statuses = this.state.data;
-		const Machine = config_statuses.length !== 0 ? this.MachineSetup : this.MachineStart;
-		// const Machine = this.MachineStart;
+		console.log(this.state.reply_status);
+		const reply_status = this.state.reply_status;
+		const Machine = reply_status ? this.MachineSetup : this.MachineStart;
 		return <Machine />
 	}
 
