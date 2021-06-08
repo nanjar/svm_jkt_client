@@ -28,6 +28,7 @@ class Sale extends React.Component {
 
 	componentDidMount() {
 		this.handleInitialStateChanges();
+		this.interval = setInterval(() => this.checkPaymentStatus, 3000);
 	}
 
 	requestQrCode() {
@@ -97,11 +98,11 @@ class Sale extends React.Component {
 				this.setState({
 					titleMsg: "Connection timed out",
 					contentMsg: "Your payment connection is timed out. Please try again!",
-					statusChanged: "timeout"
+					statusChanged: "timeout",
+					intervalId: setInterval(() => this.props.history.push(this.state.redirectURL))
 				});
 				document.getElementById("open-modal").click();
-				this.setState({ duration: 5000 }); // Redirect to Home page after 3 secs if user doesn't click OK button
-			} else { // To redirect to Home page after 5 seconds
+			} else if (this.state.statusChanged === "timeout") {
 				document.getElementById("close-modal").click();
 				clearInterval(this.state.intervalId);
 				this.props.history.push(this.state.redirectURL);
@@ -176,15 +177,15 @@ class Sale extends React.Component {
 			if (response.transaction_status === "settlement") {
 				this.props.history.push("/sale_success");
 			} 
-			// else if (response.transaction_status === "failure" || response.transaction_status === "deny") {
-			// 	document.getElementById("open-modal").click();
-			// }
 		})
 		.catch(error => console.log(error.message));
 	}
 
+	redirectToHomeP
+
 	componentWillUnmount() {
     clearInterval(this.state.intervalId);
+    clearInterval(this.interval);
   }
 
 	render() {
