@@ -75,7 +75,7 @@ class Home extends React.Component {
 
 	Machine = () => {
 		console.log(this.state.reply_status);
-		const reply_status = this.state.reply_status;
+		// const reply_status = this.state.reply_status;
 		// const Machine = reply_status ? this.MachineSetup : this.MachineStart;
 		const Machine = this.MachineStart;
 		return <Machine />

@@ -12,20 +12,27 @@ class Sale extends React.Component {
 			sale_data: {},
 			qrCodeURL: btn_gopay,
 			transactionId: "",
-			timer: null,
-			duration: 1000,
+			duration: 5000,
 			titleMsg: "",
 			contentMsg: "",
 			statusChanged: "initial",
 			redirectURL: "/",
+			checkQrStatus: false,
+			intervalId: null,
+			retry: 0,
+
 		}
 
 		this.handleButtonOk = this.handleButtonOk.bind(this);
 	}
 
 	componentDidMount() {
-		const url = 'http://vending.smartvending.com/api/sales/payment.json';
-		const amount = 10;
+		this.handleInitialStateChanges();
+	}
+
+	requestQrCode() {
+		const url = '/api/sales/payment.json';
+		const amount = 1;
 		const product_id = 1;
 
 		const params = new FormData();
@@ -39,25 +46,37 @@ class Sale extends React.Component {
 			body: params
 		})
 		.then(response => {
+			console.log("RQC " + response);
 			if (response.ok) {
 				return response.json();
-			} 
-			// throw new Error("Network response was not ok.");
-			throw this.state.timer = setInterval(() => this.handleConnectionTimeout(), this.state.duration);
+			} else {
+				console.log("Not ok retry - " + this.state.retry);
+				console.log("Not ok statusChanged - " + this.state.statusChanged);
+				if (this.state.retry === 1) {
+					if (this.state.statusChanged === "initial") {
+						this.setState({
+							titleMsg: "Connection timed out",
+							contentMsg: "Cannot connect to payment server. Please try again!",
+							statusChanged: "timeout"
+						});
+						document.getElementById("open-modal").click();
+						this.setState({ duration: 3000 }); // Redirect to Home page after 3 secs if user doesn't click OK button
+					}
+				}
+				this.setState({ intervalId: setInterval(() => this.handleInitialStateChanges(), this.state.duration) });
+			}
 		})
 		.then(response => { 
-			// if (response) {
-				if (response.transaction_status === "pending") {
-					const qr = response.actions.find( a => a.name === "generate-qr-code" );
-					this.setState({
-						qrCodeURL: qr.url,
-						transactionId: response.transaction_id,
-						duration: 120000 // set qr code life span to 2 minutes - get data from machine config
-					});
-
-					this.state.timer = setInterval(() => this.warningTimeOut(), this.state.duration);
-				}
-			// }
+			if (response.transaction_status === "pending") {
+				const qr = response.actions.find( a => a.name === "generate-qr-code" );
+				this.setState({
+					qrCodeURL: qr.url,
+					transactionId: response.transaction_id,
+					duration: 120000, // set qr code life span to 2 minutes - get data from machine config
+					checkQrStatus: true,
+					intervalId: setInterval(() => this.warningTimeOut(), 120000)
+				});
+			}
 		})
 		.catch(error => console.log(error.message));
 	}
@@ -72,19 +91,25 @@ class Sale extends React.Component {
 		document.getElementById("open-modal").click();
 	}
 
-	handleConnectionTimeout() {
-		console.log("conn timed out");
-		if (this.state.statusChanged === "initial") {
-			this.setState({
-				titleMsg: "Connection timed out",
-				contentMsg: "Your payment connection is timed out. Please try again!",
-				statusChanged: "timeout"
-			});
-			document.getElementById("open-modal").click();
-			this.setState({ duration: 5000 }); // Redirect to Home page after 3 secs if user doesn't click OK button
-		} else { // To redirect to Home page after 3 seconds
-			document.getElementById("close-modal").click();
-			this.props.history.push(this.state.redirectURL);
+	handleInitialStateChanges() {
+		if (this.state.checkQrStatus) {
+			if (this.state.statusChanged === "initial") {
+				this.setState({
+					titleMsg: "Connection timed out",
+					contentMsg: "Your payment connection is timed out. Please try again!",
+					statusChanged: "timeout"
+				});
+				document.getElementById("open-modal").click();
+				this.setState({ duration: 5000 }); // Redirect to Home page after 3 secs if user doesn't click OK button
+			} else { // To redirect to Home page after 5 seconds
+				document.getElementById("close-modal").click();
+				clearInterval(this.state.intervalId);
+				this.props.history.push(this.state.redirectURL);
+			}
+		} else {
+			console.log("Duration " + this.state.duration);
+			this.setState({ retry: 1 });
+			this.requestQrCode();
 		}
 	}
 
@@ -92,9 +117,11 @@ class Sale extends React.Component {
 		let chkStatus = event.target.getAttribute("data-status");
 		document.getElementById("close-modal").click();
 		if (chkStatus === "warned") {
-			this.setState({ duration: 60000 });
+			this.setState({ 
+				duration: 60000,
+				intervalId: setInterval(() => this.cancelAtTimeOut(), 60000)
+			});
 			console.log("Duration " + this.state.duration);
-			this.state.timer = setInterval(() => this.cancelAtTimeOut(), this.state.duration);
 		} else if (chkStatus === "timeout") {
 			this.props.history.push(this.state.redirectURL);
 		}
@@ -102,7 +129,7 @@ class Sale extends React.Component {
 	}
 
 	cancelAtTimeOut() {
-		const url = 'http://vending.smartvending.com/api/sales/cancel.json';
+		const url = '/api/sales/cancel.json';
 		const transaction_id = this.state.transactionId;
 
 		const params = new FormData();
@@ -121,10 +148,12 @@ class Sale extends React.Component {
 		})
 		.then(response => { 
 			console.log(response);
-			if (response.status_code === "202") { // successful cancel transaction and transaction_status="cancel"
+			console.log(response.transaction_status, response.status_code);
+			if (response.transaction_status === "cancel" || response.status_code === "412") { // successful cancel transaction and transaction_status="cancel"
 				this.setState({
 					titleMsg: "Payment Expired",
-					contentMsg: "Please try again"
+					contentMsg: "Please try again",
+					statusChanged: "timeout"
 				});
 				document.getElementById("open-modal").click();
 			}
@@ -133,7 +162,7 @@ class Sale extends React.Component {
 	} 
 
 	checkPaymentStatus() {
-		const url = 'http://vending.smartvending.com/api/sales/status';
+		const url = '/api/sales/status';
 		const transaction_id = this.state.transactionId;
 
 		fetch(url + '?transaction_id=' + transaction_id)
@@ -147,15 +176,15 @@ class Sale extends React.Component {
 			if (response.transaction_status === "settlement") {
 				this.props.history.push("/sale_success");
 			} 
-			else if (response.transaction_status === "failure" || response.transaction_status === "deny") {
-				document.getElementById("open-modal").click();
-			}
+			// else if (response.transaction_status === "failure" || response.transaction_status === "deny") {
+			// 	document.getElementById("open-modal").click();
+			// }
 		})
 		.catch(error => console.log(error.message));
 	}
 
 	componentWillUnmount() {
-    clearInterval(this.state.timer);
+    clearInterval(this.state.intervalId);
   }
 
 	render() {
