@@ -74,7 +74,7 @@ class Sale extends React.Component {
 					transactionId: response.transaction_id,
 					duration: 120000, // set qr code life span to 2 minutes - get data from machine config
 					checkQrStatus: true,
-					intervalId: setInterval(() => this.warningTimeOut(), 120000)
+					intervalId: setInterval(() => this.cancelAtTimeOut(), 120000)
 				});
 			}
 		})
@@ -123,6 +123,8 @@ class Sale extends React.Component {
 			});
 			console.log("Duration " + this.state.duration);
 		} else if (chkStatus === "timeout") {
+			document.getElementById("close-modal").click();
+			clearInterval(this.state.intervalId);
 			this.props.history.push(this.state.redirectURL);
 		}
 		console.log("Btn Status" + chkStatus);
