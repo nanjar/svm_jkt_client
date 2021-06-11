@@ -68,7 +68,7 @@ class Sale extends React.Component {
 								contentMsg: "Cannot connect to payment server. Please try again!",
 								statusChanged: "timeout"
 							});
-							this._intervalId = setInterval(() => { this.handleTimeout(); this._intervalId = 0; }, 5000); // set auto timeout and redirect back to home page after 5 seconds if user doesn't close the popup
+							this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
 						}
 						
 						if (document.getElementById("open-modal") !== null) {
@@ -78,7 +78,7 @@ class Sale extends React.Component {
 				} else {
 					// invoke handleInitialStateChanges to request QR code again
 					if (this._isMounted) {
-						this._intervalId = setInterval(() => { this.handleInitialStateChanges(); this._intervalId = 0; }, 5000);
+						this._timerId = setTimeout(() => { this.handleInitialStateChanges(); this._timerId = 0; }, 5000);
 					}
 				} 
 			}
@@ -113,7 +113,7 @@ class Sale extends React.Component {
 						contentMsg: "Please try again!",
 						statusChanged: "qrerror"
 					});
-					this._intervalId = setInterval(() => { this.handleTimeout(); this._intervalId = 0; }, 5000);
+					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
 				}
 				if (document.getElementById("open-modal") !== null) {
 					document.getElementById("open-modal").click();
@@ -131,7 +131,7 @@ class Sale extends React.Component {
 				statusChanged: "warned",
 				showCancel: true
 			});
-			this._intervalId = setInterval(() => { this.cancelAtTimeOut(); this._intervalId = 0 }, 60000);
+			this._timerId = setTimeout(() => { this.cancelAtTimeOut(); this._timerId = 0 }, 60000);
 		}
 		if (document.getElementById("open-modal") !== null) {
 			document.getElementById("open-modal").click();
@@ -147,7 +147,7 @@ class Sale extends React.Component {
 						contentMsg: "Your payment connection is timed out. Please try again!",
 						statusChanged: "timeout"
 					});
-					this._intervalId = setInterval(() => { this.handleTimeout(); this._intervalId = 0; }, 5000); // set auto timeout and redirect back to home page after 5 seconds if user doesn't close the popup
+					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
 				}
 				
 				if (document.getElementById("open-modal") !== null) {
@@ -171,7 +171,7 @@ class Sale extends React.Component {
 		}
 		if (statusChanged === "warned") {
 			if (this._isMounted) {
-				this._intervalId = setInterval(() => { this.cancelAtTimeOut(); this._intervalId = 0; }, 60000); // wait 1 extra min for payment before invoke cancel even
+				this._timerId = setTimeout(() => { this.cancelAtTimeOut(); this._timerId = 0; }, 60000); // wait 1 extra min for payment before invoke cancel even
 			}
 		} else if (statusChanged === "timeout" || statusChanged === "qrerror") {
 			this.handleTimeout();
@@ -210,7 +210,7 @@ class Sale extends React.Component {
 							showCancel: false
 						});
 					}
-					this._intervalId = setInterval(() => { this.handleTimeout(); this._intervalId = 0; }, 5000); // set auto timeout and redirect back to home page after 5 seconds if user doesn't close the popup
+					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
 
 					if (document.getElementById("open-modal") !== null) {
 						document.getElementById("open-modal").click();
@@ -276,6 +276,7 @@ class Sale extends React.Component {
     this._isMounted = false;
 		if (this._timerId) { clearTimeout(this._timerId); this._timerId = 0; }
 		if (this._intervalId) { clearInterval(this._intervalId); this.intervalId = 0; }
+		clearInterval(this.state.intervalId);
 		this.setState = (state, callback) => {
 			return;
 		};
