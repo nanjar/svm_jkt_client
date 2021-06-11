@@ -7,6 +7,8 @@ import product_img from '../../assets/static_images/cola.jpg';
 
 class Sale extends React.Component {
 	_isMounted = false;
+	_intervalId = 0;
+	_timerId = 0;
 
 	constructor(props) {
 		super(props); 
@@ -19,11 +21,9 @@ class Sale extends React.Component {
 			statusChanged: "initial",
 			redirectURL: "/",
 			checkQrStatus: false,
-			intervalId: null,
 			retry: 0,
 			countdown: 121,
 			cancelBtnClicked: false,
-			timer: null,
 			showCancel: false // flag for cancel button of popup box
 		}
 
@@ -66,11 +66,11 @@ class Sale extends React.Component {
 							this.setState({
 								titleMsg: "Connection timed out",
 								contentMsg: "Cannot connect to payment server. Please try again!",
-								statusChanged: "timeout",
-								intervalId: setInterval(() => this.handleTimeout(), 5000) // set auto timeout and redirect back to home page after 5 seconds if user doesn't close the popup
+								statusChanged: "timeout"
 							});
+							this._intervalId = setInterval(() => { this.handleTimeout(); this._intervalId = 0; }, 5000); // set auto timeout and redirect back to home page after 5 seconds if user doesn't close the popup
 						}
-						clearInterval(this.state.intervalId);
+						
 						if (document.getElementById("open-modal") !== null) {
 							document.getElementById("open-modal").click();
 						}
@@ -78,10 +78,9 @@ class Sale extends React.Component {
 				} else {
 					// invoke handleInitialStateChanges to request QR code again
 					if (this._isMounted) {
-						this.setState({ intervalId: setInterval(() => this.handleInitialStateChanges(), 5000) }); 
+						this._intervalId = setInterval(() => { this.handleInitialStateChanges(); this._intervalId = 0; }, 5000);
 					}
-					clearInterval(this.state.intervalId);
-				}
+				} 
 			}
 		})
 		.then(response => { 
@@ -102,23 +101,20 @@ class Sale extends React.Component {
 								console.log("countdown - " + countdown);
 							}
 							this.setState({ countdown: countdown });
-						}, 1000),
-						timer: setTimeout(() => {this.checkPaymentStatus();}, 1000)
+						}, 1000)
 					});
+					this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
 				}
-				clearTimeout(this.state.timer);
-				clearInterval(this.state.intervalId);
 			} else if (response.status_code === "406") {
 				console.log("Status code - " + response.status_code);
 				if (this._isMounted) {
 					this.setState({
 						titleMsg: "Cannot Connect to Server",
 						contentMsg: "Please try again!",
-						statusChanged: "qrerror",
-						intervalId: setInterval(() => this.handleTimeout(), 5000) // set auto timeout and redirect back to home page after 5 seconds if user doesn't close the popup
+						statusChanged: "qrerror"
 					});
+					this._intervalId = setInterval(() => { this.handleTimeout(); this._intervalId = 0; }, 5000);
 				}
-				clearInterval(this.state.intervalId);
 				if (document.getElementById("open-modal") !== null) {
 					document.getElementById("open-modal").click();
 				}
@@ -133,11 +129,10 @@ class Sale extends React.Component {
 				titleMsg: "Payment Expiry Warning",
 				contentMsg: "Your payment is going to expire soon. Click OK if you still need time to pay.",
 				statusChanged: "warned",
-				showCancel: true,
-				intervalId: setInterval(() => this.cancelAtTimeOut(), 60000)
+				showCancel: true
 			});
+			this._intervalId = setInterval(() => { this.cancelAtTimeOut(); this._intervalId = 0 }, 60000);
 		}
-		clearInterval(this.state.intervalId);
 		if (document.getElementById("open-modal") !== null) {
 			document.getElementById("open-modal").click();
 		}
@@ -150,11 +145,11 @@ class Sale extends React.Component {
 					this.setState({
 						titleMsg: "Connection timed out",
 						contentMsg: "Your payment connection is timed out. Please try again!",
-						statusChanged: "timeout",
-						intervalId: setInterval(() => this.handleTimeout(), 5000) // set auto timeout and redirect back to home page after 5 seconds if user doesn't close the popup
+						statusChanged: "timeout"
 					});
+					this._intervalId = setInterval(() => { this.handleTimeout(); this._intervalId = 0; }, 5000); // set auto timeout and redirect back to home page after 5 seconds if user doesn't close the popup
 				}
-				clearInterval(this.state.intervalId);
+				
 				if (document.getElementById("open-modal") !== null) {
 					document.getElementById("open-modal").click();
 				}
@@ -176,11 +171,8 @@ class Sale extends React.Component {
 		}
 		if (statusChanged === "warned") {
 			if (this._isMounted) {
-				this.setState({ 
-					intervalId: setInterval(() => this.cancelAtTimeOut(), 60000) // wait 1 extra min for payment before invoke cancel event
-				});
+				this._intervalId = setInterval(() => { this.cancelAtTimeOut(); this._intervalId = 0; }, 60000); // wait 1 extra min for payment before invoke cancel even
 			}
-			clearInterval(this.state.intervalId);
 		} else if (statusChanged === "timeout" || statusChanged === "qrerror") {
 			this.handleTimeout();
 		} 
@@ -206,20 +198,23 @@ class Sale extends React.Component {
 		.then(response => { 
 			console.log("Transaction Status - " + response.transaction_status);
 			console.log("Transaction Status Code - " + response.status_code);
-			if (this.state.cancelBtnClicked) this.handleTimeout();
 			if (response.transaction_status === "cancel" || response.status_code === "412") { // successful cancel transaction and transaction_status="cancel"
-				if (this._isMounted) {
-					this.setState({
-						titleMsg: "Payment Expired",
-						contentMsg: "Please try again",
-						statusChanged: "timeout",
-						showCancel: false,
-						intervalId: setInterval(() => this.handleTimeout(), 5000) // set auto timeout and redirect back to home page after 5 seconds if user doesn't close the popup
-					});
-				}
-				clearInterval(this.state.intervalId);
-				if (document.getElementById("open-modal") !== null) {
-					document.getElementById("open-modal").click();
+				if (this.state.cancelBtnClicked) {
+					this.handleTimeout();
+				} else {
+					if (this._isMounted) {
+						this.setState({
+							titleMsg: "Payment Expired",
+							contentMsg: "Please try again",
+							statusChanged: "timeout",
+							showCancel: false
+						});
+					}
+					this._intervalId = setInterval(() => { this.handleTimeout(); this._intervalId = 0; }, 5000); // set auto timeout and redirect back to home page after 5 seconds if user doesn't close the popup
+
+					if (document.getElementById("open-modal") !== null) {
+						document.getElementById("open-modal").click();
+					}
 				}
 			}
 		})
@@ -229,8 +224,6 @@ class Sale extends React.Component {
 	checkPaymentStatus() {
 		const url = 'http://vending.smartvending.com/api/sales/status';
 		const transaction_id = this.state.transactionId;
-		console.log("transction_id " + transaction_id);
-		console.log(this.state.countdown);
 
 		if(this.state.countdown === 0){
 			// process when the countdown end;
@@ -249,17 +242,15 @@ class Sale extends React.Component {
 				this.props.history.push("/sale_success"); // Change after confirm what to response
 			} else {
 				if (this._isMounted) {
-					this.setState({ timer: setTimeout(() => this.checkPaymentStatus(), 1000) });
+					this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
 				}
-				clearTimeout(this.state.timer);
 			}
 		})
 		.catch(error => {
 			console.log(error.message)
 			if (this._isMounted) {
-				this.setState({ timer: setTimeout(() => this.checkPaymentStatus(), 1000) });
+				this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
 			}
-			clearTimeout(this.state.timer);
 		});
 	}
 
@@ -283,6 +274,11 @@ class Sale extends React.Component {
 
 	componentWillUnmount() {
     this._isMounted = false;
+		if (this._timerId) { clearTimeout(this._timerId); this._timerId = 0; }
+		if (this._intervalId) { clearInterval(this._intervalId); this.intervalId = 0; }
+		this.setState = (state, callback) => {
+			return;
+		};
   }
 
 	render() {
