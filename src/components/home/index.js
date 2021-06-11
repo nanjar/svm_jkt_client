@@ -1,7 +1,5 @@
 import React from "react";
 import MachineSetup from './MachineShop';
-import logo from '../../assets/static_images/Logo.png';
-import btn_press from '../../assets/static_images/button.gif';
 import '../../App.css';
 
 class Home extends React.Component {
@@ -15,8 +13,8 @@ class Home extends React.Component {
 	}
 
 	componentDidMount() {
-		const url = "/api/home";
 		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 300, reply_to: 'button_pressed' })
+		const url = "http://vending.smartvending.com/api/home.json";
 		fetch(url)
 			.then(response => {
 				if (response.ok) {
@@ -53,7 +51,6 @@ class Home extends React.Component {
 	}
 
 	Machine = () => {
-		console.log(this.state.reply_status);
 		const reply_status = this.state.reply_status;
 		const Machine = reply_status ? this.MachineStart : MachineSetup;
 		return <Machine />
