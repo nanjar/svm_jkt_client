@@ -80,7 +80,7 @@ class Sale extends React.Component {
 					if (this._isMounted) {
 						this._intervalId = setInterval(() => { this.handleInitialStateChanges(); this._intervalId = 0; }, 5000);
 					}
-				}
+				} 
 			}
 		})
 		.then(response => { 
@@ -216,10 +216,6 @@ class Sale extends React.Component {
 						document.getElementById("open-modal").click();
 					}
 				}
-
-				this._isMounted = false;
-				if (this._timerId) { clearTimeout(this._timerId); this._timerId = 0; }
-				if (this._intervalId) { clearInterval(this._intervalId); this.intervalId = 0; }
 			}
 		})
 		.catch(error => console.log(error.message));
@@ -264,10 +260,6 @@ class Sale extends React.Component {
 			document.getElementById("close-modal").click();
 		}
 		this.props.history.push(this.state.redirectURL);
-
-    this._isMounted = false;
-		if (this._timerId) { clearTimeout(this._timerId); this._timerId = 0; }
-		if (this._intervalId) { clearInterval(this._intervalId); this.intervalId = 0; }
 	}
 
 	handleCancelPayment() {
