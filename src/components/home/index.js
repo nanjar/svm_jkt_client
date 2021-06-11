@@ -14,7 +14,7 @@ class Home extends React.Component {
 	}
 
 	componentDidMount() {
-		const url = "/api/home";
+		const url = "http://vending.smartvending.com/api/home.json";
 
 		fetch(url)
 			.then(response => {
@@ -74,7 +74,6 @@ class Home extends React.Component {
 	}
 
 	Machine = () => {
-		console.log(this.state.reply_status);
 		const reply_status = this.state.reply_status;
 		const Machine = reply_status ? this.MachineStart : this.MachineSetup;
 		return <Machine />
