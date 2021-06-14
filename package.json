@@ -16,6 +16,7 @@
     "http-proxy-middleware": "^2.0.0",
     "jquery": "^3.6.0",
     "midtrans-client": "^1.2.3",
+    "numeral": "^2.0.6",
     "popper.js": "^1.16.1",
     "react": "^16.14.0",
     "react-actioncable-provider": "^1.0.3",
@@ -25,6 +26,7 @@
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "socket.io-client": "^4.1.2",
     "typescript": "^4.3.2",
     "web-vitals": "^1.1.2"
   },
