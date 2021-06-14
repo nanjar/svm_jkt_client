@@ -7,7 +7,6 @@ import product_img from '../../assets/static_images/cola.jpg';
 
 class Sale extends React.Component {
 	_isMounted = false;
-	_intervalId = 0;
 	_timerId = 0;
 
 	constructor(props) {
@@ -275,7 +274,6 @@ class Sale extends React.Component {
 	componentWillUnmount() {
     this._isMounted = false;
 		if (this._timerId) { clearTimeout(this._timerId); this._timerId = 0; }
-		if (this._intervalId) { clearInterval(this._intervalId); this.intervalId = 0; }
 		clearInterval(this.state.intervalId);
 		this.setState = (state, callback) => {
 			return;
