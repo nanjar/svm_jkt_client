@@ -1,12 +1,11 @@
 import React from "react";
-import { Link } from 'react-router-dom';
-import logo from '../../assets/static_images/Logo.png';
-import btn_press from '../../assets/static_images/button.gif';
+import MachineSetup from './MachineShop';
 import '../../App.css';
 
 class Home extends React.Component {
 	constructor(props) {
 		super(props);
+		this.socket = props.socket;
 		this.state = {
 			reply_status: false,
 			machine_code: ""
@@ -14,8 +13,8 @@ class Home extends React.Component {
 	}
 
 	componentDidMount() {
+		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 300, reply_to: 'button_pressed' })
 		const url = "http://vending.smartvending.com/api/home.json";
-
 		fetch(url)
 			.then(response => {
 				if (response.ok) {
@@ -51,31 +50,9 @@ class Home extends React.Component {
 		</div>;
 	}
 
-	MachineStart = () => {
-		return <div className="m-3">
-			<div className='row col-12'>
-				<div className='col-7 d-flex flex-column justify-content-center'>
-					<div className='p-2 align-self-center'>
-						<img src={logo} className='img-thumbnail border-0' alt='Logo' />
-					</div>
-				</div>
-				<div className='col-5 d-flex flex-column justify-content-center'>
-					<div className='p-2 align-self-center'>
-						<Link to='/sale'>
- 							<img src={btn_press} className='img-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
- 						</Link>
-					</div>
-				</div>
-			</div>
-			<div className='row col-12 justify-content-center mt-4'>
-				<h1 className='text-center display-3'><strong>SILAHKAN MEMULAI DENGAN MENEKAN TOMBOL PRODUK YANG MAU DIPILIH</strong></h1>
-			</div>
-		</div>;
-	}
-
 	Machine = () => {
 		const reply_status = this.state.reply_status;
-		const Machine = reply_status ? this.MachineStart : this.MachineSetup;
+		const Machine = reply_status ? this.MachineStart : MachineSetup;
 		return <Machine />
 	}
 
