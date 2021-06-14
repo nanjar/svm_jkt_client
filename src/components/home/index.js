@@ -1,11 +1,14 @@
 import React from "react";
-import MachineSetup from './MachineShop';
+import MachineShop from './MachineShop';
 import '../../App.css';
+
+import {SocketContext} from '../../services/socket';
 
 class Home extends React.Component {
 	constructor(props) {
 		super(props);
-		this.socket = props.socket;
+		// this.socket = SocketContext._currentValue;
+		// this.socket = props.socket;
 		this.state = {
 			reply_status: false,
 			machine_code: ""
@@ -13,7 +16,7 @@ class Home extends React.Component {
 	}
 
 	componentDidMount() {
-		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 300, reply_to: 'button_pressed' })
+		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 500, reply_to: 'button_pressed' })
 		const url = "http://vending.smartvending.com/api/home.json";
 		fetch(url)
 			.then(response => {
@@ -29,6 +32,9 @@ class Home extends React.Component {
 				});
 			})
 			.catch(() => this.props.history.push("/"));
+	}
+	componentWillUnmount(){
+		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' })
 	}
 
 	MachineSetup = () => {
@@ -52,7 +58,7 @@ class Home extends React.Component {
 
 	Machine = () => {
 		const reply_status = this.state.reply_status;
-		const Machine = reply_status ? this.MachineStart : MachineSetup;
+		const Machine = reply_status ? MachineShop : this.MachineSetup;
 		return <Machine />
 	}
 
@@ -67,5 +73,7 @@ class Home extends React.Component {
 		);
 	}
 }
+
+Home.contextType = SocketContext;
 
 export default Home;

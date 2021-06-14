@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from 'react-router-dom';
+import {SocketContext} from '../../../services/socket';
 import '../../../App.css';
 
 class ButtonConfig extends React.Component {
@@ -16,7 +17,8 @@ class ButtonConfig extends React.Component {
 	}
 
 	componentDidMount() {
-		const url = "/button/config";
+		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 500, reply_to: 'button_pressed' })
+		const url = "http://vending.smartvending.com/button/config";
 
 		fetch(url)
 			.then(response => {
@@ -32,7 +34,7 @@ class ButtonConfig extends React.Component {
 					mappedButtonIds: response.mapped_button_ids
 				});
 			})
-			.catch(() => this.props.history.push("/"));
+			// .catch(() => this.props.history.push("/"));
 		
 		this.handleButtonOnClick = this.handleButtonOnClick.bind(this);
 		this.handleConfirmButtonOnClick = this.handleConfirmButtonOnClick.bind(this);
@@ -184,5 +186,5 @@ class ButtonConfig extends React.Component {
 	}
 
 }
-
+ButtonConfig.contextType = SocketContext;
 export default ButtonConfig;

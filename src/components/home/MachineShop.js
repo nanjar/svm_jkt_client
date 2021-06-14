@@ -1,26 +1,35 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { SocketContext } from '../../services/socket';
-import { REQUEST } from '../../helpers';
+import SERVER_REQ  from '../../helpers/Request';
 import {useHistory} from 'react-router-dom';
 import logo from '../../assets/static_images/Logo.png';
 import btn_press from '../../assets/static_images/button.gif';
-export default MachineStart = () => {
+
+const MachineShop = () => {
     const socket = useContext(SocketContext);
     const history = useHistory();
     useEffect(() => {
-        socket.on('button_pressed', (data) => {
-            if(data.no === 0 )
+        let button_pressed = false;
+        socket.on('button_pressed', async (data) => {
+            data = JSON.parse(data);
+            if(button_pressed)
                 return;
-            socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });
-            const button_req = await REQUEST.get(`/api/buttons/${data.no}.json`);
-            const button_detail = button_req.reponse.data;
-            history.push(`/sales/${button_detail.product.id}/${button_detail.price}`)
+            button_pressed = true;
+            const button = data.button_no
+            if(button === 0 )
+                return;
+            socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: 'button_pressed' });
+            console.log('pressed')
+            const button_req = await SERVER_REQ.get(`http://vending.smartvending.com/api/buttons/${button}.json`);
+            console.log(button_req);
+            // const button_detail = button_req.response.data;
+            // history.push(`/sales/${button_detail.product.id}/${button_detail.price}`)
         })
         return () => {
-            socket.offAny('button_pressed')
+            socket.off('button_pressed')
         }
-    })([]);
+    }, [history, socket]);
     return <div className="m-3">
         <div className='row col-12'>
             <div className='col-7 d-flex flex-column justify-content-center'>
@@ -41,3 +50,5 @@ export default MachineStart = () => {
         </div>
     </div>;
 }
+
+export default MachineShop;

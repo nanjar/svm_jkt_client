@@ -2,7 +2,7 @@ export default class Request{
     static config(){
         return {
             headers: {
-            'Content-Type': 'application/json'
+                'Content-Type': 'application/json'
             }
         }
     }
@@ -36,10 +36,10 @@ export default class Request{
         let response = {},
             status = 200;
         try{
-            const has_keys = has_data(data);
+            const has_keys = this.has_data(data);
             const parseURL = this.formatURL(url, data);
-            await fetch(parsURL, this.config())
-                .then(result => response.json())
+            await fetch(parseURL, this.config())
+                .then(result => result.json())
                 .then(data => response = data);
         }catch(e){
             let message = e.message;
@@ -51,19 +51,19 @@ export default class Request{
         }
     }
     static async post(url, data = {}, config={}){
-        return await formDataRequest(url, data, 'POST', config)
+        return await this.formDataRequest(url, data, 'POST', config)
     }
 
     static async put(url, data = {}, config={}){
-        return await formDataRequest(url, data, 'PUT', config)
+        return await this.formDataRequest(url, data, 'PUT', config)
     }
 
     static async delete(url, data = {}, config={}){
-        return await formDataRequest(url, data, 'DELETE', config)
+        return await this.formDataRequest(url, data, 'DELETE', config)
     }
 
     static async options(url, data = {}, config={}){
-        return await formDataRequest(url, data, 'OPTIONS', config)
+        return await this.formDataRequest(url, data, 'OPTIONS', config)
     }
 
     static async formDataRequest(url, data, method="POST", config={}){
@@ -72,16 +72,19 @@ export default class Request{
             status = 200;
         try{
             const parseURL = this.formatURL(url);
-            await fetch(parsURL, {
+            await fetch(parseURL, {
                     ...this.config(),
                     method,
                     body: data,
                     ...config
                 })
-                .then(result => response.json())
+                .then(result => {
+                    return result.json()
+                })
                 .then(data => response = data);
         }catch(e){
             let message = e.message;
+            console.log('errror ',e.message);
             if(message.toLowerCase().includes('fail'))
                 message = "Error Connection. Please try again later";
             response = { status: 404, message: message };
