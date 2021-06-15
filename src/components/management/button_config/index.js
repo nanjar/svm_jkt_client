@@ -2,21 +2,17 @@ import React from "react";
 import { Link } from 'react-router-dom';
 import '../../../App.css';
 
-class ButtonConfig extends React.Component {
+class ManagementButtonConfig extends React.Component {
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			mappedProducts: [],
-			mappedProductIds: [],
-			mappedButtonIds: [],
-			mappedProductName: "",
-			buttonId: 0
+			buttons: []
 		};
 	}
 
 	componentDidMount() {
-		const url = "/button/config";
+		const url = "http://vending.smartvending.com/api/buttons.json";
 
 		fetch(url)
 			.then(response => {
@@ -27,9 +23,7 @@ class ButtonConfig extends React.Component {
 			})
 			.then(response => {
 				this.setState({ 
-					mappedProducts: response.mapped_products,
-					mappedProductIds: response.mapped_product_ids,
-					mappedButtonIds: response.mapped_button_ids
+					buttons: response.data
 				});
 			})
 			.catch(() => this.props.history.push("/"));
@@ -72,13 +66,9 @@ class ButtonConfig extends React.Component {
 			this.props.history.push("/management/button_mapping/" + checkButtonId);	
 		} else {
 			const url = '/button/mapping/' + this.state.buttonId;
-			const myHeaders = new Headers();
-			myHeaders.append('Content-Type', 'application/json');
+
 			fetch(url, {
-				method: 'DELETE',
-				headers: myHeaders,
-				mode: 'cors',
-				cache: 'default'
+				method: 'DELETE'
 			})
 				.then(response => {
 					console.log(response);
@@ -185,4 +175,4 @@ class ButtonConfig extends React.Component {
 
 }
 
-export default ButtonConfig;
+export default ManagementButtonConfig;

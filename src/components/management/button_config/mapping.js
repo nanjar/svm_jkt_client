@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from 'react-router-dom';
 import '../../../App.css';
 
-class ButtonMapping extends React.Component {
+class ManagementButtonMapping extends React.Component {
 
 	constructor(props) {
 		super(props); 
@@ -16,7 +16,7 @@ class ButtonMapping extends React.Component {
 	}
 
 	componentDidMount() {
-		const url = '/button/mapping'; 
+		const url = 'http://vending.smartvending.com/api/buttons.json'; 
 
 		fetch(url)
 			.then(response => {
@@ -66,13 +66,8 @@ class ButtonMapping extends React.Component {
 			product_id
 		}
 
-		const myHeaders = new Headers();
-		myHeaders.append('Content-Type', 'application/json');
 		fetch(url, {
 			method: 'POST',
-			headers: myHeaders,
-			mode: 'cors',
-			cache: 'default',
 			body: JSON.stringify(body)
 		})
 			.then(response => {
@@ -193,4 +188,4 @@ class ButtonMapping extends React.Component {
 
 }
 
-export default ButtonMapping;
+export default ManagementButtonMapping;
