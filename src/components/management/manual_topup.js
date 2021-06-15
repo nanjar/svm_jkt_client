@@ -24,7 +24,7 @@ class ManualTopup extends React.Component {
 	}
 
 	componentDidMount = () => {
-		const url = "/api/topups/layouts.json"; 
+		const url = "http://vending.smartvending.com/api/topups/layouts.json"; 
 		// const url = "http://vending.smartvending.com/api/topups/layouts.json"; 
 
 		fetch(url)
@@ -77,26 +77,26 @@ class ManualTopup extends React.Component {
 	}
 
 	handleBtnConfirmOnClick = (event) => {
-		const url = "/api/stock/restock.json";
+		// const url = "http://vending.smartvending.com/api/stock/restock.json";
 
 		const body = {
 			slot_id: this.state.slotId, 
 			to_stock: this.state.toStockQty
 		};
+
+		console.log(body);
 		
-		fetch(url, {
-			method: 'POST',
-			mode: 'cors',
-			cache: 'default',
-			body: JSON.stringify(body)
-		})
-			.then(response => {
-				if (response.ok) {
-					return response.json();
-				} 
-			})
-			.then(response => { this.props.history.push("/management") })
-			.catch(error => console.log(error.message));
+		// fetch(url, {
+		// 	method: 'POST',
+		// 	body: JSON.stringify(body)
+		// })
+		// 	.then(response => {
+		// 		if (response.ok) {
+		// 			return response.json();
+		// 		} 
+		// 	})
+		// 	.then(response => { this.props.history.push("/management") })
+		// 	.catch(error => console.log(error.message));
 	}
 
 	render() {
