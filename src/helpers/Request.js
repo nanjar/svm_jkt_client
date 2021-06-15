@@ -1,9 +1,9 @@
 export default class Request{
     static config(){
         return {
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            // headers: {
+            //     'Content-Type': 'application/json'
+            // }
         }
     }
     
@@ -19,7 +19,7 @@ export default class Request{
   
     static formatData(data, config={}){
         const formData = new FormData();
-        data.keys().each((key) => {
+        Object.keys(data).map((key) => {
             formData.set(key, data[key])
         })
         return formData;
@@ -75,7 +75,7 @@ export default class Request{
             await fetch(parseURL, {
                     ...this.config(),
                     method,
-                    body: data,
+                    body: this.formatData(data),
                     ...config
                 })
                 .then(result => {

@@ -8,14 +8,26 @@ class ManagementButtonConfig extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			buttons: []
+			buttons: [],
+			clickedButton: 0
 		};
 	}
 
 	componentDidMount() {
-		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 500, reply_to: 'button_pressed' })
+		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 500, reply_to: 'set_button' })
 		const url = "http://vending.smartvending.com/api/buttons.json";
-
+		const self = this;
+		let button_pressed = false;
+		this.context.on('set_button', data => {
+			if(button_pressed)
+				return;
+			button_pressed = true;
+			data = JSON.parse(data);
+			const button = data.button_no;
+			self.setState({clickedButton: button}, () => {
+				self.state.clickedButton
+			});
+		})
 		fetch(url)
 			.then(response => {
 				if (response.ok) {
@@ -32,6 +44,10 @@ class ManagementButtonConfig extends React.Component {
 		
 		this.handleButtonOnClick = this.handleButtonOnClick.bind(this);
 		this.handleConfirmButtonOnClick = this.handleConfirmButtonOnClick.bind(this);
+	}
+	componentWillUnmount(){
+		this.context.offAny('set_button');
+		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 500, reply_to: 'set_button' })
 	}
 
 	handleButtonOnClick = (event) => {
@@ -151,7 +167,7 @@ class ManagementButtonConfig extends React.Component {
 									<button id="modal-close" type="button" className="close custom-t1 d-none" data-dismiss="modal" aria-label="Close">
 										<span aria-hidden="true">&times;</span>
 									</button>
-									<h4 className="modal-title display-4">This button is mapped to {productName}. Do you want ot Edit?</h4>
+									<h4 className="modal-title display-4">This button is mapped to {productName}. Do you want to Edit?</h4>
 								</div>
 							</div>
 							<div className="modal-footer p-2">
