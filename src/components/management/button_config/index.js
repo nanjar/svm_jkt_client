@@ -3,22 +3,18 @@ import { Link } from 'react-router-dom';
 import {SocketContext} from '../../../services/socket';
 import '../../../App.css';
 
-class ButtonConfig extends React.Component {
+class ManagementButtonConfig extends React.Component {
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			mappedProducts: [],
-			mappedProductIds: [],
-			mappedButtonIds: [],
-			mappedProductName: "",
-			buttonId: 0
+			buttons: []
 		};
 	}
 
 	componentDidMount() {
 		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 500, reply_to: 'button_pressed' })
-		const url = "http://vending.smartvending.com/button/config";
+		const url = "http://vending.smartvending.com/api/buttons.json";
 
 		fetch(url)
 			.then(response => {
@@ -29,9 +25,7 @@ class ButtonConfig extends React.Component {
 			})
 			.then(response => {
 				this.setState({ 
-					mappedProducts: response.mapped_products,
-					mappedProductIds: response.mapped_product_ids,
-					mappedButtonIds: response.mapped_button_ids
+					buttons: response.data
 				});
 			})
 			// .catch(() => this.props.history.push("/"));
@@ -74,13 +68,9 @@ class ButtonConfig extends React.Component {
 			this.props.history.push("/management/button_mapping/" + checkButtonId);	
 		} else {
 			const url = '/button/mapping/' + this.state.buttonId;
-			const myHeaders = new Headers();
-			myHeaders.append('Content-Type', 'application/json');
+
 			fetch(url, {
-				method: 'DELETE',
-				headers: myHeaders,
-				mode: 'cors',
-				cache: 'default'
+				method: 'DELETE'
 			})
 				.then(response => {
 					console.log(response);
@@ -186,5 +176,6 @@ class ButtonConfig extends React.Component {
 	}
 
 }
-ButtonConfig.contextType = SocketContext;
-export default ButtonConfig;
+ManagementButtonConfig.contextType = SocketContext;
+
+export default ManagementButtonConfig;

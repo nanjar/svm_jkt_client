@@ -26,7 +26,7 @@ class AutoTopup extends React.Component {
 	}
 
 	componentDidMount = () => {
-		const url = "/api/topups/layouts.json"; 
+		const url = "http://vending.smartvending.com/api/topups/layouts.json"; 
 		
 		fetch(url)
 			.then(response => {
@@ -86,7 +86,7 @@ class AutoTopup extends React.Component {
 	}
 
 	handleBtnMainConfirmOnClick = (event) => {
-		const url = "/stock/restock.json";
+		// const url = "http://vending.smartvending.com/stock/restock.json";
 
 		let preparedData = [];
 		const slotData = this.state.slotData;
@@ -105,19 +105,19 @@ class AutoTopup extends React.Component {
 			preparedData.push({slot_id: x, to_stock: y});
 		});
 
-		fetch(url, {
-			method: 'POST',
-			mode: 'cors',
-			cache: 'default',
-			body: JSON.stringify(preparedData)
-		})
-			.then(response => {
-				if (response.ok) {
-					return response.json();
-				} 
-			})
-			.then(response => { this.props.history.push("/management") })
-			.catch(error => console.log(error.message));
+		console.log(preparedData);
+
+		// fetch(url, {
+		// 	method: 'POST',
+		// 	body: JSON.stringify(preparedData)
+		// })
+		// 	.then(response => {
+		// 		if (response.ok) {
+		// 			return response.json();
+		// 		} 
+		// 	})
+		// 	.then(response => { this.props.history.push("/management") })
+		// 	.catch(error => console.log(error.message));
 		}
 
 	render() {

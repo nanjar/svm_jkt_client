@@ -16,7 +16,7 @@ class Home extends React.Component {
 	}
 
 	componentDidMount() {
-		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 500, reply_to: 'button_pressed' })
+		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 200, reply_to: 'button_pressed' })
 		const url = "http://vending.smartvending.com/api/home.json";
 		fetch(url)
 			.then(response => {
