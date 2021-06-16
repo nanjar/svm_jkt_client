@@ -33,12 +33,12 @@ class AutoTopup extends React.Component {
 				const rawSlots = response.data;
 				let slotList = [];
 
-				rawSlots.map(data => {
+				rawSlots.forEach(data => {
 					if(!slotList[data.tied]) slotList[data.tied] = []; // for unhandle error at initialization
 					slotList[data.tied].push(data);
 				});
 
-				slotList.map(data => {
+				slotList.forEach(data => {
 					const len = 10 - data.length;
 					let iter = 0;
 					while(len > iter){
@@ -62,7 +62,7 @@ class AutoTopup extends React.Component {
 					rawSlotData: rawSlots
 				});
 			})
-			// .catch(() => this.props.history.push("/management"));
+			.catch(error => console.log(error.message));
 	}
 
 	handlePlus = () => {
@@ -91,7 +91,7 @@ class AutoTopup extends React.Component {
 		event.preventDefault();
 		const rawSlotData = this.state.rawSlotData;
 		let slotId = event.target.getAttribute("data-slotid");
-		rawSlotData.map((data, index) => {
+		rawSlotData.forEach((data, index) => {
 			if (parseInt(data.slot_id) === parseInt(slotId)) {
 				this.setState({ 
 					toStockQty: data.to_stock,
@@ -111,8 +111,8 @@ class AutoTopup extends React.Component {
 		const toStockQty = this.state.toStockQty;
 		const slotData = this.state.slotData;
 
-		slotData.map((rowData, i) => {
-			rowData.map((slot, j) => {
+		slotData.forEach((rowData, i) => {
+			rowData.forEach((slot, j) => {
 				if (parseInt(slotId) === parseInt(slot.slot_id)) {
 					slot.to_stock = toStockQty;
 				}
@@ -126,7 +126,7 @@ class AutoTopup extends React.Component {
 	}
 
 	handleBtnMainConfirmOnClick = (event) => {
-		// const url = "http://vending.smartvending.com/stock/restock.json";
+		const url = "/api/topups/auto_topup.json";
 
 		let preparedData = [];
 		const slotData = this.state.slotData;
@@ -147,17 +147,17 @@ class AutoTopup extends React.Component {
 
 		console.log(preparedData);
 
-		// fetch(url, {
-		// 	method: 'POST',
-		// 	body: JSON.stringify(preparedData)
-		// })
-		// 	.then(response => {
-		// 		if (response.ok) {
-		// 			return response.json();
-		// 		} 
-		// 	})
-		// 	.then(response => { this.props.history.push("/management") })
-		// 	.catch(error => console.log(error.message));
+		fetch(url, {
+			method: 'POST',
+			body: JSON.stringify(preparedData)
+		})
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} 
+			})
+			.then(response => { this.props.history.push("/management") })
+			.catch(error => console.log(error.message));
 	}
 
 	render() {

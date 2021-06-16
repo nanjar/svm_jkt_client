@@ -19,13 +19,13 @@ export default class Request{
   
     static formatData(data, config={}){
         const formData = new FormData();
-        Object.keys(data).map((key) => {
+        Object.keys(data).forEach((key) => {
             formData.set(key, data[key])
         })
         return formData;
     }
     static has_data(data){
-        let has_keys = false;
+        // let has_keys = false;
         try{
             return data.keys().length > 0
         }catch(e){
@@ -36,7 +36,7 @@ export default class Request{
         let response = {},
             status = 200;
         try{
-            const has_keys = this.has_data(data);
+            // const has_keys = this.has_data(data);	
             const parseURL = this.formatURL(url, data);
             await fetch(parseURL, this.config())
                 .then(result => result.json())
