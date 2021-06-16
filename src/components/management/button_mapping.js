@@ -5,7 +5,7 @@ import LandingPage from "./buttons/LandingPage";
 import Product from './buttons/Product';
 import '../../App.css';
 import { Button, Container, Image, Modal, Row } from 'react-bootstrap';
-
+ 
 class ButtonMapping extends React.Component {
 	constructor(props) {
 		super(props);
@@ -19,7 +19,7 @@ class ButtonMapping extends React.Component {
 			showModal: false,
 			selectedProduct: false,
 			modalTextPostFix: "Do you want to Edit?",
-			confirmButtonText: "CONFIRM"
+			confirmButtonText: "confirm"
 		}
 		this.handleCancelBtn = this.handleCancelBtn.bind(this);
 		this.handleModalCancelBtn = this.handleModalCancelBtn.bind(this);
@@ -65,7 +65,7 @@ class ButtonMapping extends React.Component {
 	componentDidMount() {
 		this.startSocket();
 		// const self=this;
-		// const button = 5;
+		// const button = 6;
 		// self.setState({ tappedButton: button }, async () => {
 		// 	const url = `http://vending.smartvending.com/api/buttons/${button}/detail.json`;
 		// 	const button_req = await SERVER_REQ.get(url);
@@ -101,7 +101,7 @@ class ButtonMapping extends React.Component {
 	
 	handleOnRadioChange = (e) => {
 		const selectedProduct = parseInt(e.target.id)
-		this.setState({ selectedProduct })
+		this.setState({ selectedProduct: selectedProduct });
 	}
 
 	handleSubmitBtn = async () => {
@@ -117,7 +117,7 @@ class ButtonMapping extends React.Component {
 						this.setState({
 							showModal: true,
 							modalTextPostFix: "",
-							confirmButtonText: "OK",
+							confirmButtonText: "ok",
 						})
 					} 
 				});
@@ -129,9 +129,8 @@ class ButtonMapping extends React.Component {
 
 	handleConfirmButtonOnClick = () => {
 		const btnText = this.state.confirmButtonText;
-		console.log(typeof btnText)
-		if (btnText === "OK") this.props.history.push("/management/button_config");
-		this.setState({showModal: false});
+		this.setState({ showModal: false });
+		if (btnText === "ok") this.handleModalCancelBtn();
 	}
 
 	componentWillUnmount(){
@@ -139,24 +138,25 @@ class ButtonMapping extends React.Component {
 	}
 
 	render() {
-		const {tappedButton, mappedProduct={}, showModal = false, products, selectedProduct, modalTextPostFix, confirmButtonText} = this.state;
+		const {tappedButton, mappedProduct={}, showModal, products, selectedProduct, modalTextPostFix, confirmButtonText} = this.state;
 		console.log(products);
+
 		return (
-			<Container>
+			<Container fluid>
 				{tappedButton ? <Product products={products} selectedProduct={selectedProduct} handleCancelBtn={this.handleModalCancelBtn} handleOnRadioChange={this.handleOnRadioChange} handleSubmitBtn={this.handleSubmitBtn} /> : <LandingPage handleCancelBtn={this.handleCancelBtn} />}
 
-				<Modal show={showModal} onHide={this.handleModalCancelBtn} size="lg" centered>
+				<Modal show={showModal} size="lg" centered>
 					<Modal.Body>
-						<Row className="w-100 justify-content-center">
+						<Row className="w-100 justify-content-center text-uppsercase custom-t2 text-center">
 							<Image alt={mappedProduct.name} src={`http://vending.smartvending.com${mappedProduct.image_url}`} />
-							<h1 className="text-uppsercase custom-t1 text-center">This button is mapped to {mappedProduct.name}. {modalTextPostFix}</h1>
+							This button is mapped to {mappedProduct.name}. {modalTextPostFix}
 						</Row>
 					</Modal.Body>
 					<Modal.Footer className="text-center">
-						<Button variant="warning" onClick={this.handleModalCancelBtn} className="custom-t2">
-							CANCEL
+						<Button variant="warning" onClick={this.handleModalCancelBtn} className="text-uppercase custom-t2">
+							cancel
 						</Button>
-						<Button variant="info" onClick={this.handleConfirmButtonOnClick} className="custom-t2">
+						<Button variant="info" onClick={this.handleConfirmButtonOnClick} className="text-uppercase custom-t2">
 							{confirmButtonText}
 						</Button>
 					</Modal.Footer>
