@@ -1,8 +1,9 @@
 import React from "react";
 // import ActionCable from 'actioncable';
 // import { Link } from "react-router-dom";
+import Formatter from '../../helpers/Formatter';
 import '../../App.css';
-import btn_gopay from '../../assets/static_images/gopay.png';
+import btn_gopay from '../../assets/static_images/loading_qr.gif';
 import product_img from '../../assets/static_images/cola.jpg';
 
 class Sale extends React.Component {
@@ -23,7 +24,9 @@ class Sale extends React.Component {
 			retry: 0,
 			countdown: 121,
 			cancelBtnClicked: false,
-			showCancel: false // flag for cancel button of popup box
+			product:{id: '', name: '', url: '', price: 0},
+			showCancel: false, // flag for cancel button of popup box
+			loadingQR: true
 		}
 
 		this.requestQrCode = this.requestQrCode.bind(this);
@@ -37,18 +40,29 @@ class Sale extends React.Component {
 	}
 
 	componentDidMount() {
-		this._isMounted = true;
-		this.handleInitialStateChanges();
+		const {params} = this.props.match;
+		const {search} = this.props.location;
+		const urlParams = new URLSearchParams(search);
+		console.log(urlParams)
+		this.setState({ product: {
+			name: urlParams.get('name'),
+			price: params.amount,
+			id: params.product_id,
+			url: urlParams.get('url')
+		} })
+		// this._isMounted = true;
+		// this.handleInitialStateChanges();
 	}
 
 	requestQrCode() {
+		const {product} = this.state;
 		const url = 'http://vending.smartvending.com/api/sales/payment.json';
-		const amount = 1;
-		const product_id = 1;
+		// const amount = product;
+		// const product_id = 1;
 
 		const params = new FormData();
-		params.set('amount', amount);
-		params.set('product_id', product_id);
+		params.set('amount', product.price);
+		params.set('product_id', product.id);
 
 		fetch(url, {
 			method: 'POST',
@@ -281,7 +295,7 @@ class Sale extends React.Component {
   }
 
 	render() {
-		const qrCodeURL = this.state.qrCodeURL;
+		const {product, qrCodeURL, checkQrStatus} = this.state;
 		const titleMsg = this.state.titleMsg;
 		const contentMsg = this.state.contentMsg;
 
@@ -295,21 +309,22 @@ class Sale extends React.Component {
 								<div className="col-5">
 									<h1 className="text-center display-3 mb-3">Kamu telah memilih</h1><br/>
 									<h1 className="text-center custom-t1">{}</h1>
-									<img src={product_img} className="img-thumbnail custom-thumbnail border-0 d-block mx-auto" alt="product" />
-									<h1 className="text-center mt-3 custom-t1"><strong>{3500}</strong></h1>
+									<img src={`http://vending.smartvending.com${product.url}`} className="img-thumbnail custom-thumbnail border-0 d-block mx-auto" alt="product" />
+									<h1 className="text-center mt-3"><strong style={{fontSize: "6vw"}}>{Formatter.money(999999)}</strong></h1>
 								</div>
 
 								<div className="col-7 d-flex flex-column justify-content-center">
 									<div className="p-2 align-self-center mb-3">
-										<h1 className="text-center display-3">Silahkan pilih metoda pembayaran</h1>
+										<h1 className="text-center display-3">
+											{checkQrStatus ? 'Scan QR Code to pay' : 'Requesting QR Code'}</h1>
 									</div>
-									<div className="p-2 align-self-center m-3">
-										<img src={qrCodeURL} className="img-fluid" alt="TEKAN TOMBOL UNTUK MEMULAI"></img>
+									<div className="w-100 p-2 text-center m-3">
+										<img src={qrCodeURL} className="img-fluid" style={{height: '60vh', width: '85vh'}} alt="TEKAN TOMBOL UNTUK MEMULAI"></img>
 									</div>
 
-									<div className="p-2 align-self-center mt-3">
-										<button type="button" className="btn btn-primary btn-lg btn-info" onClick={this.handleCancelPayment}>
-											<h2 className="text-center text-uppercase custom-t2">Cancel Payment</h2>
+									<div className="align-self-center mt-3">
+										<button type="button" className="btn btn-primary btn-lg btn-info p-5" onClick={this.handleCancelPayment}>
+											<h2 className="text-center text-uppercase custom-t2" style={{fontSize: '4rem'}}>Cancel Payment</h2>
 										</button>
 									</div>
 								</div>
@@ -318,7 +333,7 @@ class Sale extends React.Component {
 							
 							<button id="open-modal" type="button" className="d-none"  data-toggle="modal" data-target="#myModal" data-dismiss="modal" aria-label="Close">Hidden Button</button>
 
-							<div id="myModal" className="modal text-uppercase" tabIndex="-1" role="dialog">
+							{/* <div id="myModal" className="modal text-uppercase" tabIndex="-1" role="dialog">
 								<div className="modal-dialog modal-xl modal-en" role="document">
 									<div className="modal-content">
 
@@ -351,7 +366,7 @@ class Sale extends React.Component {
 
 									</div>
 								</div>
-							</div>
+							</div> */}
 
 						</div>
 					</div>
