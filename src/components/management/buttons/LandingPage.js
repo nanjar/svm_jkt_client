@@ -1,13 +1,15 @@
+import { Row } from 'react-bootstrap';
 
 const LandingPage = (props) => {
-    return <div className="row">
-        <div className="col-md-12">
-            PRESS BUTTON TO MAP
-        </div>
-        <div className="col-md-12">
-            <button onClick={props.handleCancelBtn}>CANCEL</button>
-        </div>
-    </div>;
+	return <Row>
+		<Row className="justify-content-center">
+			<h1 className="text-center text-uppercase display-2">Press button to map</h1>
+			<br/>
+			<button className="btn btn-lg btn-warning m-3 text-center text-uppercase custom-t1" onClick={props.handleCancelBtn}>
+				Cancel
+			</button>
+		</Row>
+	</Row>
 }
 
 export default LandingPage;
