@@ -1,4 +1,4 @@
-import { Button, Image, Row, Col} from 'react-bootstrap';
+import { Button, Image, Row, Col } from 'react-bootstrap';
 
 const Product = (props) => {
 	const {products, handleCancelBtn, selectedProduct, handleOnRadioChange = () => {}, handleSubmitBtn = () => {}} = props;
