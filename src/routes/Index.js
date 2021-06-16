@@ -27,7 +27,7 @@ export default (
 		<Route path="/" exact component={Home} />
 
 		{/* Sale */}
-		<Route path="/sale" exact component={Sale} />
+		<Route path="/sales/:product_id/:amount" component={Sale} />
 		<Route path="/sale_success" exact component={SaleSucces} />
 
 		{/* Dispense */}

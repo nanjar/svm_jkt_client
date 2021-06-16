@@ -29,8 +29,10 @@ class Sale extends React.Component {
 	}
 
 	componentDidMount() {
-		this.handleInitialStateChanges();
-		this.interval = setInterval(() => this.checkPaymentStatus, 3000);
+		console.log(this.props)
+		// console.log('hellow')
+		// this.handleInitialStateChanges();
+		// this.interval = setInterval(() => this.checkPaymentStatus, 3000);
 	}
 
 	requestQrCode() {

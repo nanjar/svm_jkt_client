@@ -27,6 +27,6 @@ export default class Formatter{
         return numeral(number).format(format)
     }
     static date(date){
-        return moment(date);
+        // return moment(date);
     }
 }

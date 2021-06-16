@@ -13,6 +13,7 @@ const MachineShop = () => {
         let button_pressed = false;
         socket.on('button_pressed', async (data) => {
             data = JSON.parse(data);
+            console.log(data);
             if(button_pressed)
                 return;
             button_pressed = true;
@@ -23,8 +24,11 @@ const MachineShop = () => {
             console.log('pressed')
             const button_req = await SERVER_REQ.get(`http://vending.smartvending.com/api/buttons/${button}.json`);
             console.log(button_req);
-            // const button_detail = button_req.response.data;
-            // history.push(`/sales/${button_detail.product.id}/${button_detail.price}`)
+            const button_detail = button_req.response.data;
+            const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url}
+            const url_params = new URLSearchParams(product_detail);
+            console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
+            history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
         })
         return () => {
             socket.off('button_pressed')
