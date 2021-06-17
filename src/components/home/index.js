@@ -1,6 +1,7 @@
 import React from "react";
 import MachineShop from './MachineShop';
 import '../../App.css';
+import { Spinner } from 'react-bootstrap';
 
 import {SocketContext} from '../../services/socket';
 
@@ -47,9 +48,7 @@ class Home extends React.Component {
 		}
 		return <div className="m-3">
 			<div className='row d-flex justify-content-center'>
-				<div className='spinner-border custom-spinner' role='status'>
-					<span className='sr-only'>Setting up ...</span>
-				</div>
+				<Spinner animation="border" className="custom-spinner" />
 				<br />
 			</div>
 			<div className='row col-12 justify-content-center mt-4'>{code}</div>

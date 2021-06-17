@@ -1,10 +1,9 @@
 import React from "react";
-// import ActionCable from 'actioncable';
-// import { Link } from "react-router-dom";
+// import SERVER_REQ from '../../helpers/Request';
 import Formatter from '../../helpers/Formatter';
 import '../../App.css';
 import btn_gopay from '../../assets/static_images/loading_qr.gif';
-import product_img from '../../assets/static_images/cola.jpg';
+import { Modal } from 'react-bootstrap';
 
 class Sale extends React.Component {
 	_isMounted = false;
@@ -26,7 +25,8 @@ class Sale extends React.Component {
 			cancelBtnClicked: false,
 			product:{id: '', name: '', url: '', price: 0},
 			showCancel: false, // flag for cancel button of popup box
-			loadingQR: true
+			loadingQR: true,
+			showModal: false
 		}
 
 		this.requestQrCode = this.requestQrCode.bind(this);
@@ -50,15 +50,13 @@ class Sale extends React.Component {
 			id: params.product_id,
 			url: urlParams.get('url')
 		} })
-		// this._isMounted = true;
-		// this.handleInitialStateChanges();
+		this._isMounted = true;
+		this.handleInitialStateChanges();
 	}
 
 	requestQrCode() {
-		const {product} = this.state;
+		const {product, retry} = this.state;
 		const url = 'http://vending.smartvending.com/api/sales/payment.json';
-		// const amount = product;
-		// const product_id = 1;
 
 		const params = new FormData();
 		params.set('amount', product.price);
@@ -73,19 +71,16 @@ class Sale extends React.Component {
 				return response.json();
 			} else {
 				console.log("Not ok statusChanged - " + this.state.statusChanged);
-				if (this.state.retry < 4) {
+				if (retry < 4) {
 					if (this.state.statusChanged === "initial") {
 						if (this._isMounted) {
 							this.setState({
 								titleMsg: "Connection timed out",
 								contentMsg: "Cannot connect to payment server. Please try again!",
-								statusChanged: "timeout"
+								statusChanged: "timeout",
+								showModal: true
 							});
 							this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
-						}
-						
-						if (document.getElementById("open-modal") !== null) {
-							document.getElementById("open-modal").click();
 						}
 					}
 				} else {
@@ -124,12 +119,10 @@ class Sale extends React.Component {
 					this.setState({
 						titleMsg: "Cannot Connect to Server",
 						contentMsg: "Please try again!",
-						statusChanged: "qrerror"
+						statusChanged: "qrerror",
+						showModal: true
 					});
 					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
-				}
-				if (document.getElementById("open-modal") !== null) {
-					document.getElementById("open-modal").click();
 				}
 			}
 		})
@@ -142,46 +135,40 @@ class Sale extends React.Component {
 				titleMsg: "Payment Expiry Warning",
 				contentMsg: "Your payment is going to expire soon. Click OK if you still need time to pay.",
 				statusChanged: "warned",
-				showCancel: true
+				showCancel: true,
+				showModal: true
 			});
 			this._timerId = setTimeout(() => { this.cancelAtTimeOut(); this._timerId = 0 }, 60000);
-		}
-		if (document.getElementById("open-modal") !== null) {
-			document.getElementById("open-modal").click();
 		}
 	}
 
 	handleInitialStateChanges() {
-		if (this.state.checkQrStatus) {
-			if (this.state.statusChanged === "initial") {
+		const {checkQrStatus, statusChanged, retry} = this.state;
+		if (checkQrStatus) {
+			if (statusChanged === "initial") {
 				if (this._isMounted) {
 					this.setState({
 						titleMsg: "Connection timed out",
 						contentMsg: "Your payment connection is timed out. Please try again!",
-						statusChanged: "timeout"
+						statusChanged: "timeout",
+						showModal: true
 					});
 					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
 				}
-				
-				if (document.getElementById("open-modal") !== null) {
-					document.getElementById("open-modal").click();
-				}
-			} else if (this.state.statusChanged === "timeout") {
+			} else if (statusChanged === "timeout") {
 				this.handleTimeout();
 			}
 		} else {
 			if (this._isMounted) {
-				this.setState({ retry: this.state.retry + 1});
+				this.setState({ retry: retry + 1});
 			}
 			this.requestQrCode();
 		}
 	}
 
 	handleButtonOk(event) {
-		const statusChanged = this.state.statusChanged;
-		if (document.getElementById("close-modal") !== null) {
-			document.getElementById("close-modal").click();
-		}
+		const {statusChanged} = this.state;
+		this.setState({ showModal: false });
 		if (statusChanged === "warned") {
 			if (this._isMounted) {
 				this._timerId = setTimeout(() => { this.cancelAtTimeOut(); this._timerId = 0; }, 60000); // wait 1 extra min for payment before invoke cancel even
@@ -220,14 +207,11 @@ class Sale extends React.Component {
 							titleMsg: "Payment Expired",
 							contentMsg: "Please try again",
 							statusChanged: "timeout",
-							showCancel: false
+							showCancel: false,
+							showModal: true
 						});
 					}
 					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
-
-					if (document.getElementById("open-modal") !== null) {
-						document.getElementById("open-modal").click();
-					}
 				}
 			}
 		})
@@ -269,9 +253,7 @@ class Sale extends React.Component {
 
 	// Redirect back to Home Page and clear all the timers and intervals
 	handleTimeout() {
-		if (document.getElementById("close-modal") !== null) {
-			document.getElementById("close-modal").click();
-		}
+		this.setState({ showModal: false });
 		this.props.history.push(this.state.redirectURL);
 	}
 
@@ -295,9 +277,7 @@ class Sale extends React.Component {
   }
 
 	render() {
-		const {product, qrCodeURL, checkQrStatus} = this.state;
-		const titleMsg = this.state.titleMsg;
-		const contentMsg = this.state.contentMsg;
+		const {product, qrCodeURL, checkQrStatus, showModal, showCancel, titleMsg, contentMsg} = this.state;
 
 		return (
 			<>
@@ -330,43 +310,30 @@ class Sale extends React.Component {
 								</div>
 
 							</div>
-							
-							<button id="open-modal" type="button" className="d-none"  data-toggle="modal" data-target="#myModal" data-dismiss="modal" aria-label="Close">Hidden Button</button>
 
-							{/* <div id="myModal" className="modal text-uppercase" tabIndex="-1" role="dialog">
-								<div className="modal-dialog modal-xl modal-en" role="document">
-									<div className="modal-content">
-
-										<div className="modal-header bg-warning">
-											<h4 className="modal-title display-3">{titleMsg}</h4>
-											<button id="close-modal" type="button" className="close custom-t1" data-dismiss="modal" aria-label="Close">
-												<span aria-hidden="true">&times;</span>
-											</button>
-										</div>
-
-										<div className="modal-body">
-											<div className="row col-12">
-												<h4 className="modal-title display-4">{contentMsg}</h4>
-											</div>
-										</div>
-
-										<div className="modal-footer p-2">
-											<div className="text-center">
-												<button type="button" style={{display: this.state.showCancel ? 'block' : 'none' }} onClick={this.handleCancelPayment} className="btn btn-lg btn-warning text-uppercase font-weight-bold " data-dismiss="modal">
-													<h2 className="text-center text-uppercase custom-t2">Cancel</h2>
-												</button>
-											</div>
-
-											<div className="text-center">
-												<button type="button" onClick={this.handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
-													<h2 className="text-center text-uppercase custom-t2">Ok</h2>
-												</button>
-											</div>
-										</div>
-
+							<Modal show={showModal} size="lg" centered>
+								<Modal.Header>
+									<Modal.Title>
+										<h4 className="custom-t1 text-uppercase">{titleMsg}</h4>
+									</Modal.Title>
+								</Modal.Header>
+								<Modal.Body>
+									<h4 className="custom-t2 text-uppercase">{contentMsg}</h4>
+								</Modal.Body>
+								<Modal.Footer className="text-center">
+									<div className="text-center">
+										<button type="button" style={{display: showCancel ? 'block' : 'none' }} onClick={this.handleCancelPayment} className="btn btn-lg btn-warning text-uppercase font-weight-bold " data-dismiss="modal">
+											<h2 className="text-center text-uppercase custom-t2">Cancel</h2>
+										</button>
 									</div>
-								</div>
-							</div> */}
+
+									<div className="text-center">
+										<button type="button" onClick={this.handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
+											<h2 className="text-center text-uppercase custom-t2">Ok</h2>
+										</button>
+									</div>
+								</Modal.Footer>
+							</Modal>
 
 						</div>
 					</div>

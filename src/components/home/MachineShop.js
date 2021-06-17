@@ -1,5 +1,4 @@
 import { useContext, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { SocketContext } from '../../services/socket';
 import SERVER_REQ  from '../../helpers/Request';
 import {useHistory} from 'react-router-dom';
@@ -43,9 +42,7 @@ const MachineShop = () => {
             </div>
             <div className='col-5 d-flex flex-column justify-content-center'>
                 <div className='p-2 align-self-center'>
-                    <Link to='/sale'>
-                         <img src={btn_press} className='img-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
-                     </Link>
+                  <img src={btn_press} className='img-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
                 </div>
             </div>
         </div>

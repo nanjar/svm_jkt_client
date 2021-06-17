@@ -1,28 +1,25 @@
 import React from "react";
+import SERVER_REQ from '../../helpers/Request';
 import { Link } from 'react-router-dom';
 import '../../App.css';
+import { Row, Col, InputGroup, Modal } from 'react-bootstrap';
 
 class AutoTopup extends React.Component {
-
 	constructor(props) {
 		super(props);
 	
 		this.state = { 
-			slotData: {},
+			slotData: [],
+			rawSlotData: [],
 			productURL: "/assets/images/cola.jpg",
 			productName: "Coca Cola",
 			toStockQty: 0,
+			modifiedToStockQty: 0,
 			slotId: 0,
 			maxQty: 0,
-			toStockData: []
+			toStockData: [],
+			showModal: false
 		};
-
-		this.handlePlus = this.handlePlus.bind(this);
-		this.handleMinus = this.handleMinus.bind(this);
-		this.handleValueChange = this.handleValueChange.bind(this);
-		this.handleBtnSlotOnClick = this.handleBtnSlotOnClick.bind(this);
-		this.handleBtnMainConfirmOnClick = this.handleBtnMainConfirmOnClick.bind(this);
-		this.handleBtnSubConfirmOnClick = this.handleBtnSubConfirmOnClick.bind(this);
 	}
 
 	componentDidMount = () => {
@@ -36,9 +33,39 @@ class AutoTopup extends React.Component {
 				throw new Error("Network response was not ok.");
 			})
 			.then(response => {
-				this.setState({ slotData: response.data });
+				const rawSlots = response.data;
+				let slotList = [];
+
+				rawSlots.forEach(data => {
+					if(!slotList[data.tied]) slotList[data.tied] = []; // for unhandle error at initialization
+					slotList[data.tied].push(data);
+				});
+
+				slotList.forEach(data => {
+					const len = 10 - data.length;
+					let iter = 0;
+					while(len > iter){
+						slotList[data[0].tied].push({
+							slot_id: Date.now().toString(36) + Math.random().toString(36).substring(2),
+							max_qty: null,
+							tied: null,
+							product_id: null,
+							image: null,
+							product_name: null,
+							current_stock: null,
+							to_stock: null,
+							slot_active: null
+						})
+						iter++;
+					}
+				});
+
+				this.setState({ 
+					slotData: slotList,
+					rawSlotData: rawSlots
+				});
 			})
-			.catch(() => this.props.history.push("/management"));
+			.catch(error => console.log(error.message));
 	}
 
 	handlePlus = () => {
@@ -65,115 +92,100 @@ class AutoTopup extends React.Component {
 
 	handleBtnSlotOnClick = (event) => {
 		event.preventDefault();
-		this.setState({ 
-			toStockQty: event.target.getAttribute("data-tostockqty"),
-			slotId: event.target.getAttribute("data-slotid"),
-			maxQty: event.target.getAttribute("data-maxqty"),
-			productURL: event.target.getAttribute("data-producturl"),
-			productName: event.target.getAttribute("data-productname")
+		const rawSlotData = this.state.rawSlotData;
+		let slotId = event.target.getAttribute("data-slotid");
+		rawSlotData.forEach((data, index) => {
+			if (parseInt(data.slot_id) === parseInt(slotId)) {
+				this.setState({ 
+					toStockQty: data.to_stock,
+					slotId: slotId,
+					maxQty: data.max_qty,
+					productURL: data.image,
+					productName: data.product_name,
+					showModal: true
+				});
+			}
 		});
-
-		document.getElementById("open-modal").click();
 	} 
 
 	handleBtnSubConfirmOnClick = (event) => {
 		const slotId = this.state.slotId;
 		const toStockQty = this.state.toStockQty;
-
-		this.state.toStockData.push({slot_id: slotId, tostock_qty: toStockQty});
-
-		document.getElementById("close-modal").click();
-	}
-
-	handleBtnMainConfirmOnClick = (event) => {
-		// const url = "http://vending.smartvending.com/stock/restock.json";
-
-		let preparedData = [];
 		const slotData = this.state.slotData;
-		const toStockData = this.state.toStockData;
 
-		slotData.forEach(element => {
-			let x, y;
-			x = element.slot_id;
-			y = element.to_stock;
-			toStockData.forEach(tostock => {
-				if (parseInt(tostock.slot_id) === parseInt(element.slot_id) && parseInt(tostock.tostock_qty) !== parseInt(element.slot_id)) {
-					x = element.slot_id; 
-					y = tostock.tostock_qty;
+		slotData.forEach((rowData, i) => {
+			rowData.forEach((slot, j) => {
+				if (parseInt(slotId) === parseInt(slot.slot_id)) {
+					slot.to_stock = toStockQty;
 				}
 			});
-			preparedData.push({slot_id: x, to_stock: y});
+		});
+		
+		this.setState({
+			slotData: slotData,
+			showModal: false
+		});
+		this.state.toStockData.push({slot_id: slotId, tostock_qty: toStockQty});
+	}
+
+	handleBtnMainConfirmOnClick = async(event) => {
+		let preparedData = {};
+		let preparedDataIndex =0;
+		const {slotData, toStockData} = this.state;
+
+		slotData.forEach(data => {
+			data.forEach(element => {
+				let x, y, z;
+				x = element.slot_id;
+				y = element.to_stock;
+				z = element.product_id;
+				toStockData.forEach(tostock => {
+					if (parseInt(tostock.slot_id) === parseInt(element.slot_id) && parseInt(tostock.tostock_qty) !== parseInt(element.slot_id)) {
+						x = element.slot_id; 
+						y = tostock.tostock_qty;
+						z = element.product_id;
+						preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
+						preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
+						preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
+						preparedDataIndex++;
+					}
+				});
+			});
 		});
 
 		console.log(preparedData);
-
-		// fetch(url, {
-		// 	method: 'POST',
-		// 	body: JSON.stringify(preparedData)
-		// })
-		// 	.then(response => {
-		// 		if (response.ok) {
-		// 			return response.json();
-		// 		} 
-		// 	})
-		// 	.then(response => { this.props.history.push("/management") })
-		// 	.catch(error => console.log(error.message));
+		const button_put = await SERVER_REQ.put(`http://vending.smartvending.com/api/stocks/1.json`, preparedData);
+		console.log(button_put);
+		if (button_put.response.success) {
+			this.props.history.push("/management")
 		}
+	}
+
+	handleModalClose = () => {
+		this.setState({ showModal: false });
+	}
 
 	render() {
-		const slotData = this.state.slotData;
-		let slotList = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []};
+		const {slotData, productName, productURL, showModal} = this.state;
 
-		Object.values(slotData).forEach((data) => {
-			if (data.slot_active) {
-				slotList[data.tied].push(<div key={data.slot_id} id={'cs_' + data.slot_id} onClick={this.handleBtnSlotOnClick} className="col align-self-center text-center border border-dark border-3 bg-slot btn-slot" data-tostockqty={data.to_stock} data-slotid={data.slot_id} data-maxqty={data.max_qty} data-productname={data.product_name} data-producturl={data.image}><h2 className="text-uppercase display-4 mt-3 mb-3" data-slotid={data.slot_id} data-tostockqty={data.to_stock} data-maxqty={data.max_qty} data-productname={data.product_name} data-producturl={data.image}>{data.to_stock}/{data.max_qty ===  0 ? 12 : data.max_qty}</h2></div>);
-			} else {
-				slotList[data.tied].push(<div key={data.slot_id} id={'cs_' + data.slot_id} className="col align-self-center text-center border border-dark border-3 bg-slot btn-slot disable-div"><h2 className="text-uppercase display-4 mt-3 mb-3">{data.to_stock ? data.to_stock : "-" }/{data.max_qty ? data.max_qty : "-"}</h2></div>);
-			}
-		});
-
-		Object.values(slotList).forEach((data) => { 
-			if (data.length < 10) {
-				while (data.length < 10) {
-					let genKey = Date.now().toString(36) + Math.random().toString(36).substring(2);
-					data.push(<div key={genKey} className="col align-self-center text-center border border-dark border-3 bg-slot btn-slot disable-div"><h2 className="text-uppercase display-4 mt-3 mb-3">-</h2></div>)
-				}
-			}
-		});
-		
 		return (
 			<>
 				<div className="vw-100 vh-100 d-flex align-items-center text-uppercase">
 					<div className="container-fluid">
 						<div className="m-3">
-
 							<div className="row col-12 justify-content-center mb-4">
 								<h1 className="text-center text-uppercase display-4">Confirm the restocked quantity for each slot</h1>
 							</div>
 
-							<div className="row justify-content-center">
-								{slotList[1]}
-							</div>
-
-							<div className="row justify-content-center">
-								{slotList[2]}
-							</div>
-
-							<div className="row justify-content-center">
-								{slotList[3]}
-							</div>
-
-							<div className="row justify-content-center">
-								{slotList[4]}
-							</div>
-
-							<div className="row justify-content-center">
-								{slotList[5]}
-							</div>
-
-							<div className="row justify-content-center">
-								{slotList[6]}
-							</div>
+							{
+								slotData.map((rowData, index) => (
+									<div key={index} className="row justify-content-center">
+										{
+											rowData.map(data => (<div key={data.slot_id} id={'cs_' + data.slot_id} onClick={this.handleBtnSlotOnClick} className={data.tied ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><h2 className="text-uppercase display-4 mt-3 mb-3" data-slotid={data.slot_id} >{data.to_stock ? data.to_stock + "/" + data.max_qty : "-"}</h2></div>))
+										}
+									</div>
+								))
+							}
 
 							<div className="row col-12 d-flex justify-content-center mt-5">
 								<div className="text-center col p-2 align-self-center">
@@ -193,57 +205,45 @@ class AutoTopup extends React.Component {
 					</div>
 				</div>
 
-				<button id="open-modal" type="button" className="d-none"  data-toggle="modal" data-target="#myModal" data-dismiss="modal" aria-label="Close">Hidden Button</button>
-
-				<div id="myModal" className="modal text-uppercase" tabIndex="-1" role="dialog">
-					<div className="modal-dialog modal-xl modal-en" role="document">
-						<div className="modal-content">
-							<div className="modal-header">
-								<h4 className="modal-title display-4">Confirm Restocked Quantity</h4>
-								<button type="button" className="close custom-t1" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div className="modal-body">
-								<div className="row col-12">
-									<div className="col-4 d-flex flex-column justify-content-center">
-										<div className="p-2 align-self-center">
-											<img src={this.state.productURL} className="img-thumbnail border-0" alt="product" />
-											<h1 className="text-center text-uppercase custom-t2">{this.state.productName}</h1>
-										</div>
-									</div>
-
-									<div className="row col-8">
-										<div className="row col-12 d-flex flex-column justify-content-center">
-											<div className="p-2 align-self-center">
-												<h1 className="lead text-uppercase custom-t2">Quantity</h1><br/>
-												<div className="form-inline">
-													<input type="button" value="-" className="form-control col-2 btn border border-dark border-3 form-control-lg font-weight-bold custom-t2" onClick={this.handleMinus}></input>
-													<input type="number" value={this.state.toStockQty} className="form-control col-8 border border-dark border-3 form-control-lg font-weight-bold custom-t2" onChange={this.handleValueChange} readOnly={true}></input>
-													<input type="button" value="+" className="form-control col-2 btn  border border-dark border-3 form-control-lg font-weight-bold custom-t2" onClick={this.handlePlus}></input>
-												</div>
-											</div>
-										</div>
-									</div>
+				<Modal show={showModal} size="lg" centered>
+					<Modal.Header>
+						<Modal.Title className="custom-t2">
+							Confirm Restocked Quantity
+						</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<Row className="justify-content-center mt-5 mb-5">
+							<Col lg={5} className="text-center">
+								<div className="p-2 align-self-center">
+									<img src={`http://vending.smartvending.com${productURL}`} className="img-thumbnail border-0" alt={productName} />
+									<h1 className="text-center text-uppercase custom-t2">{productName}</h1>
 								</div>
-							</div>
-							<div className="modal-footer p-2">
-								<div className="text-center">
-									<button type="button" id="close-modal" className="btn btn-lg btn-warning text-uppercase font-weight-bold " data-dismiss="modal">
-										<h2 className="text-center text-uppercase custom-t2">Cancel</h2>
-									</button>
-								</div>
+							</Col>
 
-								<div className="text-center">
-									<button type="button" className="btn btn-lg btn-info text-uppercase font-weight-bold" onClick={this.handleBtnSubConfirmOnClick}>
-										<h2 className="text-center text-uppercase custom-t2">Confirm</h2>
-									</button>
-								</div>
-							</div>
+							<Col lg={7} className="align-self-center text-uppercase custom-t2">
+								<label className="text-uppercase custom-t2">Quantity</label><br/>
+								<InputGroup>
+									<input type="button" value="-" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={this.handleMinus}></input>
+									<input type="number" value={this.state.toStockQty} className="form-control border border-1 form-control-lg custom-t1" onChange={this.handleValueChange} readOnly={true}></input>
+									<input type="button" value="+" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={this.handlePlus}></input>
+								</InputGroup>
+							</Col>
+						</Row>
+					</Modal.Body>
+					<Modal.Footer className="text-center">
+						<div className="text-center">
+							<button type="button" className="btn btn-lg btn-warning text-uppercase" onClick={this.handleModalClose}>
+								<h2 className="text-center text-uppercase custom-t2">Cancel</h2>
+							</button>
 						</div>
-					</div>
-				</div>
 
+						<div className="text-center">
+							<button type="button" className="btn btn-lg btn-info text-uppercase" onClick={this.handleBtnSubConfirmOnClick}>
+								<h2 className="text-center text-uppercase custom-t2">Confirm</h2>
+							</button>
+						</div>
+					</Modal.Footer>
+				</Modal>
 			</>
 		);
 	}
