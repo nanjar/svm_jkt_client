@@ -126,8 +126,8 @@ class ManualTopup extends React.Component {
 		});
 
 		return (
-			<Container>
-				<Row className="justify-content-center">
+			<Container fluid>
+				<Row className="justify-content-center mb-5">
 					<h1 className="text-center text-uppercase display-3">Confirm/Edit the restocked quantity</h1>
 				</Row>
 
@@ -140,27 +140,34 @@ class ManualTopup extends React.Component {
 					</Col>
 
 					<Col lg={7} className="align-self-center text-uppercase custom-t2">
-						<label className="text-uppercase custom-t2">Slot</label><br/>
-						<NumPad.Number
-							decimal={false}
-							negative={false}
-							onChange={this.handleSlotOnChange}
-							placeholder={'TYPE THE SLOT'}
-							value={slotId} />
+						<Row>
+							<label className="text-uppercase custom-t2">Slot</label><br/>
+							<NumPad.Number
+								decimal={false}
+								negative={false}
+								onChange={this.handleSlotOnChange}
+								placeholder={'TYPE THE SLOT'}
+								value={slotId} />
+						</Row>
 
-						<br />
-						<br />
+						<br /><br />
 
-						<label className="text-uppercase custom-t2">Quantity</label><br/>
-						<InputGroup>
-							<input type="button" value="-" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={this.handleMinus}></input>
-							<input type="number" value={this.state.toStockQty} className="form-control border border-1 form-control-lg custom-t1" onChange={this.handleValueChange} readOnly={true}></input>
-							<input type="button" value="+" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={this.handlePlus}></input>
-						</InputGroup>
+						<Row>
+							<label className="text-uppercase custom-t2">Quantity</label><br/>
+							<Col lg={2} className="p-0">
+								<input type="button" value="-" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={this.handleMinus}></input>
+							</Col>
+							<Col lg={6} className="p-0">
+								<input type="number" value={this.state.toStockQty} className="form-control border border-1 form-control-lg custom-t1" onChange={this.handleValueChange} readOnly={true}></input>
+							</Col>
+							<Col lg={2} className="p-0">
+								<input type="button" value="+" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={this.handlePlus}></input>
+							</Col>
+						</Row>
 					</Col>
 				</Row>
 
-				<Row>
+				<Row className="mt-5">
 					<div className="text-center col p-2 align-self-center">
 						<Link to="/management" className="btn btn-lg btn-warning">
 								<h2 className="text-center text-uppercase display-4">Cancel</h2>

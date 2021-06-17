@@ -169,21 +169,21 @@ class AutoTopup extends React.Component {
 		const {slotData, productName, productURL, showModal} = this.state;
 
 		return (
-			<Container fluid className="m-3 text-uppercase">
+			<Container fluid className="text-uppercase">
 				<Row className="justify-content-center">
-					<p className="text-center custom-t2">Confirm the restocked quantity for each slot</p>
+					<p className="text-center custom-t1">Confirm the restocked quantity for slots</p>
 					<br />
 				</Row>
 				{
 					slotData.map((rowData, index) => (
 						<Row key={index} className="justify-content-center">
 							{
-								rowData.map(data => (<Col lg="1" key={data.slot_id} id={'cs_' + data.slot_id} onClick={this.handleBtnSlotOnClick} className={data.tied ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t3 mt-3 mb-3" data-slotid={data.slot_id} >{data.to_stock ? data.to_stock + "/" + data.max_qty : "-"}</p></Col>))
+								rowData.map(data => (<Col lg="1" key={data.slot_id} id={'cs_' + data.slot_id} onClick={this.handleBtnSlotOnClick} className={data.tied ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t2 mt-3 mb-3" data-slotid={data.slot_id} >{data.to_stock ? data.to_stock + "/" + data.max_qty : "-"}</p></Col>))
 							}
 						</Row>
 					))
 				}
-				<Row className="justify-content-center">
+				<Row className="justify-content-center mt-4">
 					<br />
 					<div className="text-center col p-2 align-self-center">
 						<Link to="/management" className="btn btn-lg btn-warning">
