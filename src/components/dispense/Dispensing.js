@@ -8,17 +8,17 @@ const DISPENSE_E = "dispense";
 
 const Dispensing = () => {
     const {slot_id} = useParams();
-    const [dispenseResult, setDispenseResult] = useState(4);
-    const [isDispensing, setDespensing] = useState(true);
+    const [dispenseResult, setDispenseResult] = useState(4); // change to 0 to check the dispense success, change to other number to check dispense success
+    const [isDispensing, setDespensing] = useState(true); // change to false to see the dispense error or success
     const socket = useContext(SocketContext);
     useEffect(()=>{
         const slot = parseInt(slot_id)
-        socket.emit('vendingv1-indo', {"command":"single_dispense","slot":slot-1,"reply_to": DISPENSE_E});
+        // socket.emit('vendingv1-indo', {"command":"single_dispense","slot":slot-1,"reply_to": DISPENSE_E});
         let received_dispense = false
         console.log(isDispensing)
         socket.on(DISPENSE_E, (data) => {
             const response = JSON.parse(data);
-            if(isDispensing) return;
+            // if(isDispensing) return;
             // if(received_dispense) return;
             // setDespensing(false);
             // setDispenseResult(0);
@@ -40,7 +40,7 @@ const Dispensing = () => {
                     <img src={LoadingImage} />
                 </>
             :
-                dispenseResult === 0 ? <DispenseError /> : <DispenseSuccess />
+                dispenseResult !== 0  ? <DispenseError /> : <DispenseSuccess />
         }
         
     </div>;
