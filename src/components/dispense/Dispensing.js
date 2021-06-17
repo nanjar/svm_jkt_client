@@ -13,15 +13,15 @@ const Dispensing = () => {
     const socket = useContext(SocketContext);
     useEffect(()=>{
         const slot = parseInt(slot_id)
-        // socket.emit('vendingv1-indo', {"command":"single_dispense","slot":slot-1,"reply_to": DISPENSE_E});
+        socket.emit('vendingv1-indo', {"command":"single_dispense","slot":slot-1,"reply_to": DISPENSE_E});
         let received_dispense = false
         console.log(isDispensing)
         socket.on(DISPENSE_E, (data) => {
             const response = JSON.parse(data);
             if(isDispensing) return;
             // if(received_dispense) return;
-            setDespensing(false);
-            setDispenseResult(0);
+            // setDespensing(false);
+            // setDispenseResult(0);
             // received_dispense = true
             console.log(response)
         })
