@@ -4,7 +4,7 @@ import '../../App.css';
 class NoStock extends React.Component {
 	render() {
 		return (
-      		<>
+      <>
 				<div className="vw-100 vh-100 d-flex align-items-center">
 					<div className="container-fluid">
 						<div className="m-3">

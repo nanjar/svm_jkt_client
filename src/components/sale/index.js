@@ -23,7 +23,7 @@ class Sale extends React.Component {
 			retry: 0,
 			countdown: 121,
 			cancelBtnClicked: false,
-			product:{id: 1, name: '', url: '', price: 1},
+			product:{id: '', name: '', url: '', price: 1},
 			showCancel: false, // flag for cancel button of popup box
 			loadingQR: true,
 			showModal: false,
@@ -208,7 +208,7 @@ class Sale extends React.Component {
 		if (reqPaymentStatus.response) {
 			console.log("Transaction status - " + reqPaymentStatus.response.transaction_status);
 			if (reqPaymentStatus.response.transaction_status === "settlement") {
-				this.props.history.push("/sale_success"); // Change after confirm what to response
+				this.props.history.push("/sales/success"); // Change after confirm what to response
 			} else {
 				if (this._isMounted) {
 					this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
