@@ -262,7 +262,7 @@ class Sale extends React.Component {
 									<h1 className="text-center display-3 mb-3">Kamu telah memilih</h1><br/>
 									<h1 className="text-center custom-t1">{}</h1>
 									<img src={`http://vending.smartvending.com${product.url}`} className="img-thumbnail custom-thumbnail border-0 d-block mx-auto" alt="product" />
-									<h1 className="text-center mt-3"><strong style={{fontSize: "6vw"}}>{Formatter.money(999999)}</strong></h1>
+									<h1 className="text-center mt-3"><strong style={{fontSize: "6vw"}}>{Formatter.money(product.price)}</strong></h1>
 								</div>
 
 								<div className="col-7 d-flex flex-column justify-content-center">
