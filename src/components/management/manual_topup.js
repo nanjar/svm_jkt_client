@@ -2,7 +2,8 @@ import React from "react";
 import SERVER_REQ from '../../helpers/Request';
 import { Link } from 'react-router-dom';
 import '../../App.css';
-import { Container, Row, Col, InputGroup } from 'react-bootstrap';
+import imgURL from '../../assets/static_images/no_image.png';
+import { Container, Row, Col, InputGroup, Modal } from 'react-bootstrap';
 import NumPad from 'react-numpad';
 
 class ManualTopup extends React.Component {
@@ -11,18 +12,22 @@ class ManualTopup extends React.Component {
 
 		this.state = { 
 			slotData: {},
-			productURL: "",
+			productURL: imgURL,
 			productName: "",
 			productId: false,
 			toStockQty: 0,
 			stockId: 0,
 			maxQty: 0,
-			toStockData: {}
+			toStockData: {},
+			showModal: false,
+			contentMsg: "",
+			slotId: ""
 		};
 
 		this.handlePlus = this.handlePlus.bind(this);
 		this.handleMinus = this.handleMinus.bind(this);
 		this.handleValueChange = this.handleValueChange.bind(this);
+		this.handleButtonOk = this.handleButtonOk.bind(this);
 	}
 
 	componentDidMount = () => {
@@ -65,19 +70,29 @@ class ManualTopup extends React.Component {
 
 	handleSlotOnChange = (event) => {
 		const slotData = this.state.slotData;
+		const uniqSlotId = slotData.map(x => x['slot_id']);
 
-		slotData.forEach(slot => {
-			this.setState({ toStockQty: 0 });
-			console.log(parseInt(event), slot.slot_id)
-			if (Number(event) === slot.slot_id) {
-				this.setState({ 
-					toStockQty: slot.to_stock,
-					productId: slot.product_id,
-					productURL: slot.image,
-					productName: slot.product_name
-				});
-			} 
-		});
+		console.log(uniqSlotId);
+		if (uniqSlotId.includes(parseInt(event))) {
+			slotData.forEach(slot => {
+				this.setState({ toStockQty: 0 });
+				console.log(parseInt(event), slot.slot_id)
+				if (Number(event) === slot.slot_id) {
+					this.setState({ 
+						toStockQty: slot.to_stock,
+						productId: slot.product_id,
+						productURL: `http://vending.smartvending.com${slot.image}`,
+						productName: slot.product_name
+					});
+				} 
+			});
+		} else {
+			let msg = (parseInt(event) > 60) ? "Invalid slot! Please key in the valit slot number." : "Slot " + event + " is inactive. Please key in the active slot number";
+			this.setState({
+				showModal: true,
+				contentMsg: msg,
+			})
+		}
 		
 		this.setState({slotId: event});	
 	}
@@ -91,8 +106,17 @@ class ManualTopup extends React.Component {
 		}
 	}
 
+	handleButtonOk() {
+		this.setState({ 
+			showModal: false, 
+			slotId: "",
+			productURL: imgURL,
+			productName: "" 
+		});
+	}
+
 	render() {
-		const {slotData, slotId, productName, productURL} = this.state;
+		const {slotData, slotId, productName, productURL, showModal, contentMsg} = this.state;
 		
 		// const limitValidator = (value) => parseInt(value, 10) > -1 && parseInt(value, 10) <= 60;
 		
@@ -110,7 +134,7 @@ class ManualTopup extends React.Component {
 				<Row className="justify-content-center mt-5 mb-5">
 					<Col lg={5} className="text-center">
 						<div className="p-2 align-self-center">
-							<img src={`http://vending.smartvending.com${productURL}`} className="img-thumbnail border-0" alt={productName} />
+							<img src={productURL} className="img-thumbnail border-0" alt={productName} />
 							<h1 className="text-center text-uppercase custom-t2">{productName}</h1>
 						</div>
 					</Col>
@@ -149,6 +173,19 @@ class ManualTopup extends React.Component {
 						</button>
 					</div>
 				</Row>
+
+				<Modal show={showModal} size="xl" centered>
+					<Modal.Body>
+						<p className="custom-t2 text-uppercase">{contentMsg}</p>
+					</Modal.Body>
+					<Modal.Footer className="text-center">
+						<div className="text-center">
+							<button type="button" onClick={this.handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
+								<h2 className="text-center text-uppercase custom-t2">Ok</h2>
+							</button>
+						</div>
+					</Modal.Footer>
+				</Modal>
 			</Container>
 		);
 	}
