@@ -8,6 +8,7 @@ import SaleSucces from "../components/sale/success";
 import DispenseError from "../components/dispense/dispense_error";
 import DispenseNoStock from "../components/dispense/no_stock";
 import DispenseSuccess from "../components/dispense/dispense_success";
+import Dispensing from '../components/dispense/Dispensing';
 
 import ManagementLogin from "../components/management/login";
 import ManagementIndex from "../components/management/index";
@@ -31,6 +32,7 @@ export default (
 		<Route path="/sale_success" exact component={SaleSucces} />
 
 		{/* Dispense */}
+		<Route path="/dispense/:slot_id" exact component={Dispensing} />
 		<Route path="/dispense/error" exact component={DispenseError} />
 		<Route path="/dispense/no_stock" exact component={DispenseNoStock} />
 		<Route path="/dispense/success" exact component={DispenseSuccess} />
