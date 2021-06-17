@@ -3,8 +3,7 @@ import SERVER_REQ from '../../helpers/Request';
 import { Link } from 'react-router-dom';
 import '../../App.css';
 import imgURL from '../../assets/static_images/no_image.png';
-import { Container, Row, Col, InputGroup, Modal } from 'react-bootstrap';
-import NumPad from 'react-numpad';
+import { Container, Row, Col, Modal } from 'react-bootstrap';
 
 class ManualTopup extends React.Component {
 	constructor(props) {
@@ -21,13 +20,18 @@ class ManualTopup extends React.Component {
 			toStockData: {},
 			showModal: false,
 			contentMsg: "",
-			slotId: ""
+			slotId: "",
+			showNumpad: false,
+			numInput: ""
 		};
 
 		this.handlePlus = this.handlePlus.bind(this);
 		this.handleMinus = this.handleMinus.bind(this);
 		this.handleValueChange = this.handleValueChange.bind(this);
 		this.handleButtonOk = this.handleButtonOk.bind(this);
+		this.handleShowNumpad = this.handleShowNumpad.bind(this);
+		this.handleNumInput = this.handleNumInput.bind(this);
+		this.handleSlotId = this.handleSlotId.bind(this);
 	}
 
 	componentDidMount = () => {
@@ -68,33 +72,32 @@ class ManualTopup extends React.Component {
 		this.setState({ toStockQty: x });
 	}
 
-	handleSlotOnChange = (event) => {
-		const slotData = this.state.slotData;
+	handleSlotId = () => {
+		console.log("hello");
+		const {slotData, slotId} = this.state;
 		const uniqSlotId = slotData.map(x => x['slot_id']);
 
 		console.log(uniqSlotId);
-		if (uniqSlotId.includes(parseInt(event))) {
+		if (uniqSlotId.includes(parseInt(slotId))) {
 			slotData.forEach(slot => {
 				this.setState({ toStockQty: 0 });
-				console.log(parseInt(event), slot.slot_id)
-				if (Number(event) === slot.slot_id) {
+				console.log(parseInt(slotId), slot.slot_id)
+				if (parseInt(slotId) === slot.slot_id) {
 					this.setState({ 
 						toStockQty: slot.to_stock,
 						productId: slot.product_id,
 						productURL: `http://vending.smartvending.com${slot.image}`,
-						productName: slot.product_name
+						productName: slot.product_name,
 					});
 				} 
 			});
 		} else {
-			let msg = (parseInt(event) > 60) ? "Invalid slot! Please key in the valit slot number." : "Slot " + event + " is inactive. Please key in the active slot number";
+			let msg = (parseInt(slotId) > 60) ? "Invalid slot! Please key in the valid slot number." : "Slot " + slotId + " is inactive. Please key in the active slot number";
 			this.setState({
 				showModal: true,
 				contentMsg: msg,
 			})
 		}
-		
-		this.setState({slotId: event});	
 	}
 
 	handleBtnConfirmOnClick = async() => {
@@ -106,17 +109,57 @@ class ManualTopup extends React.Component {
 		}
 	}
 
-	handleButtonOk() {
+	handleButtonOk = () => {
 		this.setState({ 
 			showModal: false, 
-			slotId: "",
+			numInput: "",
 			productURL: imgURL,
 			productName: "" 
 		});
 	}
 
+	handleShowNumpad = () => {
+		this.setState({ 
+			showNumpad: true, 
+			numInput: "" 
+		});
+	}
+
+	handleNumInput = (event) => {
+		let oldNum = this.state.numInput;
+		let num = event.target.getAttribute("data-num");
+		if (num === "Set") {
+			if (oldNum === "") {
+				this.setState({ 
+					showNumpad: false,
+					productURL: imgURL,
+					productName: "" 
+				});
+			} else {
+ 				this.setState({
+					slotId: this.state.numInput,
+					showNumpad: false
+				}, () => this.handleSlotId());
+			}
+		} else if ( num === "Del") {
+			this.setState({ numInput: oldNum.slice(0, -1) });
+		} else {
+			if (oldNum.charAt(0) === "0") {
+				let newNum = oldNum + num;
+				while(newNum.charAt(0) === '0')
+				{
+					newNum = newNum.substring(1);
+				}
+				this.setState({ numInput: newNum });
+			} else {
+				this.setState({ numInput: oldNum + num });
+			}
+		}
+	}
+
 	render() {
-		const {slotData, slotId, productName, productURL, showModal, contentMsg} = this.state;
+		const {slotData, productName, productURL, showModal, contentMsg, showNumpad, numInput} = this.state;
+		const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']];
 		
 		// const limitValidator = (value) => parseInt(value, 10) > -1 && parseInt(value, 10) <= 60;
 		
@@ -142,12 +185,15 @@ class ManualTopup extends React.Component {
 					<Col lg={7} className="align-self-center text-uppercase custom-t2">
 						<Row>
 							<label className="text-uppercase custom-t2">Slot</label><br/>
-							<NumPad.Number
+							<Col lg={10} className="p-0">
+								<input type="text" onClick={this.handleShowNumpad} value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true}></input>
+							</Col>
+							{/* <NumPad.Number
 								decimal={false}
 								negative={false}
 								onChange={this.handleSlotOnChange}
 								placeholder={'TYPE THE SLOT'}
-								value={slotId} />
+								value={slotId} /> */}
 						</Row>
 
 						<br /><br />
@@ -155,13 +201,13 @@ class ManualTopup extends React.Component {
 						<Row>
 							<label className="text-uppercase custom-t2">Quantity</label><br/>
 							<Col lg={2} className="p-0">
-								<input type="button" value="-" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={this.handleMinus}></input>
+								<input type="button" value="-" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={this.handleMinus} />
 							</Col>
 							<Col lg={6} className="p-0">
-								<input type="number" value={this.state.toStockQty} className="form-control border border-1 form-control-lg custom-t1" onChange={this.handleValueChange} readOnly={true}></input>
+								<input type="number" value={this.state.toStockQty} className="form-control border border-1 form-control-lg custom-t1" onChange={this.handleValueChange} readOnly={true} />
 							</Col>
 							<Col lg={2} className="p-0">
-								<input type="button" value="+" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={this.handlePlus}></input>
+								<input type="button" value="+" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={this.handlePlus} />
 							</Col>
 						</Row>
 					</Col>
@@ -192,6 +238,25 @@ class ManualTopup extends React.Component {
 							</button>
 						</div>
 					</Modal.Footer>
+				</Modal>
+
+				<Modal show={showNumpad} size="md" centered className="text-uppercase">
+					<Modal.Body>
+						<Row>
+							<input type="text" value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} />
+						</Row>
+						{
+							numData.map((rowData, rowIndex) => (
+								<Row key={'row-' + rowIndex} className="justify-content-center">
+									{
+										rowData.map((num, index) => (
+											<Col key={index} onClick={this.handleNumInput} className="col align-self-center text-center border border-1 bg-slot btn-slot" data-num={num}><p data-num={num} className="custom-t2 mt-3 mb-3" >{num}</p></Col>
+										))
+									}	
+								</Row>
+							))
+						}
+					</Modal.Body>
 				</Modal>
 			</Container>
 		);
