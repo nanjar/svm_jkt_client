@@ -1,8 +1,8 @@
 import React from "react";
-// import SERVER_REQ from '../../helpers/Request';
+import SERVER_REQ from '../../helpers/Request';
 import Formatter from '../../helpers/Formatter';
 import '../../App.css';
-import btn_gopay from '../../assets/static_images/loading_qr.gif';
+import logoImage from '../../assets/static_images/loading_qr.gif';
 import { Modal } from 'react-bootstrap';
 
 class Sale extends React.Component {
@@ -13,7 +13,7 @@ class Sale extends React.Component {
 		super(props); 
 		this.state = { 
 			sale_data: {},
-			qrCodeURL: btn_gopay,
+			qrCodeURL: logoImage,
 			transactionId: "",
 			titleMsg: "",
 			contentMsg: "",
@@ -23,10 +23,12 @@ class Sale extends React.Component {
 			retry: 0,
 			countdown: 121,
 			cancelBtnClicked: false,
-			product:{id: '', name: '', url: '', price: 0},
+			product:{id: 1, name: '', url: '', price: 1},
 			showCancel: false, // flag for cancel button of popup box
 			loadingQR: true,
-			showModal: false
+			showModal: false,
+			imgWidth: "85vh",
+			imgHeight: "60vh"
 		}
 
 		this.requestQrCode = this.requestQrCode.bind(this);
@@ -54,50 +56,40 @@ class Sale extends React.Component {
 		this.handleInitialStateChanges();
 	}
 
-	requestQrCode() {
+	requestQrCode = async() => {
 		const {product, retry} = this.state;
-		const url = 'http://vending.smartvending.com/api/sales/payment.json';
+		const reqQrCode = await SERVER_REQ.post(`http://vending.smartvending.com/api/sales/payment.json`, {'amount': product.price, 'product_id': product.id});
+		
+		console.log(reqQrCode);
 
-		const params = new FormData();
-		params.set('amount', product.price);
-		params.set('product_id', product.id);
-
-		fetch(url, {
-			method: 'POST',
-			body: params
-		})
-		.then(response => {
-			if (response.ok) {
-				return response.json();
-			} else {
-				console.log("Not ok statusChanged - " + this.state.statusChanged);
-				if (retry < 4) {
-					if (this.state.statusChanged === "initial") {
-						if (this._isMounted) {
-							this.setState({
-								titleMsg: "Connection timed out",
-								contentMsg: "Cannot connect to payment server. Please try again!",
-								statusChanged: "timeout",
-								showModal: true
-							});
-							this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
-						}
-					}
-				} else {
-					// invoke handleInitialStateChanges to request QR code again
+		if (!reqQrCode.response) {
+			if (retry < 4) {
+				if (this.state.statusChanged === "initial") {
 					if (this._isMounted) {
-						this._timerId = setTimeout(() => { this.handleInitialStateChanges(); this._timerId = 0; }, 5000);
+						this.setState({
+							titleMsg: "Connection timed out",
+							contentMsg: "Cannot connect to payment server. Please try again!",
+							statusChanged: "timeout",
+							showModal: true
+						});
+						this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
 					}
-				} 
-			}
-		})
-		.then(response => { 
-			if (response.transaction_status === "pending") {
-				const qr = response.actions.find( a => a.name === "generate-qr-code" );
+				}
+			} else {
+				// invoke handleInitialStateChanges to request QR code again
+				if (this._isMounted) {
+					this._timerId = setTimeout(() => { this.handleInitialStateChanges(); this._timerId = 0; }, 5000);
+				}
+			} 
+		} else {
+			if (reqQrCode.response.transaction_status === "pending") {
+				const qr = reqQrCode.response.actions.find( a => a.name === "generate-qr-code" );
 				if (this._isMounted) {
 					this.setState({
 						qrCodeURL: qr.url,
-						transactionId: response.transaction_id,
+						imgWidth: "60vh",
+						imgHeight: "60vh",
+						transactionId: reqQrCode.response.transaction_id,
 						checkQrStatus: true,
 						intervalId: setInterval(() => {
 							let countdown = this.state.countdown;
@@ -113,8 +105,8 @@ class Sale extends React.Component {
 					});
 					this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
 				}
-			} else if (response.status_code === "406") {
-				console.log("Status code - " + response.status_code);
+			} else if (reqQrCode.response.status_code === "406") {
+				console.log("Status code - " + reqQrCode.response.status_code);
 				if (this._isMounted) {
 					this.setState({
 						titleMsg: "Cannot Connect to Server",
@@ -125,8 +117,7 @@ class Sale extends React.Component {
 					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
 				}
 			}
-		})
-		.catch(error => console.log(error.message));
+		}
 	}
 
 	warningTimeOut() {
@@ -143,6 +134,7 @@ class Sale extends React.Component {
 	}
 
 	handleInitialStateChanges() {
+		console.log("hello")
 		const {checkQrStatus, statusChanged, retry} = this.state;
 		if (checkQrStatus) {
 			if (statusChanged === "initial") {
@@ -179,27 +171,16 @@ class Sale extends React.Component {
 		console.log("Btn Status - " + statusChanged);
 	}
 
-	cancelAtTimeOut() {
-		const url = 'http://vending.smartvending.com/api/sales/cancel.json';
-		const transaction_id = this.state.transactionId;
+	cancelAtTimeOut = async() => {
+		const {transactionId, cancelBtnClicked} = this.state;
+		const reqCancelQrCode = await SERVER_REQ.post(`http://vending.smartvending.com/api/sales/cancel.json`, {'transaction_id': transactionId});
+		console.log(reqCancelQrCode);
 
-		const params = new FormData();
-		params.set('transaction_id', transaction_id);
-
-		fetch(url, {
-			method: 'POST',
-			body: params
-		})
-		.then(response => {
-			if (response.ok) {
-				return response.json();
-			} 
-		})
-		.then(response => { 
-			console.log("Transaction Status - " + response.transaction_status);
-			console.log("Transaction Status Code - " + response.status_code);
-			if (response.transaction_status === "cancel" || response.status_code === "412") { // successful cancel transaction and transaction_status="cancel"
-				if (this.state.cancelBtnClicked) {
+		if (reqCancelQrCode.response) {
+			console.log("Transaction Status - " + reqCancelQrCode.response.transaction_status);
+			console.log("Transaction Status Code - " + reqCancelQrCode.response.status_code);
+			if (reqCancelQrCode.response.transaction_status === "cancel" || reqCancelQrCode.response.status_code === "412") { // successful cancel transaction and transaction_status="cancel"
+				if (cancelBtnClicked) {
 					this.handleTimeout();
 				} else {
 					if (this._isMounted) {
@@ -214,41 +195,30 @@ class Sale extends React.Component {
 					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
 				}
 			}
-		})
-		.catch(error => console.log(error.message));
+		}
 	} 
 
-	checkPaymentStatus() {
-		const url = 'http://vending.smartvending.com/api/sales/status';
-		const transaction_id = this.state.transactionId;
+	checkPaymentStatus = async() => {
+		const {transactionId} = this.state;
+		console.log(`http://vending.smartvending.com/api/sales/status.json?transaction_id=${transactionId}`);
+		const reqPaymentStatus = await SERVER_REQ.get(`http://vending.smartvending.com/api/sales/status.json?transaction_id=${transactionId}`);
 
-		if(this.state.countdown === 0){
-			// process when the countdown end;
-			return;
-		}
+		console.log(reqPaymentStatus);
 
-		fetch(url + '?transaction_id=' + transaction_id)
-		.then(response => {
-			if (response.ok) {
-				return response.json();
-			} 
-		})
-		.then(response => { 
-			console.log("Transaction status - " + response.transaction_status);
-			if (response.transaction_status === "settlement") {
+		if (reqPaymentStatus.response) {
+			console.log("Transaction status - " + reqPaymentStatus.response.transaction_status);
+			if (reqPaymentStatus.response.transaction_status === "settlement") {
 				this.props.history.push("/sale_success"); // Change after confirm what to response
 			} else {
 				if (this._isMounted) {
 					this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
 				}
 			}
-		})
-		.catch(error => {
-			console.log(error.message)
+		} else {
 			if (this._isMounted) {
 				this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
 			}
-		});
+		}
 	}
 
 	// Redirect back to Home Page and clear all the timers and intervals
@@ -258,13 +228,15 @@ class Sale extends React.Component {
 	}
 
 	handleCancelPayment() {
+		console.log(this._isMounted);
 		if (this._isMounted) {
 			this.setState({ 
 				cancelBtnClicked: true, 
 				showCancel: false 
+			}, () => {
+				this.cancelAtTimeOut();
 			});
 		}
-		this.cancelAtTimeOut();
 	}
 
 	componentWillUnmount() {
@@ -277,7 +249,7 @@ class Sale extends React.Component {
   }
 
 	render() {
-		const {product, qrCodeURL, checkQrStatus, showModal, showCancel, titleMsg, contentMsg} = this.state;
+		const {product, qrCodeURL, checkQrStatus, showModal, showCancel, titleMsg, contentMsg, imgWidth, imgHeight} = this.state;
 
 		return (
 			<>
@@ -299,26 +271,26 @@ class Sale extends React.Component {
 											{checkQrStatus ? 'Scan QR Code to pay' : 'Requesting QR Code'}</h1>
 									</div>
 									<div className="w-100 p-2 text-center m-3">
-										<img src={qrCodeURL} className="img-fluid" style={{height: '60vh', width: '85vh'}} alt="TEKAN TOMBOL UNTUK MEMULAI"></img>
+										<img src={qrCodeURL} className="img-fluid" style={{width: imgWidth, height: imgHeight}} alt="TEKAN TOMBOL UNTUK MEMULAI"></img>
 									</div>
 
 									<div className="align-self-center mt-3">
-										<button type="button" className="btn btn-primary btn-lg btn-info p-5" onClick={this.handleCancelPayment}>
-											<h2 className="text-center text-uppercase custom-t2" style={{fontSize: '4rem'}}>Cancel Payment</h2>
+										<button type="button" className="btn btn-primary btn-lg btn-info p-4" onClick={this.handleCancelPayment}>
+											<h2 className="text-center text-uppercase custom-t1">Cancel Payment</h2>
 										</button>
 									</div>
 								</div>
 
 							</div>
 
-							<Modal show={showModal} size="lg" centered>
+							<Modal show={showModal} size="xl" centered>
 								<Modal.Header>
 									<Modal.Title>
-										<h4 className="custom-t1 text-uppercase">{titleMsg}</h4>
+										<p className="custom-t2 text-uppercase">{titleMsg}</p>
 									</Modal.Title>
 								</Modal.Header>
 								<Modal.Body>
-									<h4 className="custom-t2 text-uppercase">{contentMsg}</h4>
+									<p className="custom-t2 text-uppercase">{contentMsg}</p>
 								</Modal.Body>
 								<Modal.Footer className="text-center">
 									<div className="text-center">
