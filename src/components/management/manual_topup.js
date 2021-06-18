@@ -30,6 +30,7 @@ class ManualTopup extends React.Component {
 		this.handleValueChange = this.handleValueChange.bind(this);
 		this.handleButtonOk = this.handleButtonOk.bind(this);
 		this.handleShowNumpad = this.handleShowNumpad.bind(this);
+		this.handleHideNumpad = this.handleHideNumpad.bind(this);
 		this.handleNumInput = this.handleNumInput.bind(this);
 		this.handleSlotId = this.handleSlotId.bind(this);
 	}
@@ -125,6 +126,13 @@ class ManualTopup extends React.Component {
 		});
 	}
 
+	handleHideNumpad = () => {
+		this.setState({ 
+			showNumpad: false, 
+			numInput: "" 
+		});
+	}
+
 	handleNumInput = (event) => {
 		let oldNum = this.state.numInput;
 		let num = event.target.getAttribute("data-num");
@@ -183,7 +191,7 @@ class ManualTopup extends React.Component {
 					</Col>
 
 					<Col lg={7} className="align-self-center text-uppercase custom-t2">
-						<Row>
+						<Row className="mb-2">
 							<label className="text-uppercase custom-t2">Slot</label><br/>
 							<Col lg={10} className="p-0">
 								<input type="text" onClick={this.handleShowNumpad} value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true}></input>
@@ -195,8 +203,6 @@ class ManualTopup extends React.Component {
 								placeholder={'TYPE THE SLOT'}
 								value={slotId} /> */}
 						</Row>
-
-						<br /><br />
 
 						<Row>
 							<label className="text-uppercase custom-t2">Quantity</label><br/>
@@ -241,7 +247,10 @@ class ManualTopup extends React.Component {
 				</Modal>
 
 				<Modal show={showNumpad} size="md" centered className="text-uppercase">
-					<Modal.Body>
+					{/* <Modal.Header> */}
+					<label className="custom-t2" style={{paddingLeft: "90%", cursor: "pointer"}} onClick={this.handleHideNumpad}>&times;</label>
+					{/* </Modal.Header> */}
+					<Modal.Body className="m-3 mt-0">
 						<Row>
 							<input type="text" value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} />
 						</Row>
@@ -250,7 +259,7 @@ class ManualTopup extends React.Component {
 								<Row key={'row-' + rowIndex} className="justify-content-center">
 									{
 										rowData.map((num, index) => (
-											<Col key={index} onClick={this.handleNumInput} className="col align-self-center text-center border border-1 bg-slot btn-slot" data-num={num}><p data-num={num} className="custom-t2 mt-3 mb-3" >{num}</p></Col>
+											<Col key={index} onClick={this.handleNumInput} className="col align-self-center text-center border border-1 bg-slot btn-slot" data-num={num}><p data-num={num} className="custom-t3 mt-3 mb-3" >{num}</p></Col>
 										))
 									}	
 								</Row>
