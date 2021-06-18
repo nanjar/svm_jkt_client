@@ -171,20 +171,18 @@ class AutoTopup extends React.Component {
 		return (
 			<Container fluid className="text-uppercase">
 				<Row className="justify-content-center">
-					<p className="text-center custom-t1">Confirm the restocked quantity for slots</p>
-					<br />
+					<p className="text-center custom-t2">Confirm the restocked quantity for slots</p>
 				</Row>
 				{
 					slotData.map((rowData, index) => (
 						<Row key={index} className="justify-content-center">
 							{
-								rowData.map(data => (<Col lg="1" key={data.slot_id} id={'cs_' + data.slot_id} onClick={this.handleBtnSlotOnClick} className={data.tied ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t2 mt-3 mb-3" data-slotid={data.slot_id} >{data.to_stock ? data.to_stock + "/" + data.max_qty : "-"}</p></Col>))
+								rowData.map(data => (<Col lg="1" key={data.slot_id} id={'cs_' + data.slot_id} onClick={this.handleBtnSlotOnClick} className={data.tied ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t3 mt-1 mb-1 ml-2 mr-2" data-slotid={data.slot_id} >{data.to_stock ? data.to_stock + "/" + data.max_qty : "-"}</p></Col>))
 							}
 						</Row>
 					))
 				}
 				<Row className="justify-content-center mt-4">
-					<br />
 					<div className="text-center col p-2 align-self-center">
 						<Link to="/management" className="btn btn-lg btn-warning">
 							<h2 className="text-center text-uppercase display-4">Cancel</h2>
@@ -200,39 +198,46 @@ class AutoTopup extends React.Component {
 
 				<Modal show={showModal} size="xl" centered>
 					<Modal.Header>
-						<Modal.Title className="custom-t2">
+						<Modal.Title className="custom-t2 text-uppercase">
 							Confirm Restocked Quantity
 						</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
-						<Row className="justify-content-center mt-5 mb-5">
+						<Row className="justify-content-center">
 							<Col lg={5} className="text-center">
-								<div className="p-2 align-self-center">
+								<div className="p-1 align-self-center">
 									<img src={`http://vending.smartvending.com${productURL}`} className="img-thumbnail border-0" alt={productName} />
-									<h1 className="text-center text-uppercase custom-t2">{productName}</h1>
+									<h1 className="text-center text-uppercase custom-t3">{productName}</h1>
 								</div>
 							</Col>
 
 							<Col lg={7} className="align-self-center text-uppercase custom-t2">
-								<label className="text-uppercase custom-t2">Quantity</label><br/>
-								<InputGroup>
-									<input type="button" value="-" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={this.handleMinus}></input>
-									<input type="number" value={this.state.toStockQty} className="form-control border border-1 form-control-lg custom-t1" onChange={this.handleValueChange} readOnly={true}></input>
-									<input type="button" value="+" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={this.handlePlus}></input>
-								</InputGroup>
+								<Row>
+									<label className="text-uppercase custom-t2">Quantity</label><br/>
+									<Col lg={2} className="p-0">
+										<input type="button" value="-" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t2" onClick={this.handleMinus} />
+									</Col>
+									<Col lg={6} className="p-0">
+										<input type="number" value={this.state.toStockQty} className="form-control border border-1 form-control-lg custom-t2" onChange={this.handleValueChange} readOnly={true} />
+									</Col>
+									<Col lg={2} className="p-0">
+										<input type="button" value="+" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t2" onClick={this.handlePlus} />
+									</Col>
+								</Row>
 							</Col>
+
 						</Row>
 					</Modal.Body>
 					<Modal.Footer className="text-center">
 						<div className="text-center">
 							<Button variant="warning" type="button" className="text-uppercase" onClick={this.handleModalClose}>
-								<h2 className="text-center text-uppercase custom-t2">Cancel</h2>
+								<h2 className="text-center text-uppercase custom-t3">Cancel</h2>
 							</Button>
 						</div>
 
 						<div className="text-center">
 							<Button variant="info" type="button" className="text-uppercase" onClick={this.handleBtnSubConfirmOnClick}>
-								<h2 className="text-center text-uppercase custom-t2">Confirm</h2>
+								<h2 className="text-center text-uppercase custom-t3">Confirm</h2>
 							</Button>
 						</div>
 					</Modal.Footer>

@@ -3,7 +3,7 @@ import SERVER_REQ from '../../helpers/Request';
 import Formatter from '../../helpers/Formatter';
 import '../../App.css';
 import logoImage from '../../assets/static_images/loading_qr.gif';
-import { Modal } from 'react-bootstrap';
+import { Modal, Container, Row, Col } from 'react-bootstrap';
 
 class Sale extends React.Component {
 	_isMounted = false;
@@ -120,7 +120,7 @@ class Sale extends React.Component {
 		}
 	}
 
-	warningTimeOut() {
+	warningTimeOut = () => {
 		if (this._isMounted) {
 			this.setState({
 				titleMsg: "Payment Expiry Warning",
@@ -133,7 +133,7 @@ class Sale extends React.Component {
 		}
 	}
 
-	handleInitialStateChanges() {
+	handleInitialStateChanges = () => {
 		console.log("hello")
 		const {checkQrStatus, statusChanged, retry} = this.state;
 		if (checkQrStatus) {
@@ -252,65 +252,55 @@ class Sale extends React.Component {
 		const {product, qrCodeURL, checkQrStatus, showModal, showCancel, titleMsg, contentMsg, imgWidth, imgHeight} = this.state;
 
 		return (
-			<>
-				<div className="vw-100 vh-100 d-flex align-items-center">
-					<div className="container-fluid">
-						<div className="m-3">
-							<div className="row col-12">
+			<Container fluid className="text-uppercase m-3">
+				<Row>
+					<Col lg={5} className="text-center">
+						<p className="custom-t4 mb-3">Kamu telah memilih</p><br/>
+						<p className="custom-t1">{product.name}</p>
+						<img src={`http://vending.smartvending.com${product.url}`} className="img-thumbnail custom-thumbnail border-0  text-center" alt="product" />
+						<p className="mt-3 custom-t1"><strong>{Formatter.money(product.price)}</strong></p>
+					</Col>
 
-								<div className="col-5">
-									<h1 className="text-center display-3 mb-3">Kamu telah memilih</h1><br/>
-									<h1 className="text-center custom-t1">{}</h1>
-									<img src={`http://vending.smartvending.com${product.url}`} className="img-thumbnail custom-thumbnail border-0 d-block mx-auto" alt="product" />
-									<h1 className="text-center mt-3"><strong style={{fontSize: "6vw"}}>{Formatter.money(product.price)}</strong></h1>
-								</div>
-
-								<div className="col-7 d-flex flex-column justify-content-center">
-									<div className="p-2 align-self-center mb-3">
-										<h1 className="text-center display-3">
-											{checkQrStatus ? 'Scan QR Code to pay' : 'Requesting QR Code'}</h1>
-									</div>
-									<div className="w-100 p-2 text-center m-3">
-										<img src={qrCodeURL} className="img-fluid" style={{width: imgWidth, height: imgHeight}} alt="TEKAN TOMBOL UNTUK MEMULAI"></img>
-									</div>
-
-									<div className="align-self-center mt-3">
-										<button type="button" className="btn btn-primary btn-lg btn-info p-4" onClick={this.handleCancelPayment}>
-											<h2 className="text-center text-uppercase custom-t1">Cancel Payment</h2>
-										</button>
-									</div>
-								</div>
-
-							</div>
-
-							<Modal show={showModal} size="xl" centered>
-								<Modal.Header>
-									<Modal.Title>
-										<p className="custom-t2 text-uppercase">{titleMsg}</p>
-									</Modal.Title>
-								</Modal.Header>
-								<Modal.Body>
-									<p className="custom-t2 text-uppercase">{contentMsg}</p>
-								</Modal.Body>
-								<Modal.Footer className="text-center">
-									<div className="text-center">
-										<button type="button" style={{display: showCancel ? 'block' : 'none' }} onClick={this.handleCancelPayment} className="btn btn-lg btn-warning text-uppercase font-weight-bold " data-dismiss="modal">
-											<h2 className="text-center text-uppercase custom-t2">Cancel</h2>
-										</button>
-									</div>
-
-									<div className="text-center">
-										<button type="button" onClick={this.handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
-											<h2 className="text-center text-uppercase custom-t2">Ok</h2>
-										</button>
-									</div>
-								</Modal.Footer>
-							</Modal>
-
+					<Col lg={7} className="justify-content-center text-center">
+						<div className="p-2 align-self-center mb-3">
+							<p className="custom-t4 mb-3">{checkQrStatus ? 'Scan QR Code to pay' : 'Requesting QR Code'}</p>
 						</div>
-					</div>
-				</div>
-			</>
+						<div className="w-100 text-center m-3">
+							<img src={qrCodeURL} className="img-fluid" style={{width: imgWidth, height: imgHeight}} alt="TEKAN TOMBOL UNTUK MEMULAI"></img>
+						</div>
+
+						<div className="align-self-center mt-3 text-center">
+							<button type="button" className="btn btn-primary btn-lg btn-info" onClick={this.handleCancelPayment}>
+								<p className="custom-t1 mb-3 text-uppercase">Cancel Payment</p>
+							</button>
+						</div>
+					</Col>
+				</Row>
+
+				<Modal show={showModal} size="xl" centered>
+					<Modal.Header>
+						<Modal.Title>
+							<p className="custom-t2 text-uppercase">{titleMsg}</p>
+						</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<p className="custom-t2 text-uppercase">{contentMsg}</p>
+					</Modal.Body>
+					<Modal.Footer className="text-center">
+						<div className="text-center">
+							<button type="button" style={{display: showCancel ? 'block' : 'none' }} onClick={this.handleCancelPayment} className="btn btn-lg btn-warning text-uppercase font-weight-bold " data-dismiss="modal">
+								<h2 className="text-center text-uppercase custom-t2">Cancel</h2>
+							</button>
+						</div>
+
+						<div className="text-center">
+							<button type="button" onClick={this.handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
+								<h2 className="text-center text-uppercase custom-t2">Ok</h2>
+							</button>
+						</div>
+					</Modal.Footer>
+				</Modal>
+			</Container>
     );
 	}
 }
