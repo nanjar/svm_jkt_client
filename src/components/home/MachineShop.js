@@ -1,16 +1,23 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { SocketContext } from '../../services/socket';
 import SERVER_REQ  from '../../helpers/Request';
 import {useHistory} from 'react-router-dom';
+import Crontab from 'reactjs-crontab';
 import logo from '../../assets/static_images/Logo.png';
 import btn_press from '../../assets/static_images/button.gif';
 import { Container, Row, Col, Button } from 'react-bootstrap';
-
-const MachineShop = (props) => {
+const sendHealth = () => {
+    console.log('sending health')
+    SERVER_REQ.get('/api/health.json', { vending: 0, vending_temp: 3.0 });
+}
+const MachineShop = () => {
     const socket = useContext(SocketContext);
     const history = useHistory();
     useEffect(() => {
         let button_pressed = false;
+        socket.on('error', function(){
+            console.log('error')
+        })
         socket.on('button_pressed', async (data) => {
             data = JSON.parse(data);
             console.log(data);
@@ -35,25 +42,39 @@ const MachineShop = (props) => {
         }
     }, [history, socket]);
 
-		let start, end;
-		const handleMouseDown = () => {
-			start = new Date();
+	const tasks = useMemo(() => [
+		{
+			fn: sendHealth,
+			config: '5 * * * *',
+            name: 'healthcheck',
+            id: '1'
 		}
-	
-		const handleMouseUp = () => {
-			const minTime = 5000; 
-			const maxTime = 10000;
-			let delta;
-			end = new Date();
-			delta = end - start;
-			console.log("Delta - " + delta);
-			if (delta > minTime && delta < maxTime) {
-				history.push(`/management/login`);
-			}
-		}
+	])
+    let start, end;
+    const handleMouseDown = () => {
+        start = new Date();
+    }
+
+    const handleMouseUp = () => {
+        const minTime = 5000; 
+        const maxTime = 10000;
+        let delta;
+        end = new Date();
+        delta = end - start;
+        console.log("Delta - " + delta);
+        if (delta > minTime && delta < maxTime) {
+            history.push(`/management/login`);
+        }
+    }
 
     return <Container fluid>
-				<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0"}} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>Hidden Button</Button>
+        <Crontab
+            tasks={tasks}
+            dashboard={{
+                hidden: true
+            }}
+        />
+		<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0"}} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>Hidden Button</Button>
         <Row>
             <Col lg={7} className='justify-content-center'>
                 <div className='p-2 align-self-center'>

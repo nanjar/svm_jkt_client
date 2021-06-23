@@ -26,7 +26,6 @@ const Dispensing = () => {
 			// received_dispense = true
 			console.log(response)
 		})
-
 		return () => {
 			socket.offAny(DISPENSE_E)
 		}
