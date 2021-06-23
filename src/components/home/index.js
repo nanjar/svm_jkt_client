@@ -12,7 +12,9 @@ class Home extends React.Component {
 		// this.socket = props.socket;
 		this.state = {
 			reply_status: false,
-			machine_code: ""
+			machine_code: "",
+			start: "",
+			end: ""
 		}
 	}
 
@@ -34,6 +36,7 @@ class Home extends React.Component {
 			})
 			.catch(() => this.props.history.push("/"));
 	}
+
 	componentWillUnmount(){
 		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' })
 	}
