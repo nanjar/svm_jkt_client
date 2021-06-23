@@ -1,27 +1,18 @@
 import React from "react";
 import '../../App.css';
+import { Row } from 'react-bootstrap';
 
-class NoStock extends React.Component {
-	render() {
-		return (
-      		<>
-				<div className="vw-100 vh-100 d-flex align-items-center">
-					<div className="container-fluid">
-						<div className="m-3">
-							<div className="row col-12 d-flex flex-column justify-content-center">
-								<div className="p-2 align-self-center mb-3">
-									<h1 className="text-center display-2">Barang yang ada pilih sedang habis!</h1>
-								</div>
-								<div className="p-2 align-self-center">
-									<h1 className="text-center display-3">Silahkan mencoba item lainnya!</h1>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</>
-    	);
-	}
+const NoStock = () => {
+	return (
+		<Row className="justify-content-center text-uppercase m-3">
+			<div className="p-2 align-self-center mb-3">
+				<p className="text-center custom-t0">Barang yang ada pilih sedang habis!</p>
+			</div>
+			<div className="p-2 align-self-center">
+				<p className="text-center custom-t0">Silahkan mencoba item lainnya!</p>
+			</div>
+		</Row>
+	);
 }
 
 export default NoStock;
