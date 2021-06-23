@@ -40,7 +40,11 @@ const Dispensing = () => {
                     <img src={LoadingImage} />
                 </>
             :
-                dispenseResult !== 0  ? <DispenseError /> : <DispenseSuccess />
+                    dispenseResult !== 0 
+                ?
+                    <DispenseError />
+                :
+                    <DispenseSuccess />
         }
         
     </div>;
