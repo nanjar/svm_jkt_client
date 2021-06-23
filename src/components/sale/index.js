@@ -51,9 +51,10 @@ class Sale extends React.Component {
 			price: params.amount,
 			id: params.product_id,
 			url: urlParams.get('url')
-		} })
-		this._isMounted = true;
-		this.handleInitialStateChanges();
+		} }, () => {
+			this._isMounted = true;
+			this.handleInitialStateChanges();
+		})
 	}
 
 	requestQrCode = async() => {

@@ -1,15 +1,24 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { SocketContext } from '../../services/socket';
 import SERVER_REQ  from '../../helpers/Request';
 import {useHistory} from 'react-router-dom';
+import Crontab from 'reactjs-crontab';
 import logo from '../../assets/static_images/Logo.png';
 import btn_press from '../../assets/static_images/button.gif';
 
+
+const sendHealth = () => {
+    console.log('sending health')
+    SERVER_REQ.get('/api/health.json', { vending: 0, vending_temp: 3.0 });
+}
 const MachineShop = () => {
     const socket = useContext(SocketContext);
     const history = useHistory();
     useEffect(() => {
         let button_pressed = false;
+        socket.on('error', function(){
+            console.log('error')
+        })
         socket.on('button_pressed', async (data) => {
             data = JSON.parse(data);
             console.log(data);
@@ -33,7 +42,22 @@ const MachineShop = () => {
             socket.off('button_pressed')
         }
     }, [history, socket]);
+
+	const tasks = useMemo(() => [
+		{
+			fn: sendHealth,
+			config: '5 * * * *',
+            name: 'healthcheck',
+            id: '1'
+		}
+	])
     return <div className="m-3">
+        <Crontab
+            tasks={tasks}
+            dashboard={{
+                hidden: true
+            }}
+        />
         <div className='row col-12'>
             <div className='col-7 d-flex flex-column justify-content-center'>
                 <div className='p-2 align-self-center'>
