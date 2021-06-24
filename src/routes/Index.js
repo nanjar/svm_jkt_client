@@ -10,8 +10,8 @@ import DispenseNoStock from "../components/dispense/no_stock";
 import DispenseSuccess from "../components/dispense/dispense_success";
 import Dispensing from '../components/dispense/Dispensing';
 
-import ManagementLogin from "../components/management/Login";
-import ManagementIndex from "../components/management/Index";
+import ManagementLogin from "../components/management/login";
+import ManagementIndex from "../components/management";
 import ManagementAutoTopup from "../components/management/AutoTopup";
 import ManagementManualTopup from "../components/management/ManualTopup";
 import ManagementButtonConfig from "../components/management/button_mapping";
