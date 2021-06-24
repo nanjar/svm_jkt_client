@@ -59,7 +59,7 @@ class Sale extends React.Component {
 
 	requestQrCode = async() => {
 		const {product, retry} = this.state;
-		const reqQrCode = await SERVER_REQ.post(`http://vending.smartvending.com/api/sales/payment.json`, {'amount': product.price, 'product_id': product.id});
+		const reqQrCode = await SERVER_REQ.post(`${process.env.REACT_APP_API}/api/sales/payment.json`, {'amount': product.price, 'product_id': product.id});
 		
 		console.log(reqQrCode);
 
@@ -174,7 +174,7 @@ class Sale extends React.Component {
 
 	cancelAtTimeOut = async() => {
 		const {transactionId, cancelBtnClicked} = this.state;
-		const reqCancelQrCode = await SERVER_REQ.post(`http://vending.smartvending.com/api/sales/cancel.json`, {'transaction_id': transactionId});
+		const reqCancelQrCode = await SERVER_REQ.post(`${process.env.REACT_APP_API}/api/sales/cancel.json`, {'transaction_id': transactionId});
 		console.log(reqCancelQrCode);
 
 		if (reqCancelQrCode.response) {
@@ -201,8 +201,8 @@ class Sale extends React.Component {
 
 	checkPaymentStatus = async() => {
 		const {transactionId} = this.state;
-		console.log(`http://vending.smartvending.com/api/sales/status.json?transaction_id=${transactionId}`);
-		const reqPaymentStatus = await SERVER_REQ.get(`http://vending.smartvending.com/api/sales/status.json?transaction_id=${transactionId}`);
+		console.log(`${process.env.REACT_APP_API}/api/sales/status.json?transaction_id=${transactionId}`);
+		const reqPaymentStatus = await SERVER_REQ.get(`${process.env.REACT_APP_API}/api/sales/status.json?transaction_id=${transactionId}`);
 
 		console.log(reqPaymentStatus);
 
@@ -263,7 +263,7 @@ class Sale extends React.Component {
 					<Col lg={5} className="text-center">
 						<p className="custom-t4 mb-3">Kamu telah memilih</p><br/>
 						<p className="custom-t1">{product.name}</p>
-						<img src={`http://vending.smartvending.com${product.url}`} className="img-thumbnail custom-thumbnail border-0  text-center" alt="product" />
+						<img src={`${process.env.REACT_APP_API}${product.url}`} className="img-thumbnail custom-thumbnail border-0  text-center" alt="product" />
 						<p className="mt-3 custom-t1"><strong>{Formatter.money(product.price)}</strong></p>
 					</Col>
 

@@ -14,12 +14,12 @@ const Product = (props) => {
 			{
 				products.map((product, index) => (
 						<Col key={index} className="radio-product m-3">
-							<input type="radio" id={product.id} data-name={product.name} data-url={`http://vending.smartvending.com${product.image_url}`} name="radioProduct" onChange={handleOnRadioChange}/>
+							<input type="radio" id={product.id} data-name={product.name} data-url={`${process.env.REACT_APP_API}${product.image_url}`} name="radioProduct" onChange={handleOnRadioChange}/>
 							<label id={"lbl-" + product.id} className={`radio-img mb-4 ${selectedProduct === product.id ? 'card-checked' : ''}`} htmlFor={product.id}> 
 								<div id={"card_" + index} className="card">
 									<div className="card-body text-center">
 										<Image
-												src={`http://vending.smartvending.com${product.image_url}`}
+												src={`${process.env.REACT_APP_API}${product.image_url}`}
 												className="btn-thumbnail mt-3"
 												alt={product.name}
 										/>

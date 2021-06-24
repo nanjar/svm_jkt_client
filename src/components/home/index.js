@@ -5,14 +5,12 @@ import '../../App.css';
 import { Spinner, Container, Row } from 'react-bootstrap';
 
 const Home = (props) => {
-	const [replyStatus, setReplyStatus] = useState(false);
 	const [machineCode, setMachineCode] = useState("");
 	const [chkMissingConfigs, setChkMissingConfigs] = useState([]);
 	const [chkMissingResources, setChkMissingResources] = useState([]);
 	const socket = useContext(SocketContext);
 
 	useEffect(() => {
-		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 200, reply_to: 'button_pressed' })
 		const url = `${process.env.REACT_APP_API}/api/home.json`;
 		console.log(url);
 		fetch(url)
@@ -23,7 +21,6 @@ const Home = (props) => {
 				throw new Error("Network response was not ok.");
 			})
 			.then(response => {
-				setReplyStatus(response.success);
 				setMachineCode(response.machine_code);
 				setChkMissingConfigs((response.missing_configs.length > 0 )? response.missing_configs.map(x => x['value']) : []);
 				setChkMissingResources((response.missing_resources.length > 0) ? response.missing_resources.map(x => x['value']) : []);
@@ -64,7 +61,7 @@ const Home = (props) => {
 
 	return <Container fluid>
 	{
-		(replyStatus && (machineCode==="" || chkMissingConfigs.includes(false) || chkMissingResources.includes(false))) ? <MachineSetup/> : <MachineShop />
+		(machineCode==="" || chkMissingConfigs.includes(false) || chkMissingResources.includes(false)) ? <MachineSetup/> : <MachineShop />
 	}
 	</Container>;
 }
