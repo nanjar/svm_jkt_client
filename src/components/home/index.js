@@ -19,7 +19,6 @@ class Home extends React.Component {
 	}
 
 	componentDidMount() {
-		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 200, reply_to: 'button_pressed' })
 		const url = `${process.env.REACT_APP_API}/api/home.json`;
 		console.log(url)
 		fetch(url)

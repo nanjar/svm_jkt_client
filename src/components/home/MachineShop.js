@@ -6,6 +6,7 @@ import Crontab from 'reactjs-crontab';
 import logo from '../../assets/static_images/Logo.png';
 import btn_press from '../../assets/static_images/button.gif';
 import { Container, Row, Col, Button } from 'react-bootstrap';
+const BUTTON_E = "button_pressed";
 const sendHealth = () => {
     console.log('sending health')
     SERVER_REQ.get('/api/health.json', { vending: 0, vending_temp: 3.0 });
@@ -15,10 +16,11 @@ const MachineShop = () => {
     const history = useHistory();
     useEffect(() => {
         let button_pressed = false;
+		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 200, reply_to: BUTTON_E })
         socket.on('error', function(){
             console.log('error')
         })
-        socket.on('button_pressed', async (data) => {
+        socket.on(BUTTON_E, async (data) => {
             data = JSON.parse(data);
             console.log(data);
             if(button_pressed)
@@ -27,7 +29,7 @@ const MachineShop = () => {
             const button = data.button_no
             if(button === 0 )
                 return;
-            socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: 'button_pressed' });
+            socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
             console.log('pressed')
             const button_req = await SERVER_REQ.get(`http://vending.smartvending.com/api/buttons/${button}.json`);
             console.log(button_req);
@@ -38,7 +40,7 @@ const MachineShop = () => {
             history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
         })
         return () => {
-            socket.off('button_pressed')
+            socket.off(BUTTON_E)
         }
     }, [history, socket]);
 
