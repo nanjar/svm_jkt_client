@@ -18,7 +18,7 @@ const AutoTopup = (props) => {
 	const [showModal, setShowModal] = useState(false);
 
 	useEffect(() => {
-		const url = "http://vending.smartvending.com/api/topups/layouts.json"; 
+		const url = `${process.env.REACT_APP_API}/api/topups/layouts.json`; 
 		
 		fetch(url)
 			.then(response => {
@@ -132,7 +132,7 @@ const AutoTopup = (props) => {
 		});
 
 		console.log(preparedData);
-		const button_put = await SERVER_REQ.put(`http://vending.smartvending.com/api/stocks/1.json`, preparedData);
+		const button_put = await SERVER_REQ.put(`${process.env.REACT_APP_API}/api/stocks/1.json`, preparedData);
 		console.log(button_put);
 		if (button_put.response.success) {
 			props.history.push("/management")
@@ -188,7 +188,7 @@ const AutoTopup = (props) => {
 					<Row className="justify-content-center">
 						<Col lg={5} className="text-center">
 							<div className="p-1 align-self-center">
-								<img src={`http://vending.smartvending.com${productURL}`} className="img-thumbnail border-0" alt={productName} />
+								<img src={`${process.env.REACT_APP_API}${productURL}`} className="img-thumbnail border-0" alt={productName} />
 								<h1 className="text-center text-uppercase custom-t3">{productName}</h1>
 							</div>
 						</Col>

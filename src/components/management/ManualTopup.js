@@ -19,7 +19,7 @@ const ManualTopup = (props) => {
 	const [contentMsg, setContentMsg] = useState("");
 
 	useEffect(() => {
-		const url = "http://vending.smartvending.com/api/topups/layouts.json"; 
+		const url = `${process.env.REACT_APP_API}/api/topups/layouts.json`; 
 
 		fetch(url)
 			.then(response => {
@@ -65,7 +65,7 @@ const ManualTopup = (props) => {
 				if (parseInt(slotId) === slot.slot_id) {
 					setToStockQty(slot.to_stock);
 					setProductId(slot.product_id);
-					setProductURL(`http://vending.smartvending.com${slot.image}`);
+					setProductURL(`${process.env.REACT_APP_API}${slot.image}`);
 					setProductName(slot.product_name);
 				} 
 			});
@@ -82,7 +82,7 @@ const ManualTopup = (props) => {
 			setShowModal(true);
 			setContentMsg(msg);
 		} else {
-			const button_post = await SERVER_REQ.post(`http://vending.smartvending.com/api/stocks.json`, {'slot_id': slotId, 'to_stock': toStockQty, 'product_id': productId});
+			const button_post = await SERVER_REQ.post(`${process.env.REACT_APP_API}/api/stocks.json`, {'slot_id': slotId, 'to_stock': toStockQty, 'product_id': productId});
 			console.log(button_post);
 			if (button_post.response.success) {
 				props.history.push("/management")
