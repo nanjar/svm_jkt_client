@@ -45,7 +45,7 @@ const Home = (props) => {
 				resourcesWarn = <p className='text-center text-uppercase text-warning custom-t0 align-self-center'>Missing resources!</p>;
 			}
 		} else {
-			code = <p className='text-center text-uppercase custom-t0 align-self-center'><strong>Machine Setup ... </strong></p>;
+			code = <p className='text-center text-uppercase custom-t0 align-self-center'>Machine Setup ...</p>;
 		}
 
 		return <Container fluid>
