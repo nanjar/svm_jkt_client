@@ -79,13 +79,13 @@ const MachineShop = () => {
 		<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0"}} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>Hidden Button</Button>
         <Row>
             <Col lg={7} className='justify-content-center'>
-                <div className='p-2 align-self-center'>
+                <div className='p-2 align-self-center text-center'>
                     <img src={logo} className='img-thumbnail border-0' alt='Logo' />
                 </div>
             </Col>
             <Col lg={5} className='justify-content-center'>
-                <div className='p-2 align-self-center'>
-                  <img src={btn_press} className='img-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
+                <div className='p-2 align-self-center text-center'>
+                  <img src={btn_press} className='product-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
                 </div>
             </Col>
         </Row>

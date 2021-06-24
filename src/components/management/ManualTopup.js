@@ -77,11 +77,19 @@ const ManualTopup = (props) => {
 	}
 
 	const handleBtnConfirmOnClick = async() => {
-		const button_post = await SERVER_REQ.post(`http://vending.smartvending.com/api/stocks.json`, {'slot_id': slotId, 'to_stock': toStockQty, 'product_id': productId});
-		console.log(button_post);
-		if (button_post.response.success) {
-			props.history.push("/management")
+		if (slotId === "" || toStockQty === 0) {
+			let msg = "Please key in the slot number and set the amount.";
+			setShowModal(true);
+			setContentMsg(msg);
+		} else {
+			const button_post = await SERVER_REQ.post(`http://vending.smartvending.com/api/stocks.json`, {'slot_id': slotId, 'to_stock': toStockQty, 'product_id': productId});
+			console.log(button_post);
+			if (button_post.response.success) {
+				props.history.push("/management")
+			}
 		}
+		
+		
 	}
 
 	const handleButtonOk = () => {
@@ -163,7 +171,7 @@ const ManualTopup = (props) => {
 					<Row className="mb-2">
 						<label className="text-uppercase custom-t2">Slot</label><br/>
 						<Col lg={10} className="p-0">
-							<input type="text" onClick={handleShowNumpad} value={slotId} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} />
+							<input type="text" onClick={handleShowNumpad} value={slotId} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="TYPE SLOT NUMBER" />
 						</Col>
 					</Row>
 

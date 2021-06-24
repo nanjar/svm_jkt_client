@@ -153,13 +153,13 @@ const AutoTopup = (props) => {
 					slotData.map((rowData, index) => (
 						<Row key={index} className="justify-content-center">
 							{
-								rowData.map(data => (<Col lg="1" key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={data.tied ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t3 mt-1 mb-1 ml-2 mr-2" data-slotid={data.slot_id} >{data.to_stock ? data.to_stock + "/" + data.max_qty : "-"}</p></Col>))
+								rowData.map(data => (<Col lg="1" key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={data.tied ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t3 mt-1 mb-1 ml-2 mr-2" data-slotid={data.slot_id} >{(data.to_stock && (data.max_qty>data.current_stock)) ? data.to_stock + "/" + data.max_qty : "-"}</p></Col>))
 							}
 						</Row>
 					)) : modifiedSlotData.map((rowData, index) => (
 						<Row key={index} className="justify-content-center">
 							{
-								rowData.map(data => (<Col lg="1" key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={data.tied ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t3 mt-1 mb-1 ml-2 mr-2" data-slotid={data.slot_id} >{data.to_stock ? data.to_stock + "/" + data.max_qty : "-"}</p></Col>))
+								rowData.map(data => (<Col lg="1" key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={data.tied ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t3 mt-1 mb-1 ml-2 mr-2" data-slotid={data.slot_id} >{(data.to_stock && (data.max_qty>data.current_stock)) ? data.to_stock + "/" + data.max_qty : "-"}</p></Col>))
 							}
 						</Row>
 					))

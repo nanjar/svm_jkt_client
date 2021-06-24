@@ -147,9 +147,9 @@ class ButtonMapping extends React.Component {
 
 				<Modal show={showModal} size="lg" centered>
 					<Modal.Body>
-						<Row className="w-100 justify-content-center text-uppsercase custom-t2 text-center">
-							<Image alt={mappedProduct.name} src={`http://vending.smartvending.com${mappedProduct.image_url}`} />
-							This button is mapped to {mappedProduct.name}. {modalTextPostFix}
+						<Row className="w-100 justify-content-center text-center">
+							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`http://vending.smartvending.com${mappedProduct.image_url}`} />
+							<p className="text-uppsercase custom-t2">This button is mapped to {mappedProduct.name}. {modalTextPostFix}</p>
 						</Row>
 					</Modal.Body>
 					<Modal.Footer className="text-center">

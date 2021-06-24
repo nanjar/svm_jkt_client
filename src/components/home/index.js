@@ -1,26 +1,20 @@
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
+import {SocketContext} from '../../services/socket';
 import MachineShop from './MachineShop';
 import '../../App.css';
-import { Spinner } from 'react-bootstrap';
+import { Spinner, Container, Row } from 'react-bootstrap';
 
-import {SocketContext} from '../../services/socket';
+const Home = (props) => {
+	const [replyStatus, setReplyStatus] = useState(false);
+	const [machineCode, setMachineCode] = useState("");
+	const [chkMissingConfigs, setChkMissingConfigs] = useState([]);
+	const [chkMissingResources, setChkMissingResources] = useState([]);
+	const socket = useContext(SocketContext);
 
-class Home extends React.Component {
-	constructor(props) {
-		super(props);
-		// this.socket = SocketContext._currentValue;
-		// this.socket = props.socket;
-		this.state = {
-			reply_status: false,
-			machine_code: "",
-			start: "",
-			end: ""
-		}
-	}
-
-	componentDidMount() {
+	useEffect(() => {
+		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 200, reply_to: 'button_pressed' })
 		const url = `${process.env.REACT_APP_API}/api/home.json`;
-		console.log(url)
+		console.log(url);
 		fetch(url)
 			.then(response => {
 				if (response.ok) {
@@ -29,53 +23,51 @@ class Home extends React.Component {
 				throw new Error("Network response was not ok.");
 			})
 			.then(response => {
-				this.setState({
-					reply_status: response.success,
-					machine_code: response.machine_code
-				});
+				setReplyStatus(response.success);
+				setMachineCode(response.machine_code);
+				setChkMissingConfigs((response.missing_configs.length > 0 )? response.missing_configs.map(x => x['value']) : []);
+				setChkMissingResources((response.missing_resources.length > 0) ? response.missing_resources.map(x => x['value']) : []);
 			})
-			.catch(() => this.props.history.push("/"));
-	}
+			.catch(error => console.log(error.message));
+		
+			return function cleanup() {
+				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });
+			};
+	}, [machineCode, socket]);
 
-	componentWillUnmount(){
-		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' })
-	}
+	const MachineSetup = () => {	
+		let code, configsWarn, resourcesWarn;
+		if (machineCode) {
+			code = <p className='text-center custom-t0 align-self-center'>MACHINE CODE - <span className="custom-t0"><strong> {machineCode} </strong></span></p>;
 
-	MachineSetup = () => {
-		const machine_code = this.state.machine_code;
-		let code;
-		if (machine_code) {
-			code = <h1 className='text-center display-1 align-self-center'>MACHINE CODE - <span className="custom-t0"><strong> {machine_code} </strong></span></h1>;
+			if (chkMissingConfigs.includes(false)) {
+				configsWarn = <p className='text-center text-uppercase text-warning custom-t0 align-self-center'>Missing configs!</p>;
+			}
+
+			if (chkMissingResources.includes(false)) {
+				resourcesWarn = <p className='text-center text-uppercase text-warning custom-t0 align-self-center'>Missing resources!</p>;
+			}
 		} else {
-			code = <h1 className='text-center display-1 align-self-center'><strong>Machine Setup ... </strong></h1>;
+			code = <p className='text-center text-uppercase custom-t0 align-self-center'><strong>Machine Setup ... </strong></p>;
 		}
-		return <div className="m-3">
-			<div className='row d-flex justify-content-center'>
-				<Spinner animation="border" className="custom-spinner" />
+
+		return <Container fluid>
+			<Row className='justify-content-center'>
+				<Spinner animation="border" className="custom-spinner custom-t0" />
 				<br />
-			</div>
-			<div className='row col-12 justify-content-center mt-4'>{code}</div>
-		</div>;
-	}
+			</Row>
+			<Row className='justify-content-center mt-4'>{code}</Row>
+			<Row className='justify-content-center mt-4'>{configsWarn}</Row>
+			<Row className='justify-content-center mt-4'>{resourcesWarn}</Row>
+		</Container>;
+	};
 
-	Machine = () => {
-		const reply_status = this.state.reply_status;
-		const Machine = reply_status ? MachineShop : this.MachineSetup;
-		return <Machine />
+	return <Container fluid>
+	{
+		(replyStatus && (machineCode==="" || chkMissingConfigs.includes(false) || chkMissingResources.includes(false))) ? <MachineSetup/> : <MachineShop />
 	}
-
-	render() {
-		const Machine = this.Machine;
-		return (
-			<div className="vw-100 vh-100 d-flex align-items-center">
-				<div className="container-fluid">
-					<Machine />
-				</div>
-			</div>
-		);
-	}
+	</Container>;
 }
 
-Home.contextType = SocketContext;
-
+// Home.contextType = SocketContext;
 export default Home;
