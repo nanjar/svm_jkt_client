@@ -83,7 +83,8 @@
 }
 
 .btn-thumbnail {
-	height: 350px !important;
+	width: 90% !important;
+	height: 370px !important;
 }
 
 /* HIDE RADIO */

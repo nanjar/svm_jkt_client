@@ -27,8 +27,8 @@ class Sale extends React.Component {
 			showCancel: false, // flag for cancel button of popup box
 			loadingQR: true,
 			showModal: false,
-			imgWidth: "85vh",
-			imgHeight: "60vh"
+			imgWidth: "80vh",
+			imgHeight: "50vh"
 		}
 
 		this.requestQrCode = this.requestQrCode.bind(this);
@@ -228,14 +228,19 @@ class Sale extends React.Component {
 	}
 
 	handleCancelPayment() {
+		const {transactionId} = this.state;
 		console.log(this._isMounted);
-		if (this._isMounted) {
-			this.setState({ 
-				cancelBtnClicked: true, 
-				showCancel: false 
-			}, () => {
-				this.cancelAtTimeOut();
-			});
+		if (transactionId) {
+			if (this._isMounted) {
+				this.setState({ 
+					cancelBtnClicked: true, 
+					showCancel: false 
+				}, () => {
+					this.cancelAtTimeOut();
+				});
+			}
+		} else {
+			this.props.history.push("/");
 		}
 	}
 
@@ -262,14 +267,14 @@ class Sale extends React.Component {
 					</Col>
 
 					<Col lg={7} className="justify-content-center text-center">
-						<div className="p-2 align-self-center mb-3">
+						<div className="p-2 align-self-center">
 							<p className="custom-t4 mb-3">{checkQrStatus ? 'Scan QR Code to pay' : 'Requesting QR Code'}</p>
 						</div>
 						<div className="w-100 text-center m-3">
 							<img src={qrCodeURL} className="img-fluid" style={{width: imgWidth, height: imgHeight}} alt="TEKAN TOMBOL UNTUK MEMULAI"></img>
 						</div>
 
-						<div className="align-self-center mt-3 text-center">
+						<div className="align-self-center text-center">
 							<button type="button" className="btn btn-primary btn-lg btn-info" onClick={this.handleCancelPayment}>
 								<p className="custom-t1 mb-3 text-uppercase">Cancel Payment</p>
 							</button>
