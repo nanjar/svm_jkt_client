@@ -146,7 +146,7 @@ const AutoTopup = (props) => {
 	return (
 		<Container fluid className="text-uppercase">
 			<Row className="justify-content-center">
-				<p className="text-center custom-t2">Confirm the restocked quantity for slots</p>
+				<p className="text-center custom-t2">KONFIRMASI UNTUK JUMLAH RESTOCK SLOT</p> {/* confirm the restocked quantity for slots  */}
 			</Row>
 			{
 				(modifiedSlotData.length === 0) ? 
@@ -167,13 +167,13 @@ const AutoTopup = (props) => {
 			<Row className="justify-content-center mt-4">
 				<div className="text-center col p-2 align-self-center">
 					<Link to="/management" className="btn btn-lg btn-warning">
-						<h2 className="text-center text-uppercase display-4">Cancel</h2>
+						<h2 className="text-center text-uppercase display-4">BATAL</h2> {/* cancel */}
 					</Link>
 				</div>
 
 				<div className="text-center col p-2 align-self-center">
 					<button type="button" className="btn btn-lg btn-info text-uppercase font-weight-bold" onClick={handleBtnMainConfirmOnClick}>
-						<h2 className="text-center text-uppercase display-4">Confirm</h2>
+						<h2 className="text-center text-uppercase display-4">LANJUT</h2> {/* confirm */}
 					</button>
 				</div>
 			</Row>
@@ -181,7 +181,7 @@ const AutoTopup = (props) => {
 			<Modal show={showModal} size="xl" centered>
 				<Modal.Header>
 					<Modal.Title className="custom-t2 text-uppercase">
-						Confirm Restocked Quantity
+						KONFIRMASI JUMLAH STOCK ULANG {/* confirm restocked quantity */}
 					</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
@@ -195,7 +195,7 @@ const AutoTopup = (props) => {
 
 						<Col lg={7} className="align-self-center text-uppercase custom-t2">
 							<Row>
-								<label className="text-uppercase custom-t2">Quantity</label><br/>
+								<label className="text-uppercase custom-t2">JUMLAH</label><br/> {/* quantity */}
 								<Col lg={2} className="p-0">
 									<input type="button" value="-" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t2" onClick={handleMinus} />
 								</Col>
@@ -213,13 +213,13 @@ const AutoTopup = (props) => {
 				<Modal.Footer className="text-center">
 					<div className="text-center">
 						<Button variant="warning" type="button" className="text-uppercase" onClick={handleModalClose}>
-							<h2 className="text-center text-uppercase custom-t3">Cancel</h2>
+							<h2 className="text-center text-uppercase custom-t3">BATAL</h2> {/* cancel */}
 						</Button>
 					</div>
 
 					<div className="text-center">
 						<Button variant="info" type="button" className="text-uppercase" onClick={handleBtnSubConfirmOnClick}>
-							<h2 className="text-center text-uppercase custom-t3">Confirm</h2>
+							<h2 className="text-center text-uppercase custom-t3">LANJUT</h2> {/* confirm */}
 						</Button>
 					</div>
 				</Modal.Footer>

@@ -70,7 +70,7 @@ const ManualTopup = (props) => {
 				} 
 			});
 		} else {
-			let msg = (parseInt(slotId) > 60) ? "Invalid slot! Please key in the valid slot number." : "Slot " + slotId + " is inactive. Please key in the active slot number";
+			let msg = (parseInt(slotId) > 60) ? "SLOT TIDAK SAH! HARAP MASUKKAN NOMOR SLOT YANG SAH" : "Slot " + slotId + "  TIDAK AKTIF. HARAP MASUKKAN NOMOR SLOT AKTIF"; // cond 1: invalid slot! please key in the valid slot number, cond 2: Slot slot_id is inactive. please key in the active slot number.
 			setShowModal(true);
 			setContentMsg(msg);
 		}
@@ -78,7 +78,7 @@ const ManualTopup = (props) => {
 
 	const handleBtnConfirmOnClick = async() => {
 		if (slotId === "" || toStockQty === 0) {
-			let msg = "Please key in the slot number and set the amount.";
+			let msg = "HARAP MASUKKAN NOMOR SLOT DAN SETEL JUMLAH PRODUK"; // please key in the slot number and set the quantity.
 			setShowModal(true);
 			setContentMsg(msg);
 		} else {
@@ -156,7 +156,7 @@ const ManualTopup = (props) => {
 	return (
 		<Container fluid>
 			<Row className="justify-content-center mb-5">
-				<h1 className="text-center text-uppercase display-3">Confirm/Edit the restocked quantity</h1>
+				<h1 className="text-center text-uppercase display-3">KONFIRMASI/SUNTING JUMLAH STOCK ULANG</h1> {/* confirm/edit the restocked quantity */}
 			</Row>
 
 			<Row className="justify-content-center mt-5 mb-5">
@@ -169,9 +169,9 @@ const ManualTopup = (props) => {
 
 				<Col lg={7} className="align-self-center text-uppercase custom-t2">
 					<Row className="mb-2">
-						<label className="text-uppercase custom-t2">Slot</label><br/>
+						<label className="text-uppercase custom-t2">SLOT</label><br/>
 						<Col lg={10} className="p-0">
-							<input type="text" onClick={handleShowNumpad} value={slotId} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="TYPE SLOT NUMBER" />
+							<input type="text" onClick={handleShowNumpad} value={slotId} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="MASUKKAN NOMOR SLOT" /> {/* enter the slot number */}
 						</Col>
 					</Row>
 
@@ -193,13 +193,13 @@ const ManualTopup = (props) => {
 			<Row className="mt-5">
 				<div className="text-center col p-2 align-self-center">
 					<Link to="/management" className="btn btn-lg btn-warning">
-							<h2 className="text-center text-uppercase display-4">Cancel</h2>
+							<h2 className="text-center text-uppercase display-4">BATAL</h2> {/* cancel */}
 					</Link>
 				</div>
 
 				<div className="text-center col p-2 align-self-center">
 					<button type="button" className="btn btn-lg btn-info text-uppercase font-weight-bold" onClick={handleBtnConfirmOnClick}>
-						<h2 className="text-center text-uppercase display-4">Confirm</h2>
+						<h2 className="text-center text-uppercase display-4">LANJUT</h2> {/* confirm */}
 					</button>
 				</div>
 			</Row>
@@ -211,7 +211,7 @@ const ManualTopup = (props) => {
 				<Modal.Footer className="text-center">
 					<div className="text-center">
 						<button type="button" onClick={handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
-							<h2 className="text-center text-uppercase custom-t2">Ok</h2>
+							<h2 className="text-center text-uppercase custom-t2">OK</h2>
 						</button>
 					</div>
 				</Modal.Footer>

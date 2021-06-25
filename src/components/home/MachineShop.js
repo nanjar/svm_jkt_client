@@ -44,6 +44,7 @@ const MachineShop = () => {
         }
     }, [history, socket]);
 
+	// eslint-disable-next-line
 	const tasks = useMemo(() => [
 		{
 			fn: sendHealth,

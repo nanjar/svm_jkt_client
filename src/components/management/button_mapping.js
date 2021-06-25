@@ -18,8 +18,8 @@ class ButtonMapping extends React.Component {
 			tappedButton: false,
 			showModal: false,
 			selectedProduct: false,
-			modalTextPostFix: "Do you want to Edit?",
-			confirmButtonText: "confirm"
+			modalTextPostFix: "APAKAH ANDA INGIN MENYUNTING?", // do you want to edit?
+			confirmButtonText: "LANJUT" // confirm 
 		}
 		this.handleCancelBtn = this.handleCancelBtn.bind(this);
 		this.handleModalCancelBtn = this.handleModalCancelBtn.bind(this);
@@ -117,7 +117,7 @@ class ButtonMapping extends React.Component {
 						this.setState({
 							showModal: true,
 							modalTextPostFix: "",
-							confirmButtonText: "ok",
+							confirmButtonText: "OK",
 						})
 					} 
 				});
@@ -149,12 +149,12 @@ class ButtonMapping extends React.Component {
 					<Modal.Body>
 						<Row className="w-100 justify-content-center text-center">
 							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${process.env.REACT_APP_API}${mappedProduct.image_url}`} />
-							<p className="text-uppsercase custom-t2">This button is mapped to {mappedProduct.name}. {modalTextPostFix}</p>
-						</Row>
+							<p className="text-uppsercase custom-t2">TOMBOL INI DIPETAKAN UNTUK {mappedProduct.name}. {modalTextPostFix}</p>
+						</Row> {/* this button is mapped to */}
 					</Modal.Body>
 					<Modal.Footer className="text-center">
 						<Button variant="warning" onClick={this.handleModalCancelBtn} className="text-uppercase custom-t2">
-							cancel
+							BATAL {/* cancel */}
 						</Button>
 						<Button variant="info" onClick={this.handleConfirmButtonOnClick} className="text-uppercase custom-t2">
 							{confirmButtonText}

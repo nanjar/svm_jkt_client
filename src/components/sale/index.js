@@ -68,8 +68,8 @@ class Sale extends React.Component {
 				if (this.state.statusChanged === "initial") {
 					if (this._isMounted) {
 						this.setState({
-							titleMsg: "Connection timed out",
-							contentMsg: "Cannot connect to payment server. Please try again!",
+							titleMsg: "WAKTU KONEKSI HABIS", // connection timeout
+							contentMsg: "TIDAK DAPAT TERHUBUNG KE SERVER, SILAKAN COBA LAGI!", // cannot connect to payment server. please try again
 							statusChanged: "timeout",
 							showModal: true
 						});
@@ -110,8 +110,8 @@ class Sale extends React.Component {
 				console.log("Status code - " + reqQrCode.response.status_code);
 				if (this._isMounted) {
 					this.setState({
-						titleMsg: "Cannot Connect to Server",
-						contentMsg: "Please try again!",
+						titleMsg: "TIDAK DAPAT TERHUBUNG KE SERVER", // cannot connect to server
+						contentMsg: "SILAKAN COBA LAGI!", // please try again
 						statusChanged: "qrerror",
 						showModal: true
 					});
@@ -124,8 +124,8 @@ class Sale extends React.Component {
 	warningTimeOut = () => {
 		if (this._isMounted) {
 			this.setState({
-				titleMsg: "Payment Expiry Warning",
-				contentMsg: "Your payment is going to expire soon. Click OK if you still need time to pay.",
+				titleMsg: "PERINGATAN KEDALUWARSA PEMBAYARAN", // payment expiry warning
+				contentMsg: "PEMBAYARAN ANDA AKAN SEGERA KEDALUWARSA. KLIK “OK” JIKA ANDA MEMERLUKAN WAKTU UNTUK PEMBAYARAN", // your payment is going to expire soon. click OK if you still need time to pay
 				statusChanged: "warned",
 				showCancel: true,
 				showModal: true
@@ -141,8 +141,8 @@ class Sale extends React.Component {
 			if (statusChanged === "initial") {
 				if (this._isMounted) {
 					this.setState({
-						titleMsg: "Connection timed out",
-						contentMsg: "Your payment connection is timed out. Please try again!",
+						titleMsg: "WAKTU KONEKSI HABIS", //connection timeout
+						contentMsg: "KONEKSI PEMBAYARAN ANDA TELAH HABIS. SILAKAN COBA LAGI!", // your payment connection is timeout. please try again
 						statusChanged: "timeout",
 						showModal: true
 					});
@@ -186,8 +186,8 @@ class Sale extends React.Component {
 				} else {
 					if (this._isMounted) {
 						this.setState({
-							titleMsg: "Payment Expired",
-							contentMsg: "Please try again",
+							titleMsg: "PEMBAYARAN KEDARLUWARSA", // payment expired
+							contentMsg: "HARAP COBA KEMBALI!", // please try again
 							statusChanged: "timeout",
 							showCancel: false,
 							showModal: true
@@ -260,8 +260,8 @@ class Sale extends React.Component {
 		return (
 			<Container fluid className="text-uppercase m-3">
 				<Row>
-					<Col lg={5} className="text-center">
-						<p className="custom-t4 mb-3">Kamu telah memilih</p><br/>
+					<Col lg={5} className="text-center"> 
+						<p className="custom-t4 mb-3">ANDA TELAH MEMILIH </p><br/> {/* you have choose */}
 						<p className="custom-t1">{product.name}</p>
 						<img src={`${process.env.REACT_APP_API}${product.url}`} className="img-thumbnail custom-thumbnail border-0  text-center" alt="product" />
 						<p className="mt-3 custom-t1"><strong>{Formatter.money(product.price)}</strong></p>
@@ -269,15 +269,15 @@ class Sale extends React.Component {
 
 					<Col lg={7} className="justify-content-center text-center">
 						<div className="p-2 align-self-center">
-							<p className="custom-t4 mb-3">{checkQrStatus ? 'Scan QR Code to pay' : 'Requesting QR Code'}</p>
-						</div>
+							<p className="custom-t4 mb-3">{checkQrStatus ? 'PINDAH KODE QR UNTUK PEMBAYARAN' : 'MEMINTA KODE QR'}</p>
+						</div> {/* cond 1: scan qr code to pay, cond 2: requesting qr code */}
 						<div className="w-100 text-center m-3">
-							<img src={qrCodeURL} className="img-fluid" style={{width: imgWidth, height: imgHeight}} alt="TEKAN TOMBOL UNTUK MEMULAI"></img>
+							<img src={qrCodeURL} className="img-fluid" style={{width: imgWidth, height: imgHeight}} alt="QR CODE"></img>
 						</div>
 
 						<div className="align-self-center text-center">
 							<button type="button" className="btn btn-primary btn-lg btn-info" onClick={this.handleCancelPayment}>
-								<p className="custom-t1 mb-3 text-uppercase">Cancel Payment</p>
+								<p className="custom-t1 mb-3 text-uppercase">BATALKAN PEMBAYARAN</p> {/* cancel payment */}
 							</button>
 						</div>
 					</Col>
@@ -295,13 +295,13 @@ class Sale extends React.Component {
 					<Modal.Footer className="text-center">
 						<div className="text-center">
 							<button type="button" style={{display: showCancel ? 'block' : 'none' }} onClick={this.handleCancelPayment} className="btn btn-lg btn-warning text-uppercase font-weight-bold " data-dismiss="modal">
-								<h2 className="text-center text-uppercase custom-t2">Cancel</h2>
+								<h2 className="text-center text-uppercase custom-t2">BATAL</h2> {/* cancel */}
 							</button>
 						</div>
 
 						<div className="text-center">
 							<button type="button" onClick={this.handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
-								<h2 className="text-center text-uppercase custom-t2">Ok</h2>
+								<h2 className="text-center text-uppercase custom-t2">OK</h2>
 							</button>
 						</div>
 					</Modal.Footer>

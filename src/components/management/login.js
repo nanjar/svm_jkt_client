@@ -40,13 +40,13 @@ const Login = (props) => {
 		<Container fluid>
 			<Row className="justify-content-center">
 				<Col lg={5}>
-					<input type="text" onClick={handleShowNumpad} value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="TYPE PASSCODE" />
+					<input type="text" onClick={handleShowNumpad} value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="JENIS KODE KATA SANDI" /> {/* type passcode */}
 				</Col>
 			</Row>
 
 			<Row className="justify-content-center text-center mt-4">
 				<Col lg={4}>
-					<Button variant="info" className="text-uppercase custom-t1">Login</Button>
+					<Button variant="info" className="text-uppercase custom-t1">MASUK</Button> {/* login */}
 				</Col>
 			</Row>
 

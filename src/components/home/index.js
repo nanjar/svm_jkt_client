@@ -35,17 +35,21 @@ const Home = (props) => {
 	const MachineSetup = () => {	
 		let code, configsWarn, resourcesWarn;
 		if (machineCode) {
-			code = <p className='text-center custom-t0 align-self-center'>MACHINE CODE - <span className="custom-t0"><strong> {machineCode} </strong></span></p>;
+			// MACHINE CODE
+			code = <p className='text-center custom-t0 align-self-center'>KODE MESIN - <span className="custom-t0"><strong> {machineCode} </strong></span></p>;
 
 			if (chkMissingConfigs.includes(false)) {
-				configsWarn = <p className='text-center text-uppercase text-warning custom-t0 align-self-center'>Missing configs!</p>;
+				//Missing configs
+				configsWarn = <p className='text-center text-uppercase text-warning custom-t0 align-self-center'>KONFIGURASI HILANG!</p>;
 			}
 
 			if (chkMissingResources.includes(false)) {
-				resourcesWarn = <p className='text-center text-uppercase text-warning custom-t0 align-self-center'>Missing resources!</p>;
+				// Missing resources!
+				resourcesWarn = <p className='text-center text-uppercase text-warning custom-t0 align-self-center'>SUMBER DARA HILANG!</p>;
 			}
 		} else {
-			code = <p className='text-center text-uppercase custom-t0 align-self-center'>Machine Setup ...</p>;
+			// Machine Setup ... 
+			code = <p className='text-center text-uppercase custom-t0 align-self-center'>PENGATURAN MESIN</p>;
 		}
 
 		return <Container fluid>

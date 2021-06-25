@@ -5,7 +5,6 @@ import { SocketContext } from "../../services/socket";
 import LoadingImage from '../../assets/static_images/success.gif';
 import DispenseSuccess from "./dispense_success";
 import DispenseError from "./dispense_error";
-import {SERVER_REQ} from '../../helpers';
 const DISPENSE_E = "dispense";
 
 const DISPENSE_CODE_TEXT = {
@@ -49,7 +48,7 @@ const Dispensing = () => {
 		return () => {
 			socket.offAny(DISPENSE_E)
 		}
-	}, [])
+	}, [slot_id, socket])
 	return (
 		<Container fluid>
 			{
@@ -57,8 +56,8 @@ const Dispensing = () => {
 				? 
 					<Row className="justify-content-center text-uppercase m-3">
 						<div className="p-2 align-self-center mb-3">
-							<p className="text-center custom-t0">Payment Success</p>
-							<p className="text-center custom-t4">Machine is dispensing your product ...</p>
+							<p className="text-center custom-t0">PEMBAYARAN BERHASIL</p> {/* payment success */}
+							<p className="text-center custom-t4">MESIN SEDANG MENYIAPKAN PRODUK ANDA ...</p> {/* machine is dispensing your product  */}
 						</div>
 						<div className="p-2 text-center mb-3">
 							<img src={LoadingImage} className="img-thumbnail border-0" alt="Loading..."></img>
