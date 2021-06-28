@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import SERVER_REQ from '../../helpers/Request';
 import '../../App.css';
 import { Container, Row, Col, Modal, Button } from 'react-bootstrap';
@@ -12,7 +12,7 @@ const Login = (props) => {
 	const timerId = useRef(0);
 	
 	useEffect(() => {
-		timerId.current = setTimeout(() => { handleTimeout(); }, 30000); // redirect to home page after 30 seconds if there's no interaction
+		timerId.current = setTimeout(() => { handleTimeout(); }, 30000); // redirect to home page after 30 seconds of no interaction
 
 		return function cleanup() {
 			if (timerId.current === 0) { clearTimeout(timerId); }

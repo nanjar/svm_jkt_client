@@ -64,21 +64,6 @@ class ButtonMapping extends React.Component {
 
 	componentDidMount() {
 		this.startSocket();
-		// const self=this;
-		// const button = 6;
-		// self.setState({ tappedButton: button }, async () => {
-		// 	const url = `http://vending.smartvending.com/api/buttons/${button}/detail.json`;
-		// 	const button_req = await SERVER_REQ.get(url);
-		// 	const button_response = button_req.response
-		// 	const button_product = button_response.detail.product
-		// 	const unassigned_products = button_response.unassign_products;
-		// 	this.setState({mappedProduct: button_product, products: unassigned_products}, () =>{
-		// 		if( button_product ) {
-		// 			this.setState({showModal: true})
-		// 		} 
-		// 	});
-		// 	console.log(button_req)
-		// })
 	}
 
 	handleCancelBtn = () => {

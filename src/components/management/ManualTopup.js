@@ -55,7 +55,7 @@ const ManualTopup = (props) => {
 	const handleSlotId = () => {
 		console.log("num " + numInput);
 		console.log("slot " + slotId);
-		const uniqSlotId = slotData.map(x => x['slot_id']);
+		const uniqSlotId = (slotData.length > 0) ? slotData.map(x => x['slot_id']) : [];
 
 		console.log(uniqSlotId);
 		if (uniqSlotId.includes(parseInt(slotId))) {
