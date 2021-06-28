@@ -85,11 +85,9 @@ const ManualTopup = (props) => {
 			const button_post = await SERVER_REQ.post(`${process.env.REACT_APP_API}/api/stocks.json`, {'slot_id': slotId, 'to_stock': toStockQty, 'product_id': productId});
 			console.log(button_post);
 			if (button_post.response.success) {
-				props.history.push("/management")
+				props.history.push("/management");
 			}
 		}
-		
-		
 	}
 
 	const handleButtonOk = () => {

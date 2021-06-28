@@ -52,23 +52,31 @@ const MachineShop = () => {
             name: 'healthcheck',
             id: '1'
 		}
-	])
-    let start, end;
-    const handleMouseDown = () => {
-        start = new Date();
-    }
+	]);
 
-    const handleMouseUp = () => {
-        const minTime = 5000; 
-        const maxTime = 10000;
-        let delta;
-        end = new Date();
-        delta = end - start;
-        console.log("Delta - " + delta);
-        if (delta > minTime && delta < maxTime) {
-            history.push(`/management/login`);
-        }
-    }
+	let start, end, clickBtn1, clickBtn2; 
+
+	const handleMouseDown = () => {
+			start = new Date();
+	}
+
+	const handleMouseUp = (event) => {
+		let btn = event.target.getAttribute("data-btn");
+		const minTime = 5000; 
+		const maxTime = 10000;
+		let delta;
+		end = new Date();
+		delta = end - start;
+		console.log("Delta - " + delta);
+		if (delta > minTime && delta < maxTime) {
+			if (btn === "1") { clickBtn1 = true }
+			if (btn === "2") { clickBtn2 = true }
+			console.log(clickBtn1, clickBtn2);
+			if (clickBtn1 && clickBtn2) {
+				history.push(`/management/login`);
+			}
+		}
+	}
 
     return <Container fluid>
         <Crontab
@@ -77,7 +85,8 @@ const MachineShop = () => {
                 hidden: true
             }}
         />
-		<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0"}} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>Hidden Button</Button>
+				<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0"}} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
+				<Button className="custom-t2" style={{position: "absolute", top: "0px", right: "0px", opacity: "0"}} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
         <Row>
             <Col lg={7} className='justify-content-center'>
                 <div className='p-2 align-self-center text-center'>
