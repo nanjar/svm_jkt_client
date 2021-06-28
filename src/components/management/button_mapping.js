@@ -42,7 +42,7 @@ class ButtonMapping extends React.Component {
 			self.context.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 500, reply_to: 'set_button' });
 			const button = data.button_no;
 			self.setState({ tappedButton: button }, async () => {
-				const url = `${process.env.REACT_APP_API}/api/buttons/${button}/detail.json`;
+				const url = `/api/buttons/${button}/detail.json`;
 				const button_req = await SERVER_REQ.get(url);
 				const button_response = button_req.response
 				const button_product = button_response.detail.product

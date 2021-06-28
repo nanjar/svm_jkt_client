@@ -11,7 +11,7 @@ const Home = (props) => {
 	const socket = useContext(SocketContext);
 
 	useEffect(() => {
-		const url = `${process.env.REACT_APP_API}/api/home.json`;
+		const url = `/api/home.json`;
 		console.log(url);
 		fetch(url)
 			.then(response => {

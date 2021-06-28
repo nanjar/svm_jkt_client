@@ -9,13 +9,13 @@ import { SocketContext, socket } from "./services/socket";
 
 // eslint-disable-next-line
 ReactDOM.render(
-	<React.StrictMode>
+	// <React.StrictMode>
 		<SocketContext.Provider value={socket}>
 			<div className="vw-100 vh-100 d-flex align-items-center">
 				<App />
 			</div>
 		</SocketContext.Provider>,
-	</React.StrictMode>,
+	// </React.StrictMode>
 	document.getElementById('root')
 );
 
