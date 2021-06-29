@@ -1,17 +1,12 @@
-import { useContext, useEffect, useMemo } from 'react';
+import { useContext, useEffect } from 'react';
 import { SocketContext } from '../../services/socket';
 import SERVER_REQ  from '../../helpers/Request';
 import {useHistory} from 'react-router-dom';
-import Crontab from 'reactjs-crontab';
 import logo from '../../assets/static_images/Logo.png';
 import btn_press from '../../assets/static_images/button.gif';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 
 const BUTTON_E = "button_pressed";
-const sendHealth = () => {
-    console.log('sending health')
-    SERVER_REQ.get('/api/health.json', { vending: 0, vending_temp: 3.0 });
-}
 const MachineShop = () => {
     const socket = useContext(SocketContext);
     const history = useHistory();
@@ -43,17 +38,7 @@ const MachineShop = () => {
         return () => {
             socket.off(BUTTON_E)
         }
-    }, [history, socket]);
-
-	// eslint-disable-next-line
-	const tasks = useMemo(() => [
-		{
-			fn: sendHealth,
-			config: '5 * * * *',
-            name: 'healthcheck',
-            id: '1'
-		}
-	]);
+    });
 
 	let start, end, clickBtn1, clickBtn2; 
 
@@ -80,12 +65,6 @@ const MachineShop = () => {
 	}
 
     return <Container fluid>
-        <Crontab
-            tasks={tasks}
-            dashboard={{
-                hidden: true
-            }}
-        />
 				<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0"}} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
 				<Button className="custom-t2" style={{position: "absolute", top: "0px", right: "0px", opacity: "0"}} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
         <Row>

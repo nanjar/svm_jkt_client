@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
-import { SocketContext } from '../../services/socket';
+import {SocketContext} from '../../services/socket';
+import SERVER_REQ  from '../../helpers/Request';
 import MachineShop from './MachineShop';
 import '../../App.css';
 import { Spinner, Container, Row } from 'react-bootstrap';
@@ -27,10 +28,16 @@ const Home = (props) => {
 			})
 			.catch(error => console.log(error.message));
 		
-			return function cleanup() {
-				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });
-			};
-	}, [machineCode, socket]);
+		
+		socket.on('machine_temperature_update', (data) => {
+            data = JSON.parse(data);
+			SERVER_REQ.get('/api/health.json', { vending: 2, vending_temp: data.value });
+		})
+		
+		return function cleanup() {
+			socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });
+		};
+	});
 
 	const MachineSetup = () => {	
 		let code, configsWarn, resourcesWarn;
