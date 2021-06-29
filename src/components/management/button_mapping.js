@@ -134,7 +134,7 @@ class ButtonMapping extends React.Component {
 					<Modal.Body>
 						<Row className="w-100 justify-content-center text-center">
 							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${process.env.REACT_APP_API}${mappedProduct.image_url}`} />
-							<p className="text-uppsercase custom-t2">TOMBOL INI DIPETAKAN UNTUK {mappedProduct.name}. {modalTextPostFix}</p>
+							<p className="text-uppsercase custom-t2">TOMBOL {tappedButton} DIPETAKAN UNTUK {mappedProduct.name}. {modalTextPostFix}</p>
 						</Row> {/* this button is mapped to */}
 					</Modal.Body>
 					<Modal.Footer className="text-center">
