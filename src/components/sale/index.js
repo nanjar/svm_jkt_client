@@ -59,7 +59,7 @@ class Sale extends React.Component {
 
 	requestQrCode = async() => {
 		const {product, retry} = this.state;
-		const reqQrCode = await SERVER_REQ.post(`${process.env.REACT_APP_API}/api/sales/payment.json`, {'amount': product.price, 'product_id': product.id});
+		const reqQrCode = await SERVER_REQ.post(`/api/sales/payment.json`, {'amount': product.price, 'product_id': product.id});
 		
 		console.log(reqQrCode);
 
@@ -174,7 +174,7 @@ class Sale extends React.Component {
 
 	cancelAtTimeOut = async() => {
 		const {transactionId, cancelBtnClicked} = this.state;
-		const reqCancelQrCode = await SERVER_REQ.post(`${process.env.REACT_APP_API}/api/sales/cancel.json`, {'transaction_id': transactionId});
+		const reqCancelQrCode = await SERVER_REQ.post(`/api/sales/cancel.json`, {'transaction_id': transactionId});
 		console.log(reqCancelQrCode);
 
 		if (reqCancelQrCode.response) {
@@ -202,7 +202,7 @@ class Sale extends React.Component {
 	checkPaymentStatus = async() => {
 		const {transactionId} = this.state;
 		console.log(`${process.env.REACT_APP_API}/api/sales/status.json?transaction_id=${transactionId}`);
-		const reqPaymentStatus = await SERVER_REQ.get(`${process.env.REACT_APP_API}/api/sales/status.json?transaction_id=${transactionId}`);
+		const reqPaymentStatus = await SERVER_REQ.get(`/api/sales/status.json?transaction_id=${transactionId}`);
 
 		console.log(reqPaymentStatus);
 

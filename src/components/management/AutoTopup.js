@@ -108,6 +108,7 @@ const AutoTopup = (props) => {
 	}
 
 	const handleBtnMainConfirmOnClick = async(event) => {
+		console.log("hello")
 		let preparedData = {};
 		let preparedDataIndex =0;
 
@@ -117,22 +118,34 @@ const AutoTopup = (props) => {
 				x = element.slot_id;
 				y = element.to_stock;
 				z = element.product_id;
-				toStockData.forEach(tostock => {
-					if (parseInt(tostock.slot_id) === parseInt(element.slot_id) && parseInt(tostock.tostock_qty) !== parseInt(element.slot_id)) {
-						x = element.slot_id; 
-						y = tostock.tostock_qty;
-						z = element.product_id;
-						preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
-						preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
-						preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
-						preparedDataIndex++;
-					}
-				});
+				if (toStockData.length > 0) {
+					toStockData.forEach(tostock => {
+						if (parseInt(tostock.slot_id) === parseInt(element.slot_id) && parseInt(tostock.tostock_qty) !== parseInt(element.slot_id)) {
+							x = element.slot_id; 
+							y = tostock.tostock_qty;
+							z = element.product_id;
+							preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
+							preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
+							preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
+							preparedDataIndex++;
+						} else {
+							preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
+							preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
+							preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
+							preparedDataIndex++;
+						}
+					});
+				} else {
+					preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
+					preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
+					preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
+					preparedDataIndex++;
+				}
 			});
 		});
 
 		console.log(preparedData);
-		const button_put = await SERVER_REQ.put(`${process.env.REACT_APP_API}/api/stocks/1.json`, preparedData);
+		const button_put = await SERVER_REQ.put(`/api/stocks/1.json`, preparedData);
 		console.log(button_put);
 		if (button_put.response.success) {
 			props.history.push("/management")
@@ -150,21 +163,21 @@ const AutoTopup = (props) => {
 			</Row>
 			{
 				(modifiedSlotData.length === 0) ? 
-					slotData.map((rowData, index) => (
-						<Row key={index} className="justify-content-center">
-							{
-								rowData.map(data => (<Col lg="1" key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={data.tied ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t3 mt-1 mb-1 ml-2 mr-2" data-slotid={data.slot_id} >{(data.to_stock && (data.max_qty>data.current_stock)) ? data.to_stock + "/" + data.max_qty : "-"}</p></Col>))
-							}
-						</Row>
-					)) : modifiedSlotData.map((rowData, index) => (
-						<Row key={index} className="justify-content-center">
-							{
-								rowData.map(data => (<Col lg="1" key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={data.tied ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t3 mt-1 mb-1 ml-2 mr-2" data-slotid={data.slot_id} >{(data.to_stock && (data.max_qty>data.current_stock)) ? data.to_stock + "/" + data.max_qty : "-"}</p></Col>))
-							}
-						</Row>
-					))
+				slotData.map((rowData, index) => (
+					<Row key={index} className="justify-content-center">
+						{
+							rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t3 mt-3 mb-3" data-slotid={data.slot_id} >{(data.slot_active ? (((data.to_stock && (data.max_qty>data.current_stock)) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
+						}
+					</Row>
+				)) : modifiedSlotData.map((rowData, index) => (
+					<Row key={index} className="justify-content-center">
+						{
+							rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t3 mt-3 mb-3" data-slotid={data.slot_id} >{(data.slot_active ? (((data.to_stock && (data.max_qty>data.current_stock)) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
+						}
+					</Row>
+				))
 			}
-			<Row className="justify-content-center mt-4">
+			<Row className="justify-content-center mt-5">
 				<div className="text-center col p-2 align-self-center">
 					<Link to="/management" className="btn btn-lg btn-warning">
 						<h2 className="text-center text-uppercase display-4">BATAL</h2> {/* cancel */}

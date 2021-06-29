@@ -1,22 +1,22 @@
 import { Link } from 'react-router-dom';
 import { Row, Col, Container } from 'react-bootstrap';
-import { useEffect, useRef } from 'react';
+// import { useEffect, useRef } from 'react';
 
 const Management = (props) => {
-	const timerId = useRef(0);
+	// const timerId = useRef(0);
 
-	useEffect(() => {
-		timerId.current = setTimeout(() => { handleTimeout(); }, 180000); // redirect to home page after 3 minutes of no interaction
+	// useEffect(() => {
+	// 	timerId.current = setTimeout(() => { handleTimeout(); }, 180000); // redirect to home page after 3 minutes of no interaction
 
-		return function cleanup() {
-			if (timerId.current === 0) { clearTimeout(timerId); }
-		}	
-	});
+	// 	return function cleanup() {
+	// 		clearTimeout(timerId.current); 
+	// 	}	
+	// });
 
-	const handleTimeout = () => {
-		timerId.current = 0;
-		props.history.push("/");
-	}
+	// const handleTimeout = () => {
+	// 	// timerId.current = 0;
+	// 	props.history.push("/");
+	// }
 
 	return <Container fluid>
 		<Row className="mt-1">

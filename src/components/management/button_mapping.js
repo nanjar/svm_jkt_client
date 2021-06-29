@@ -42,7 +42,7 @@ class ButtonMapping extends React.Component {
 			self.context.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 500, reply_to: 'set_button' });
 			const button = data.button_no;
 			self.setState({ tappedButton: button }, async () => {
-				const url = `${process.env.REACT_APP_API}/api/buttons/${button}/detail.json`;
+				const url = `/api/buttons/${button}/detail.json`;
 				const button_req = await SERVER_REQ.get(url);
 				const button_response = button_req.response
 				const button_product = button_response.detail.product
@@ -92,9 +92,9 @@ class ButtonMapping extends React.Component {
 	handleSubmitBtn = async () => {
 		const {tappedButton, selectedProduct} = this.state;
 		console.log(tappedButton, selectedProduct);
-		const button_post = await SERVER_REQ.put(`${process.env.REACT_APP_API}/api/buttons//${tappedButton}.json`, {'button[product_id]': selectedProduct});
+		const button_post = await SERVER_REQ.put(`/api/buttons//${tappedButton}.json`, {'button[product_id]': selectedProduct});
 		if (button_post.response.success) {
-			const button_get =  await SERVER_REQ.get(`${process.env.REACT_APP_API}/api/buttons/${tappedButton}/detail.json`);
+			const button_get =  await SERVER_REQ.get(`/api/buttons/${tappedButton}/detail.json`);
 			if (button_get.response.detail.product) {
 				const button_product = button_get.response.detail.product;
 				this.setState({ mappedProduct: button_product}, () => {

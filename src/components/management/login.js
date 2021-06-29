@@ -15,7 +15,7 @@ const Login = (props) => {
 		timerId.current = setTimeout(() => { handleTimeout(); }, 30000); // redirect to home page after 30 seconds of no interaction
 
 		return function cleanup() {
-			if (timerId.current === 0) { clearTimeout(timerId); }
+			clearTimeout(timerId.current); 
 		}		
 	}); 
 
@@ -44,7 +44,7 @@ const Login = (props) => {
 			setContentMsg("JENIS KODE KATA SANDI"); // type password
 			setShowModal(true);
 		} else {
-			const button_post = await SERVER_REQ.get(`${process.env.REACT_APP_API}/api/users.json`, {'pin': pin});
+			const button_post = await SERVER_REQ.get(`/api/users.json`, {'pin': pin});
 			const success = button_post.response.success;
 			console.log(button_post);
 			if (success) {
@@ -67,7 +67,8 @@ const Login = (props) => {
 	}
 
 	const handleTimeout = () => {
-		timerId.current = 0;
+		// timerId.current = 0;
+		clearTimeout(timerId.current);
 		setShowModal(false);
 		props.history.push("/");
 	}
