@@ -67,7 +67,6 @@ const Login = (props) => {
 	}
 
 	const handleTimeout = () => {
-		// timerId.current = 0;
 		clearTimeout(timerId.current);
 		setShowModal(false);
 		props.history.push("/");

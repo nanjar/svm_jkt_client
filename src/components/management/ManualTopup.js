@@ -17,6 +17,8 @@ const ManualTopup = (props) => {
 	const [showNumpad, setShowNumpad] = useState(false);
 	const [numInput, setNumInput] = useState("");
 	const [contentMsg, setContentMsg] = useState("");
+	const [maxNumRestock, setMaxNumRestock] = useState("");
+	const [btnDisable, setBtndisable] = useState("");
 
 	useEffect(() => {
 		const url = `${process.env.REACT_APP_API}/api/topups/layouts.json`; 
@@ -32,12 +34,16 @@ const ManualTopup = (props) => {
 				setSlotData(response.data);
 			})
 			.catch(error => console.log(error.message));
-	}, [slotId, numInput]);
+	}, []);
 
 	const handlePlus = () => {
-		if (parseInt(toStockQty) < ((parseInt(maxQty) === 0) ? 12 : parseInt(maxQty))) {
-			setToStockQty(parseInt(toStockQty) + 1);
-		} 
+		if (parseInt(toStockQty) === parseInt(maxNumRestock)) {
+			setBtndisable("disable");
+		} else {
+			if (parseInt(toStockQty) < ((parseInt(maxQty) === 0) ? 12 : parseInt(maxQty))) {
+				setToStockQty(parseInt(toStockQty) + 1);
+			} 
+		}
 	}
 
 	const handleMinus = () => {
@@ -56,17 +62,23 @@ const ManualTopup = (props) => {
 		console.log("num " + numInput);
 		console.log("slot " + slotId);
 		const uniqSlotId = (slotData.length > 0) ? slotData.map(x => x['slot_id']) : [];
-
+		setBtndisable(false); // reset disabled button
 		console.log(uniqSlotId);
 		if (uniqSlotId.includes(parseInt(slotId))) {
 			slotData.forEach(slot => {
 				setToStockQty(0);
 				console.log(parseInt(slotId), slot.slot_id);
 				if (parseInt(slotId) === slot.slot_id) {
+					console.log(slot.to_stock, typeof slot.to_stock)
 					setToStockQty(slot.to_stock);
 					setProductId(slot.product_id);
 					setProductURL(`${process.env.REACT_APP_API}${slot.image}`);
 					setProductName(slot.product_name);
+					setMaxNumRestock(slot.to_stock);
+					if (slot.to_stock === 0) {
+						setContentMsg("slotnya penuh"); // slot is full
+						setShowModal(true); // show alert when to_stock is 0
+					}
 				} 
 			});
 		} else {
@@ -182,7 +194,7 @@ const ManualTopup = (props) => {
 							<input type="number" value={toStockQty} className="form-control border border-1 form-control-lg custom-t1" onChange={handleValueChange} readOnly={true} />
 						</Col>
 						<Col lg={2} className="p-0">
-							<input type="button" value="+" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={handlePlus} />
+							<input type="button" value="+" className={"form-control btn border border-1 form-control-lg font-weight-bold custom-t1 " + btnDisable} onClick={handlePlus} />
 						</Col>
 					</Row>
 				</Col>

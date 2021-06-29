@@ -23,6 +23,7 @@
     "react-actioncable-provider": "^1.0.3",
     "react-bootstrap": "^1.6.1",
     "react-dom": "^16.14.0",
+    "react-idle-timer": "^4.6.4",
     "react-midtrans": "^1.0.2",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",

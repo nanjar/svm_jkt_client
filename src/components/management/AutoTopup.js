@@ -16,6 +16,8 @@ const AutoTopup = (props) => {
 	const [maxQty, setMaxQty] = useState(0);
 	const [toStockData] = useState([]);
 	const [showModal, setShowModal] = useState(false);
+	const [showAlert, setShowAlert] = useState(false);
+	const [maxNumRestock, setMaxNumRestock] = useState("");
 
 	useEffect(() => {
 		const url = `${process.env.REACT_APP_API}/api/topups/layouts.json`; 
@@ -62,9 +64,15 @@ const AutoTopup = (props) => {
 	}, [modifiedSlotData]);
 
 	const handlePlus = () => {
-		if (parseInt(toStockQty) < ((parseInt(maxQty) === 0) ? 12 : parseInt(maxQty))) {
-			setToStockQty(parseInt(toStockQty) + 1);
-		} 
+		if (parseInt(maxNumRestock) !== parseInt(maxQty)) {
+			if (parseInt(toStockQty) < parseInt(maxNumRestock)) {
+				setToStockQty(parseInt(toStockQty) + 1);
+			} 
+		} else {
+			if (parseInt(toStockQty) <  parseInt(maxQty)) {
+				setToStockQty(parseInt(toStockQty) + 1);
+			} 
+		}
 	}
 
 	const handleMinus = () => {
@@ -82,13 +90,19 @@ const AutoTopup = (props) => {
 		event.preventDefault();
 		let slotId = event.target.getAttribute("data-slotid");
 		rawSlotData.forEach((data, index) => {
+			console.log(parseInt(data.to_stock) === 0);
 			if (parseInt(data.slot_id) === parseInt(slotId)) {
-				setToStockQty(data.to_stock);
-				setSlotId(slotId);
-				setMaxQty(data.max_qty);
-				setProductURL(data.image);
-				setProductName(data.product_name);
-				setShowModal(true);
+				if (parseInt(data.to_stock) === 0) {
+					setShowAlert(true);
+				} else {
+					setToStockQty(data.to_stock); // initial to stock quantity. it'll will change when +/- button on click
+					setMaxNumRestock(data.to_stock); // set max num to restock
+					setSlotId(slotId);
+					setMaxQty(data.max_qty);
+					setProductURL(data.image);
+					setProductName(data.product_name);
+					setShowModal(true);
+				}
 			}
 		});
 	} 
@@ -154,6 +168,10 @@ const AutoTopup = (props) => {
 
 	const handleModalClose = () => {
 		setShowModal(false);
+	}
+
+	const handleButtonOk = () => {
+		setShowAlert(false);
 	}
 
 	return (
@@ -234,6 +252,19 @@ const AutoTopup = (props) => {
 						<Button variant="info" type="button" className="text-uppercase" onClick={handleBtnSubConfirmOnClick}>
 							<h2 className="text-center text-uppercase custom-t3">LANJUT</h2> {/* confirm */}
 						</Button>
+					</div>
+				</Modal.Footer>
+			</Modal>
+
+			<Modal show={showAlert} size="xl" centered>
+				<Modal.Body>
+					<p className="custom-t2 text-uppercase">slotnya penuh</p> {/* slot is full */}
+				</Modal.Body>
+				<Modal.Footer className="text-center">
+					<div className="text-center">
+						<button type="button" onClick={handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
+							<h2 className="text-center text-uppercase custom-t2">OK</h2>
+						</button>
 					</div>
 				</Modal.Footer>
 			</Modal>

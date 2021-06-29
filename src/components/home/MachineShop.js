@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { SocketContext } from '../../services/socket';
 import SERVER_REQ  from '../../helpers/Request';
 import {useHistory} from 'react-router-dom';
@@ -40,26 +40,27 @@ const MachineShop = () => {
         }
     });
 
-	let start, end, clickBtn1, clickBtn2; 
-
 	const handleMouseDown = () => {
-			start = new Date();
+			// start = new Date();
+			setStart(new Date());
 	}
+	const [start, setStart] = useState(0);
+	const [clickBtn1, setClickBtn1] = useState(false);
 
 	const handleMouseUp = (event) => {
 		let btn = event.target.getAttribute("data-btn");
+		console.log("btn", start);
 		const minTime = 5000; 
 		const maxTime = 10000;
 		let delta;
-		end = new Date();
+		let end = new Date();
 		delta = end - start;
 		console.log("Delta - " + delta);
 		if (delta > minTime && delta < maxTime) {
-			if (btn === "1") { clickBtn1 = true }
-			if (btn === "2") { clickBtn2 = true }
-			console.log(clickBtn1, clickBtn2);
-			if (clickBtn1 && clickBtn2) {
-				history.push(`/management/login`);
+			if (btn === "1") { setClickBtn1(true) }
+			if (btn === "2") { 
+				if(clickBtn1) { history.push(`/management/login`); }
+				console.log("BtnClicked", clickBtn1, btn);
 			}
 		}
 	}

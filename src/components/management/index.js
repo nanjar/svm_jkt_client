@@ -1,27 +1,45 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+// import SERVER_REQ from '../../helpers/Request';
 import { Row, Col, Container } from 'react-bootstrap';
-// import { useEffect, useRef } from 'react';
+// import { useIdleTimer } from 'react-idle-timer';
 
 const Management = (props) => {
-	// const timerId = useRef(0);
+	const [piTemp] = useState(0);
+	const [machineTemp] = useState(0);
+	// const min = 5; // 5 minutes
 
-	// useEffect(() => {
-	// 	timerId.current = setTimeout(() => { handleTimeout(); }, 180000); // redirect to home page after 3 minutes of no interaction
+	// let timer = 1000 * 60 * min; // set timer
 
-	// 	return function cleanup() {
-	// 		clearTimeout(timerId.current); 
-	// 	}	
-	// });
+	// const handleOnAction = (event) => {
+	// 	console.log("user did something", event);
+	// 	timer = 1000 * 60 * min; // reset timer
+	// 	console.log("remaining time 1 ", getRemainingTime());
+	// }
 
-	// const handleTimeout = () => {
-	// 	// timerId.current = 0;
+	// const handleOnActive = (event) => {
+	// 	console.log("user is active", event);
+	// 	timer = 1000 * 60 * min; // reset timer
+	// 	console.log("remaining time 2 ", getRemainingTime());
+	// }
+
+	// const handleOnIdle = (event) => {
+	// 	console.log("user is idle", event);
+	// 	console.log("remaining time 3 ", getRemainingTime());
 	// 	props.history.push("/");
 	// }
 
+	// const { getRemainingTime } = useIdleTimer({
+	// 	timeout: timer,
+	// 	onIdle: handleOnIdle,
+	// 	onActive: handleOnActive,
+	// 	onAction: handleOnAction
+	// });
+
 	return <Container fluid>
 		<Row className="mt-1">
-			<Col lg={6}><span className="text-uppercase custom-t2">SUHU PERANGKAT - 33 C</span></Col> {/* device temp */}
-			<Col lg={6}><span className="text-uppercase float-end custom-t2">SUHU MESIN - 33 C</span></Col> {/* machine temp */}
+			<Col lg={6}><span className="text-uppercase custom-t2">SUHU PERANGKAT - {piTemp} C</span></Col> {/* device/pi temp */}
+			<Col lg={6}><span className="text-uppercase float-end custom-t2">SUHU MESIN - {machineTemp} C</span></Col> {/* machine temp */}
 		</Row> 
 		<Row>
 			<Col lg={6} className="bg-smvprimary">
