@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import {SocketContext} from '../../services/socket';
+import { SocketContext } from '../../services/socket';
 import MachineShop from './MachineShop';
 import '../../App.css';
 import { Spinner, Container, Row } from 'react-bootstrap';
@@ -11,7 +11,7 @@ const Home = (props) => {
 	const socket = useContext(SocketContext);
 
 	useEffect(() => {
-		const url = `/api/home.json`;
+		const url = `${process.env.REACT_APP_API}/api/home.json`;
 		console.log(url);
 		fetch(url)
 			.then(response => {

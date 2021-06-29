@@ -6,6 +6,7 @@ import Crontab from 'reactjs-crontab';
 import logo from '../../assets/static_images/Logo.png';
 import btn_press from '../../assets/static_images/button.gif';
 import { Container, Row, Col, Button } from 'react-bootstrap';
+
 const BUTTON_E = "button_pressed";
 const sendHealth = () => {
     console.log('sending health')
@@ -31,7 +32,7 @@ const MachineShop = () => {
                 return;
             socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
             console.log('pressed')
-            const button_req = await SERVER_REQ.get(`${process.env.REACT_APP_API}/api/buttons/${button}.json`);
+            const button_req = await SERVER_REQ.get(`/api/buttons/${button}.json`);
             console.log(button_req);
             const button_detail = button_req.response.data;
             const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url}
