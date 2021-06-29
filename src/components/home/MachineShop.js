@@ -12,7 +12,7 @@ const MachineShop = () => {
     const history = useHistory();
     useEffect(() => {
         let button_pressed = false;
-		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 200, reply_to: BUTTON_E })
+		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: BUTTON_E })
         socket.on('error', function(){
             console.log('error')
         })
@@ -36,9 +36,11 @@ const MachineShop = () => {
             history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
         })
         return () => {
+            console.log('Log out')
             socket.off(BUTTON_E)
+            socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
         }
-    });
+    },[]);
 
 	const handleMouseDown = () => {
 			// start = new Date();
@@ -48,8 +50,8 @@ const MachineShop = () => {
 	const [clickBtn1, setClickBtn1] = useState(false);
 
 	const handleMouseUp = (event) => {
-		let btn = event.target.getAttribute("data-btn");
-		console.log("btn", start);
+		let btn = event.target.dataset.btn;
+		console.log("btn", start, btn);
 		const minTime = 5000; 
 		const maxTime = 10000;
 		let delta;
@@ -66,8 +68,8 @@ const MachineShop = () => {
 	}
 
     return <Container fluid>
-				<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0"}} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
-				<Button className="custom-t2" style={{position: "absolute", top: "0px", right: "0px", opacity: "0"}} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
+				<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
+				<Button className="custom-t2" style={{position: "absolute", top: "0px", right: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
         <Row>
             <Col lg={7} className='justify-content-center'>
                 <div className='p-2 align-self-center text-center'>
