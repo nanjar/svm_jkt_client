@@ -34,7 +34,7 @@ class ButtonMapping extends React.Component {
 		const self=this;
 		let button_pressed = false;
 
-		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 500, reply_to: 'set_button' });
+		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: 'set_button' });
 		this.context.on('set_button', (data) => {
 			data = JSON.parse(data);
 			if(button_pressed) return;
