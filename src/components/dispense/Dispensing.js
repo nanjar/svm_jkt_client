@@ -50,23 +50,25 @@ const Dispensing = () => {
 		}
 	}, [slot_id, socket])
 	return (
-		<Container fluid>
-			{
-				isDispensing 
-				? 
-					<Row className="justify-content-center text-uppercase m-3">
-						<div className="p-2 align-self-center mb-3">
-							<p className="text-center custom-t0">PEMBAYARAN BERHASIL</p> {/* payment success */}
-							<p className="text-center custom-t4">MESIN SEDANG MENYIAPKAN PRODUK ANDA ...</p> {/* machine is dispensing your product  */}
-						</div>
-						<div className="p-2 text-center mb-3">
-							<img src={LoadingImage} className="img-thumbnail border-0" alt="Loading..."></img>
-						</div>
-					</Row>
-				:
-					dispenseResult !== 0  ? <DispenseError /> : <DispenseSuccess />
-			}
-		</Container>);
+		<div className="vw-100 vh-100 d-flex align-items-center">
+			<Container fluid>
+				{
+					isDispensing 
+					? 
+						<Row className="justify-content-center text-uppercase m-3">
+							<div className="p-2 align-self-center mb-3">
+								<p className="text-center custom-t0">PEMBAYARAN BERHASIL</p> {/* payment success */}
+								<p className="text-center custom-t4">MESIN SEDANG MENYIAPKAN PRODUK ANDA ...</p> {/* machine is dispensing your product  */}
+							</div>
+							<div className="p-2 text-center mb-3">
+								<img src={LoadingImage} className="img-thumbnail border-0" alt="Loading..."></img>
+							</div>
+						</Row>
+					:
+						dispenseResult !== 0  ? <DispenseError /> : <DispenseSuccess />
+				}
+			</Container>
+		</div>);
 }
 
 export default Dispensing;

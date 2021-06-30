@@ -10,10 +10,10 @@ const Product = (props) => {
 		<Row className="justify-content-center">
 			<h1 className="text-center text-uppercase display-4 mb-4">PILIH PRODUK UNTUK PEMETAAN</h1> {/* Choose the product to map */}
 		</Row>
-		<Row>
+		<Row className="justify-content-center">
 			{
 				products.map((product, index) => (
-						<Col key={index} className="radio-product m-3">
+						<Col key={index} lg={3} className="radio-product m-3">
 							<input type="radio" id={product.id} data-name={product.name} data-url={`${process.env.REACT_APP_API}${product.image_url}`} name="radioProduct" onChange={handleOnRadioChange}/>
 							<label id={"lbl-" + product.id} className={`radio-img mb-4 ${selectedProduct === product.id ? 'card-checked' : ''}`} htmlFor={product.id}> 
 								<div id={"card_" + index} className="card">

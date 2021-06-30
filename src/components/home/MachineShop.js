@@ -67,25 +67,27 @@ const MachineShop = () => {
 		}
 	}
 
-    return <Container fluid>
-				<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
-				<Button className="custom-t2" style={{position: "absolute", top: "0px", right: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
-        <Row>
-            <Col lg={7} className='justify-content-center'>
-                <div className='p-2 align-self-center text-center'>
-                    <img src={logo} className='img-thumbnail border-0' alt='Logo' />
-                </div>
-            </Col>
-            <Col lg={5} className='justify-content-center'>
-                <div className='p-2 align-self-center text-center'>
-                  <img src={btn_press} className='product-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
-                </div>
-            </Col>
-        </Row>
-        <Row className='justify-content-center mt-4'>
-            <p className='text-center custom-t1'><strong>SILAHKAN MEMULAI DENGAN MENEKAN TOMBOL PRODUK YANG MAU DIPILIH</strong></p>
-        </Row>
-    </Container>;
+    return <div className="vw-100 vh-100 d-flex align-items-center">
+				<Container fluid>
+					<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
+					<Button className="custom-t2" style={{position: "absolute", top: "0px", right: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
+					<Row>
+							<Col lg={7} className='justify-content-center'>
+									<div className='p-2 align-self-center text-center'>
+											<img src={logo} className='img-thumbnail border-0' alt='Logo' />
+									</div>
+							</Col>
+							<Col lg={5} className='justify-content-center'>
+									<div className='p-2 align-self-center text-center'>
+										<img src={btn_press} className='product-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
+									</div>
+							</Col>
+					</Row>
+					<Row className='justify-content-center mt-4'>
+							<p className='text-center custom-t1'><strong>SILAHKAN MEMULAI DENGAN MENEKAN TOMBOL PRODUK YANG MAU DIPILIH</strong></p>
+					</Row>
+			</Container>
+		</div>;
 }
 
 export default MachineShop;

@@ -18,6 +18,7 @@ class ButtonMapping extends React.Component {
 			tappedButton: false,
 			showModal: false,
 			selectedProduct: false,
+			hideCancelBtn: "",
 			modalTextPostFix: "APAKAH ANDA INGIN MENYUNTING?", // do you want to edit?
 			confirmButtonText: "LANJUT" // confirm 
 		}
@@ -64,6 +65,21 @@ class ButtonMapping extends React.Component {
 
 	componentDidMount() {
 		this.startSocket();
+		// const self=this;
+		// const button = 2;
+		// self.setState({ tappedButton: button }, async () => {
+		// 	const url = `http://vending.smartvending.com/api/buttons/${button}/detail.json`;
+		// 	const button_req = await SERVER_REQ.get(url);
+		// 	const button_response = button_req.response
+		// 	const button_product = button_response.detail.product
+		// 	const unassigned_products = button_response.unassign_products;
+		// 	this.setState({mappedProduct: button_product, products: unassigned_products}, () =>{
+		// 		if( button_product ) {
+		// 			this.setState({showModal: true})
+		// 		} 
+		// 	});
+		// 	console.log(button_req)
+		// })
 	}
 
 	handleCancelBtn = () => {
@@ -81,7 +97,7 @@ class ButtonMapping extends React.Component {
 			}
 		}, () => {
 			this.startSocket();
-		})
+		});
 	}
 	
 	handleOnRadioChange = (e) => {
@@ -103,6 +119,7 @@ class ButtonMapping extends React.Component {
 							showModal: true,
 							modalTextPostFix: "",
 							confirmButtonText: "OK",
+							hideCancelBtn: "d-none"
 						})
 					} 
 				});
@@ -114,8 +131,11 @@ class ButtonMapping extends React.Component {
 
 	handleConfirmButtonOnClick = () => {
 		const btnText = this.state.confirmButtonText;
-		this.setState({ showModal: false });
-		if (btnText === "ok") this.handleModalCancelBtn();
+		this.setState({ showModal: false }, () => {
+			if (btnText === "OK") {
+				this.handleModalCancelBtn();
+			} 
+		});
 	}
 
 	componentWillUnmount(){
@@ -123,7 +143,7 @@ class ButtonMapping extends React.Component {
 	}
 
 	render() {
-		const {tappedButton, mappedProduct={}, showModal, products, selectedProduct, modalTextPostFix, confirmButtonText} = this.state;
+		const {tappedButton, mappedProduct={}, showModal, products, selectedProduct, modalTextPostFix, confirmButtonText, hideCancelBtn} = this.state;
 		console.log(products);
 
 		return (
@@ -135,10 +155,11 @@ class ButtonMapping extends React.Component {
 						<Row className="w-100 justify-content-center text-center">
 							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${process.env.REACT_APP_API}${mappedProduct.image_url}`} />
 							<p className="text-uppsercase custom-t2">TOMBOL {tappedButton} DIPETAKAN UNTUK {mappedProduct.name}. {modalTextPostFix}</p>
-						</Row> {/* this button is mapped to */}
+						</Row> {/* button 5 is mapped to */}
+
 					</Modal.Body>
 					<Modal.Footer className="text-center">
-						<Button variant="warning" onClick={this.handleModalCancelBtn} className="text-uppercase custom-t2">
+						<Button variant="warning" onClick={this.handleModalCancelBtn} className={"text-uppercase custom-t2 " + hideCancelBtn}>
 							BATAL {/* cancel */}
 						</Button>
 						<Button variant="info" onClick={this.handleConfirmButtonOnClick} className="text-uppercase custom-t2">
