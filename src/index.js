@@ -11,9 +11,7 @@ import { SocketContext, socket } from "./services/socket";
 ReactDOM.render(
 	// <React.StrictMode>
 		<SocketContext.Provider value={socket}>
-			<div className="vw-100 vh-100 d-flex align-items-center">
-				<App />
-			</div>
+			<App />
 		</SocketContext.Provider>,
 	// </React.StrictMode>
 	document.getElementById('root')
