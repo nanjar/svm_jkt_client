@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 // import SERVER_REQ from '../../helpers/Request';
 import { Row, Col, Container } from 'react-bootstrap';
 // import { useIdleTimer } from 'react-idle-timer';
@@ -7,6 +7,15 @@ import { Row, Col, Container } from 'react-bootstrap';
 const Management = (props) => {
 	const [piTemp] = useState(0);
 	const [machineTemp] = useState(0);
+	const location = useLocation();
+	const history = useHistory()
+	useEffect(()=>{
+		if(!(location.state && location.state.login)){
+			history.push('/management/login');
+			return;
+		}
+		return () => {}
+	},[])
 	// const min = 5; // 5 minutes
 
 	// let timer = 1000 * 60 * min; // set timer

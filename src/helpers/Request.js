@@ -41,7 +41,6 @@ export default class Request{
         }
     }
     static async get(url, data={}){
-        console.log(window)
         let response = {},
             status = 200;
         try{
