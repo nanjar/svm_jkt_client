@@ -1,4 +1,5 @@
 import { Button, Container, Image, Row, Col } from 'react-bootstrap';
+import FORMATTER from '../../../helpers/Formatter';
 
 const Product = (props) => {
 	const {products, handleCancelBtn, selectedProduct, handleOnRadioChange = () => {}, handleSubmitBtn = () => {}} = props;

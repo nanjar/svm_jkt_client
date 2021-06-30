@@ -5,16 +5,21 @@ import FORMATTER  from '../../helpers/Formatter';
 import MachineShop from './MachineShop';
 import '../../App.css';
 import { Spinner, Container, Row } from 'react-bootstrap';
+import { useHistory } from "react-router-dom";
 
 const Home = (props) => {
 	const [machineCode, setMachineCode] = useState("");
 	const [chkMissingConfigs, setChkMissingConfigs] = useState([]);
 	const [chkMissingResources, setChkMissingResources] = useState([]);
 	const socket = useContext(SocketContext);
+	const history = useHistory()
 
 	useEffect(() => {
+		if(window.location.hostname !== "localhost"){
+			history.push('/management/login')
+			return;
+		}
 		const url = `${FORMATTER.api_base_url()}/api/home.json`;
-		console.log(url);
 		fetch(url)
 			.then(response => {
 				if (response.ok) {

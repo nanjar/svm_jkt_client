@@ -7,18 +7,22 @@ import btn_press from '../../assets/static_images/button.gif';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 
 const BUTTON_E = "button_pressed";
+const activate_button = (socket) => {
+	socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: BUTTON_E })
+}
 const MachineShop = () => {
     const socket = useContext(SocketContext);
     const history = useHistory();
     useEffect(() => {
         let button_pressed = false;
+        socket.on('connect', function(){
+            console.log('connected')
+        })
 		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: BUTTON_E })
         socket.on('error', function(){
             console.log('error')
         });
-        (async () => {
-            await SERVER_REQ.get(`/api/buttons/1.json`);
-        })();
+        
         socket.on(BUTTON_E, async (data) => {
             data = JSON.parse(data);
             console.log(data);
@@ -31,8 +35,14 @@ const MachineShop = () => {
             socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
             console.log('pressed')
             const button_req = await SERVER_REQ.get(`/api/buttons/${button}.json`);
-            console.log(button_req);
+			console.log(button_req)
+			const button_response = button_req.response
+			if(!button_response.success){
+				activate_button(socket);
+				return;
+			}
             const button_detail = button_req.response.data;
+			
             const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url}
             const url_params = new URLSearchParams(product_detail);
             console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);

@@ -208,11 +208,11 @@ class Sale extends React.Component {
 		const reqPaymentStatus = await SERVER_REQ.get(`/api/sales/status.json?transaction_id=${transactionId}`);
 
 		console.log(reqPaymentStatus);
-
-		if (reqPaymentStatus.response) {
+		const response = reqPaymentStatus.response;
+		if (response) {
 			console.log("Transaction status - " + reqPaymentStatus.response.transaction_status);
 			if (reqPaymentStatus.response.transaction_status === "settlement") {
-				this.props.history.push("/sales/success"); // Change after confirm what to response
+				this.props.history.push(`/dispense/${response.slot_id}/${response.sale_id}`); // Change after confirm what to response
 			} else {
 				if (this._isMounted) {
 					this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
@@ -267,7 +267,7 @@ class Sale extends React.Component {
 						<p className="custom-t4 mb-3">ANDA TELAH MEMILIH </p><br/> {/* you have choose */}
 						<p className="custom-t1">{product.name}</p>
 						<img src={`${FORMATTER.api_base_url()}${product.url}`} className="img-thumbnail custom-thumbnail border-0  text-center" alt="product" />
-						<p className="mt-3 custom-t1"><strong>{Formatter.money(product.price)}</strong></p>
+						<p className="mt-3 custom-t1"><strong>{FORMATTER.money(product.price)}</strong></p>
 					</Col>
 
 					<Col lg={7} className="justify-content-center text-center">
