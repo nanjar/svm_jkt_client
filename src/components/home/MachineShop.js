@@ -15,7 +15,10 @@ const MachineShop = () => {
 		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: BUTTON_E })
         socket.on('error', function(){
             console.log('error')
-        })
+        });
+        (async () => {
+            await SERVER_REQ.get(`/api/buttons/1.json`);
+        })();
         socket.on(BUTTON_E, async (data) => {
             data = JSON.parse(data);
             console.log(data);

@@ -1,5 +1,6 @@
 import React from "react";
 import SERVER_REQ from '../../helpers/Request';
+import FORMATTER from '../../helpers/Formatter';
 import { SocketContext } from '../../services/socket';
 import LandingPage from "./buttons/LandingPage";
 import Product from './buttons/Product';
@@ -133,7 +134,7 @@ class ButtonMapping extends React.Component {
 				<Modal show={showModal} size="lg" centered>
 					<Modal.Body>
 						<Row className="w-100 justify-content-center text-center">
-							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${process.env.REACT_APP_API}${mappedProduct.image_url}`} />
+							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_base_url()}${mappedProduct.image_url}`} />
 							<p className="text-uppsercase custom-t2">TOMBOL {tappedButton} DIPETAKAN UNTUK {mappedProduct.name}. {modalTextPostFix}</p>
 						</Row> {/* this button is mapped to */}
 					</Modal.Body>

@@ -1,6 +1,6 @@
 import React from "react";
 import SERVER_REQ from '../../helpers/Request';
-import Formatter from '../../helpers/Formatter';
+import FORMATTER from '../../helpers/Formatter';
 import '../../App.css';
 import logoImage from '../../assets/static_images/loading_qr.gif';
 import { Modal, Container, Row, Col } from 'react-bootstrap';
@@ -28,7 +28,8 @@ class Sale extends React.Component {
 			loadingQR: true,
 			showModal: false,
 			imgWidth: "80vh",
-			imgHeight: "50vh"
+			imgHeight: "50vh",
+			intervalId: false
 		}
 
 		this.requestQrCode = this.requestQrCode.bind(this);
@@ -73,7 +74,7 @@ class Sale extends React.Component {
 							statusChanged: "timeout",
 							showModal: true
 						});
-						this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
+						this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
 					}
 				}
 			} else {
@@ -96,6 +97,7 @@ class Sale extends React.Component {
 							let countdown = this.state.countdown;
 							if(this.state.countdown === 0){
 								countdown = 121
+								clearInterval(this.state.intervalId)
 								this.warningTimeOut();
 							} else {
 								countdown -= 1;
@@ -103,8 +105,9 @@ class Sale extends React.Component {
 							}
 							this.setState({ countdown: countdown });
 						}, 1000)
+					}, () => {
+						this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
 					});
-					this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
 				}
 			} else if (reqQrCode.response.status_code === "406") {
 				console.log("Status code - " + reqQrCode.response.status_code);
@@ -115,7 +118,7 @@ class Sale extends React.Component {
 						statusChanged: "qrerror",
 						showModal: true
 					});
-					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
+					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
 				}
 			}
 		}
@@ -146,7 +149,7 @@ class Sale extends React.Component {
 						statusChanged: "timeout",
 						showModal: true
 					});
-					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
+					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
 				}
 			} else if (statusChanged === "timeout") {
 				this.handleTimeout();
@@ -193,7 +196,7 @@ class Sale extends React.Component {
 							showModal: true
 						});
 					}
-					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 3000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
+					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
 				}
 			}
 		}
@@ -201,7 +204,7 @@ class Sale extends React.Component {
 
 	checkPaymentStatus = async() => {
 		const {transactionId} = this.state;
-		console.log(`${process.env.REACT_APP_API}/api/sales/status.json?transaction_id=${transactionId}`);
+		console.log(`${FORMATTER.api_base_url()}/api/sales/status.json?transaction_id=${transactionId}`);
 		const reqPaymentStatus = await SERVER_REQ.get(`/api/sales/status.json?transaction_id=${transactionId}`);
 
 		console.log(reqPaymentStatus);
@@ -255,7 +258,7 @@ class Sale extends React.Component {
   }
 
 	render() {
-		const {product, qrCodeURL, checkQrStatus, showModal, showCancel, titleMsg, contentMsg, imgWidth, imgHeight} = this.state;
+		const {product, qrCodeURL, checkQrStatus, countdown = 121, showModal, showCancel, titleMsg, contentMsg, imgWidth, imgHeight} = this.state;
 
 		return (
 			<Container fluid className="text-uppercase m-3">
@@ -263,7 +266,7 @@ class Sale extends React.Component {
 					<Col lg={5} className="text-center"> 
 						<p className="custom-t4 mb-3">ANDA TELAH MEMILIH </p><br/> {/* you have choose */}
 						<p className="custom-t1">{product.name}</p>
-						<img src={`${process.env.REACT_APP_API}${product.url}`} className="img-thumbnail custom-thumbnail border-0  text-center" alt="product" />
+						<img src={`${FORMATTER.api_base_url()}${product.url}`} className="img-thumbnail custom-thumbnail border-0  text-center" alt="product" />
 						<p className="mt-3 custom-t1"><strong>{Formatter.money(product.price)}</strong></p>
 					</Col>
 
@@ -276,6 +279,7 @@ class Sale extends React.Component {
 						</div>
 
 						<div className="align-self-center text-center">
+							{countdown === 121 ? "" : <div>QR Code expire in {countdown} second(s)</div>}
 							<button type="button" className="btn btn-primary btn-lg btn-info" onClick={this.handleCancelPayment}>
 								<p className="custom-t1 mb-3 text-uppercase">BATALKAN PEMBAYARAN</p> {/* cancel payment */}
 							</button>

@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import {SocketContext} from '../../services/socket';
 import SERVER_REQ  from '../../helpers/Request';
+import FORMATTER  from '../../helpers/Formatter';
 import MachineShop from './MachineShop';
 import '../../App.css';
 import { Spinner, Container, Row } from 'react-bootstrap';
@@ -12,7 +13,7 @@ const Home = (props) => {
 	const socket = useContext(SocketContext);
 
 	useEffect(() => {
-		const url = `${process.env.REACT_APP_API}/api/home.json`;
+		const url = `${FORMATTER.api_base_url()}/api/home.json`;
 		console.log(url);
 		fetch(url)
 			.then(response => {
