@@ -156,6 +156,7 @@ class ButtonMapping extends React.Component {
 							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${process.env.REACT_APP_API}${mappedProduct.image_url}`} />
 							<p className="text-uppsercase custom-t2">TOMBOL {tappedButton} DIPETAKAN UNTUK {mappedProduct.name}. {modalTextPostFix}</p>
 						</Row> {/* button 5 is mapped to */}
+
 					</Modal.Body>
 					<Modal.Footer className="text-center">
 						<Button variant="warning" onClick={this.handleModalCancelBtn} className={"text-uppercase custom-t2 " + hideCancelBtn}>

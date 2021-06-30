@@ -16,7 +16,10 @@ const LandingPage = (props) => {
 
 	console.log("LP", products);
 
-	return  <Container className="p-3">
+
+	const { products } = props; 
+
+	return <Container>
 		<Row className="justify-content-center text-center">
 			<p className="text-center text-uppercase custom-t1">TEKAN TOMBOL UNTUL PEMETAAN</p> {/* press button to map */}
 			<br/>
