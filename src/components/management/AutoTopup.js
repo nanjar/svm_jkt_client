@@ -1,5 +1,6 @@
 import {useState, useEffect} from "react";
 import SERVER_REQ from '../../helpers/Request';
+import FORMATTER from '../../helpers/Formatter';
 import { Link } from 'react-router-dom';
 import '../../App.css';
 import imgURL from '../../assets/static_images/no_image.png';
@@ -20,7 +21,7 @@ const AutoTopup = (props) => {
 	const [maxNumRestock, setMaxNumRestock] = useState("");
 
 	useEffect(() => {
-		const url = `${process.env.REACT_APP_API}/api/topups/layouts.json`; 
+		const url = `${FORMATTER.api_base_url()}/api/topups/layouts.json`; 
 		
 		fetch(url)
 			.then(response => {
@@ -208,21 +209,20 @@ const AutoTopup = (props) => {
 						</button>
 					</div>
 				</Row>
-
-				<Modal show={showModal} size="xl" centered>
-					<Modal.Header>
-						<Modal.Title className="custom-t2 text-uppercase">
-							KONFIRMASI JUMLAH STOCK ULANG {/* confirm restocked quantity */}
-						</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<Row className="justify-content-center">
-							<Col lg={5} className="text-center">
-								<div className="p-1 align-self-center">
-									<img src={`${process.env.REACT_APP_API}${productURL}`} className="img-thumbnail border-0" alt={productName} />
-									<h1 className="text-center text-uppercase custom-t3">{productName}</h1>
-								</div>
-							</Col>
+			<Modal show={showModal} size="xl" centered>
+				<Modal.Header>
+					<Modal.Title className="custom-t2 text-uppercase">
+						KONFIRMASI JUMLAH STOCK ULANG {/* confirm restocked quantity */}
+					</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<Row className="justify-content-center">
+						<Col lg={5} className="text-center">
+							<div className="p-1 align-self-center">
+								<img src={`${FORMATTER.api_base_url()}${productURL}`} className="img-thumbnail border-0" alt={productName} />
+								<h1 className="text-center text-uppercase custom-t3">{productName}</h1>
+							</div>
+						</Col>
 
 							<Col lg={7} className="align-self-center text-uppercase custom-t2">
 								<Row>

@@ -29,4 +29,12 @@ export default class Formatter{
     static date(date){
         // return moment(date);
     }
+    static api_base_url(){
+        var base_url = `${process.env.REACT_APP_API}`;
+        if(process.env.NODE_ENV === "production"){
+            const {hostname, protocol} = window.location
+            base_url = `${protocol}//${hostname}`
+        }
+        return base_url;
+    }
 }

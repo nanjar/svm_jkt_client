@@ -1,5 +1,6 @@
 import {useState, useEffect} from "react";
 import SERVER_REQ from '../../helpers/Request';
+import FORMATTER from '../../helpers/Formatter';
 import { Link } from 'react-router-dom';
 import '../../App.css';
 import imgURL from '../../assets/static_images/no_image.png';
@@ -21,7 +22,7 @@ const ManualTopup = (props) => {
 	const [btnDisable, setBtndisable] = useState("");
 
 	useEffect(() => {
-		const url = `${process.env.REACT_APP_API}/api/topups/layouts.json`; 
+		const url = `${FORMATTER.api_base_url()}/api/topups/layouts.json`; 
 
 		fetch(url)
 			.then(response => {
@@ -72,7 +73,7 @@ const ManualTopup = (props) => {
 					console.log(slot.to_stock, typeof slot.to_stock)
 					setToStockQty(slot.to_stock);
 					setProductId(slot.product_id);
-					setProductURL(`${process.env.REACT_APP_API}${slot.image}`);
+					setProductURL(`${FORMATTER.api_base_url()}${slot.image}`);
 					setProductName(slot.product_name);
 					setMaxNumRestock(slot.to_stock);
 					if (slot.to_stock === 0) {

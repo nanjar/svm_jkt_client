@@ -10,8 +10,15 @@ export default class Request{
     static formatURL(url, data={}){
         const params = new URLSearchParams(data)
         let params_delimeter = '?';
-        if(!url.includes('http'))
-            url = `${process.env.REACT_APP_API}${url}`
+        if(!url.includes('http')){
+            if ( process.env.NODE_ENV !== "production"){
+                url = `${process.env.REACT_APP_API}${url}`;
+            }else{
+                const {hostname, protocol} = window.location
+                url = `${protocol}//${hostname}${url}`
+            }
+        }
+
         if(url.includes('?'))
             params_delimeter = '&';
         url += params_delimeter + params;
@@ -34,6 +41,7 @@ export default class Request{
         }
     }
     static async get(url, data={}){
+        console.log(window)
         let response = {},
             status = 200;
         try{
