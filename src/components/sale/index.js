@@ -260,7 +260,7 @@ class Sale extends React.Component {
 	render() {
 		const {product, qrCodeURL, checkQrStatus, countdown = 121, showModal, showCancel, titleMsg, contentMsg, imgWidth, imgHeight} = this.state;
 
-		return (
+		return (<div className="vw-100 vh-100 d-flex align-items-center">
 			<Container fluid className="text-uppercase m-3">
 				<Row>
 					<Col lg={5} className="text-center"> 
@@ -311,7 +311,7 @@ class Sale extends React.Component {
 					</Modal.Footer>
 				</Modal>
 			</Container>
-    );
+		</div>);
 	}
 }
 
