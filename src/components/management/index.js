@@ -7,15 +7,17 @@ import { Row, Col, Container } from 'react-bootstrap';
 const Management = (props) => {
 	const [piTemp] = useState(0);
 	const [machineTemp] = useState(0);
+	
 	const location = useLocation();
-	const history = useHistory()
-	useEffect(()=>{
+	const history = useHistory();
+
+	useEffect(() => {
 		if(!(location.state && location.state.login)){
 			history.push('/management/login');
 			return;
 		}
 		return () => {}
-	},[])
+	}, []);
 	// const min = 5; // 5 minutes
 
 	// let timer = 1000 * 60 * min; // set timer
