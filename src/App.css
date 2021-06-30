@@ -1,3 +1,8 @@
+.custom-center {
+  display: flex;
+  align-items: center;
+}
+
 .custom-logo {
 	width: 90%;
 	height: 90%;
@@ -10,6 +15,11 @@
 
 .custom-thumbnail {
 	width: 90%;
+}
+
+.table-thumbnail {
+	width: 90% !important;
+	height: 90% !important;
 }
 
 .col {

@@ -4,7 +4,7 @@ import img_payment_success from '../../assets/static_images/success.gif';
 import { Row } from 'react-bootstrap';
 
 const Success = () => {
-	return (
+	return (<div className="vw-100 vh-100 d-flex align-items-center">
 		<Row className="justify-content-center m-3 text-uppercase">
 			<div className="p-2 align-self-center mb-3">
 				<p className="text-center custom-t0">PEMBAYARAN ANDA TELAH BERHASIL!</p>
@@ -16,7 +16,7 @@ const Success = () => {
 				<img src={img_payment_success} className="img-thumbnail border-0" alt="payment success!"></img>
 			</div>
 		</Row>
-	);
+	</div>);
 }
 
 export default Success;

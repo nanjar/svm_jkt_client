@@ -78,7 +78,7 @@ const Login = (props) => {
 
 	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']];
 		
-	return (
+	return (<div className="vw-100 vh-100 d-flex align-items-center">
 		<Container fluid>
 			<Row className="justify-content-center">
 				<Col lg={5}>
@@ -125,7 +125,7 @@ const Login = (props) => {
 				</Modal.Footer>
 			</Modal>
 		</Container>
-	);
+	</div>);
 }
 
 export default Login;

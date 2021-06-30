@@ -164,7 +164,7 @@ const ManualTopup = (props) => {
 		slotList.push(<option key={slot.slot_id} value={slot.product_id}>{slot.slot_id}</option>);
 	});
 
-	return (
+	return ( <div className="vw-100 vh-100 d-flex align-items-center">
 		<Container fluid>
 			<Row className="justify-content-center mb-5">
 				<h1 className="text-center text-uppercase display-3">KONFIRMASI/SUNTING JUMLAH STOCK ULANG</h1> {/* confirm/edit the restocked quantity */}
@@ -248,7 +248,7 @@ const ManualTopup = (props) => {
 				</Modal.Body>
 			</Modal>
 		</Container>
-	);
+	</div>);
 }
 
 export default ManualTopup;

@@ -60,15 +60,17 @@ const Home = (props) => {
 			code = <p className='text-center text-uppercase custom-t0 align-self-center'>PENGATURAN MESIN</p>;
 		}
 
-		return <Container fluid>
-			<Row className='justify-content-center'>
-				<Spinner animation="border" className="custom-spinner custom-t0" />
-				<br />
-			</Row>
-			<Row className='justify-content-center mt-4'>{code}</Row>
-			<Row className='justify-content-center mt-4'>{configsWarn}</Row>
-			<Row className='justify-content-center mt-4'>{resourcesWarn}</Row>
-		</Container>;
+		return <div className="vw-100 vh-100 d-flex align-items-center">
+			<Container fluid>
+				<Row className='justify-content-center'>
+					<Spinner animation="border" className="custom-spinner custom-t0" />
+					<br />
+				</Row>
+				<Row className='justify-content-center mt-4'>{code}</Row>
+				<Row className='justify-content-center mt-4'>{configsWarn}</Row>
+				<Row className='justify-content-center mt-4'>{resourcesWarn}</Row>
+			</Container>
+		</div>;
 	};
 
 	return <Container fluid>

@@ -1,6 +1,22 @@
-import { Button, Container, Row, Col } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import SERVER_REQ from '../../../helpers/Request';
+import { Button, Container, Row, Col, Image, Table } from 'react-bootstrap';
 
 const LandingPage = (props) => {
+	const [products, setProducts] = useState([]);
+
+	const getData = async() => {
+		const products_req = await SERVER_REQ.get(`/api/buttons.json`);
+		setProducts(products_req.response.data);
+	}
+
+	useEffect(() => {
+		getData();
+	}, []);
+
+	console.log("LP", products);
+
+
 	const { products } = props; 
 
 	return <Container>
@@ -9,6 +25,22 @@ const LandingPage = (props) => {
 			<br/>
 		</Row>
 		<Row className="justify-content-center text-center">
+			{
+				products.map((data, index) => (
+					(data.product) ?
+						<Col key={index} lg={4} className="text-uppercase border">
+							<p className="custom-t2">TOMBOL {data.uuid}</p>
+							<Image
+								src={`${process.env.REACT_APP_API}${data.product.image_url}`}
+								className="product-thumbnail"
+								alt={data.name}
+							/>
+						</Col>
+					: ""
+				))
+			}
+		</Row>
+		<Row className="justify-content-center text-center mt-4">
 			<Col lg={2}> 
 				<Button variant="warning" className="text-uppercase custom-t1" onClick={props.handleCancelBtn}>
 					BATAL 
