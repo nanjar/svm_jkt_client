@@ -14,6 +14,7 @@ import ManagementLogin from "../components/management/login";
 import ManagementIndex from "../components/management/index";
 import ManagementAutoTopup from "../components/management/AutoTopup";
 import ManagementManualTopup from "../components/management/ManualTopup";
+import ManagementInfoStock from "../components/management/InfoStock";
 import ManagementButtonConfig from "../components/management/button_mapping";
 
 import ErrorNotFound from "../components/error/404_error";
@@ -41,6 +42,7 @@ export default (
 		<Route path="/management/auto_topup" exact component={ManagementAutoTopup} />
 		<Route path="/management/manual_topup" exact component={ManagementManualTopup} />
 		<Route path="/management/button_config" exact component={ManagementButtonConfig} />
+		<Route path="/management/info_stock" exact component={ManagementInfoStock} />
 
 		{/* Error */}
 		<Route path="/error/404" exact component={ErrorNotFound} />

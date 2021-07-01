@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import SERVER_REQ from '../../../helpers/Request';
-import { Button, Container, Row, Col, Image, Table } from 'react-bootstrap';
+import { Button, Container, Row, Col, Image } from 'react-bootstrap';
 
 const LandingPage = (props) => {
 	const [products, setProducts] = useState([]);

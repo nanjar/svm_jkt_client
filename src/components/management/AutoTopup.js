@@ -17,8 +17,9 @@ const AutoTopup = (props) => {
 	const [maxQty, setMaxQty] = useState(0);
 	const [toStockData] = useState([]);
 	const [showModal, setShowModal] = useState(false);
-	const [showAlert, setShowAlert] = useState(false);
+	// const [showAlert, setShowAlert] = useState(false);
 	const [maxNumRestock, setMaxNumRestock] = useState("");
+	const [showSpan, setShowSpan] = useState("d-none");
 
 	useEffect(() => {
 		const url = `${FORMATTER.api_base_url()}/api/topups/layouts.json`; 
@@ -94,16 +95,19 @@ const AutoTopup = (props) => {
 			console.log(parseInt(data.to_stock) === 0);
 			if (parseInt(data.slot_id) === parseInt(slotId)) {
 				if (parseInt(data.to_stock) === 0) {
-					setShowAlert(true);
+					// setShowAlert(true);
+					setShowSpan("");
 				} else {
-					setToStockQty(data.to_stock); // initial to stock quantity. it'll will change when +/- button on click
-					setMaxNumRestock(data.to_stock); // set max num to restock
-					setSlotId(slotId);
-					setMaxQty(data.max_qty);
-					setProductURL(data.image);
-					setProductName(data.product_name);
-					setShowModal(true);
+					setShowSpan("d-none");
 				}
+				setToStockQty(data.to_stock); // initial to stock quantity. it'll will change when +/- button on click
+				setMaxNumRestock(data.to_stock); // set max num to restock
+				setSlotId(slotId);
+				setMaxQty(data.max_qty);
+				setProductURL(data.image);
+				setProductName(data.product_name);
+				setShowModal(true);
+				
 			}
 		});
 	} 
@@ -136,25 +140,31 @@ const AutoTopup = (props) => {
 				if (toStockData.length > 0) {
 					toStockData.forEach(tostock => {
 						if (parseInt(tostock.slot_id) === parseInt(element.slot_id) && parseInt(tostock.tostock_qty) !== parseInt(element.slot_id)) {
-							x = element.slot_id; 
-							y = tostock.tostock_qty;
-							z = element.product_id;
-							preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
-							preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
-							preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
-							preparedDataIndex++;
+							if (y) {
+								x = element.slot_id; 
+								y = tostock.tostock_qty;
+								z = element.product_id;
+								preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
+								preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
+								preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
+								preparedDataIndex++;
+							}
 						} else {
-							preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
-							preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
-							preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
-							preparedDataIndex++;
+							if (y) {
+								preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
+								preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
+								preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
+								preparedDataIndex++;
+							}
 						}
 					});
 				} else {
-					preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
-					preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
-					preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
-					preparedDataIndex++;
+					if (y) {
+						preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
+						preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
+						preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
+						preparedDataIndex++;
+					}
 				}
 			});
 		});
@@ -171,9 +181,9 @@ const AutoTopup = (props) => {
 		setShowModal(false);
 	}
 
-	const handleButtonOk = () => {
-		setShowAlert(false);
-	}
+	// const handleButtonOk = () => {
+	// 	setShowAlert(false);
+	// }
 
 	return ( <div className="vw-100 vh-100 d-flex align-items-center">
 			<Container fluid className="text-uppercase">
@@ -226,7 +236,7 @@ const AutoTopup = (props) => {
 
 							<Col lg={7} className="align-self-center text-uppercase custom-t2">
 								<Row>
-									<label className="text-uppercase custom-t2">JUMLAH</label><br/> {/* quantity */}
+									<label className="text-uppercase custom-t2">JUMLAH</label><span className={"text-uppercase custom-t3 text-danger " + showSpan}>(slotnya penuh)</span><br/> {/* quantity */}
 									<Col lg={2} className="p-0">
 										<input type="button" value="-" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t2" onClick={handleMinus} />
 									</Col>
@@ -256,10 +266,10 @@ const AutoTopup = (props) => {
 					</Modal.Footer>
 				</Modal>
 
-				<Modal show={showAlert} size="xl" centered>
+				{/* <Modal show={showAlert} size="xl" centered>
 					<Modal.Body>
 						<p className="custom-t2 text-uppercase">slotnya penuh</p> {/* slot is full */}
-					</Modal.Body>
+					{/* </Modal.Body>
 					<Modal.Footer className="text-center">
 						<div className="text-center">
 							<button type="button" onClick={handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
@@ -267,7 +277,7 @@ const AutoTopup = (props) => {
 							</button>
 						</div>
 					</Modal.Footer>
-				</Modal>
+				</Modal> */} 
 			</Container>
 		</div>
 	);
