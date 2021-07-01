@@ -118,6 +118,7 @@ const ManualTopup = (props) => {
 		setSlotId("");
 		setProductURL(imgURL);
 		setProductName("");
+		setShowSpan("d-none");
 	}
 
 	const handleShowNumpad = () => {
@@ -189,7 +190,7 @@ const ManualTopup = (props) => {
 
 				<Col lg={7} className="align-self-center text-uppercase custom-t2">
 					<Row className="mb-2">
-						<label className="text-uppercase custom-t2">SLOT <span className={"text-uppercase custom-t3 text-warning " + showSpan}>(slotnya penuh)</span></label><br/>
+						<label className="text-uppercase custom-t2">SLOT <span className={"text-uppercase custom-t3 text-danger " + showSpan}>(slotnya penuh)</span></label><br/>
 						<Col lg={10} className="p-0">
 							<input type="text" onClick={handleShowNumpad} value={slotId} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="MASUKKAN NOMOR SLOT" /> {/* enter the slot number */}
 						</Col>
