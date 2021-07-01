@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import SERVER_REQ from '../../../helpers/Request';
+import FORMATTER from '../../../helpers/Formatter';
 import { Button, Container, Row, Col, Image, Table } from 'react-bootstrap';
 
 const LandingPage = (props) => {
@@ -25,10 +26,10 @@ const LandingPage = (props) => {
 			{
 				products.map((data, index) => (
 					(data.product) ?
-						<Col key={index} lg={4} className="text-uppercase border">
+						<Col key={index} lg={2} className="text-uppercase border">
 							<p className="custom-t2">TOMBOL {data.uuid}</p>
 							<Image
-								src={`${process.env.REACT_APP_API}${data.product.image_url}`}
+								src={`${FORMATTER.api_base_url()}${data.product.image_url}`}
 								className="product-thumbnail"
 								alt={data.name}
 							/>

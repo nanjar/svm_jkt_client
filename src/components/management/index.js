@@ -11,7 +11,7 @@ const Management = (props) => {
 	const history = useHistory()
 	useEffect(()=>{
 		if(!(location.state && location.state.login)){
-			history.push('/management/login');
+			// history.push('/management/login');
 			return;
 		}
 		return () => {}

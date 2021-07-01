@@ -4,13 +4,14 @@ import SERVER_REQ  from '../../helpers/Request';
 import {useHistory} from 'react-router-dom';
 import logo from '../../assets/static_images/Logo.png';
 import btn_press from '../../assets/static_images/button.gif';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 
 const BUTTON_E = "button_pressed";
 const activate_button = (socket) => {
 	socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: BUTTON_E })
 }
 const MachineShop = () => {
+	const [showAlert, setShowAlert] = useState(false);
     const socket = useContext(SocketContext);
     const history = useHistory();
     useEffect(() => {
@@ -38,7 +39,8 @@ const MachineShop = () => {
 			console.log(button_req)
 			const button_response = button_req.response
 			if(!button_response.success){
-				activate_button(socket);
+				button_pressed=false;
+				setShowAlert(true);
 				return;
 			}
             const button_detail = button_req.response.data;
@@ -54,6 +56,10 @@ const MachineShop = () => {
             socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
         }
     },[]);
+	const handleButtonOk = () => {
+		setShowAlert(false);
+		activate_button(socket);
+	}
 
 	const handleMouseDown = () => {
 			// start = new Date();
@@ -100,6 +106,17 @@ const MachineShop = () => {
 							<p className='text-center custom-t1'><strong>SILAHKAN MEMULAI DENGAN MENEKAN TOMBOL PRODUK YANG MAU DIPILIH</strong></p>
 					</Row>
 			</Container>
+			<Modal show={showAlert} size="lg" centered>
+				<Modal.Body>
+					<Row className="w-100 justify-content-center text-center">
+						<p className="text-uppsercase custom-t2">KEHABISAN STOK</p>
+					</Row>
+
+				</Modal.Body>
+				<Modal.Footer className="justify-content-center text-center">
+					<Button variant="info" onClick={handleButtonOk} className="text-uppercase custom-t2">OK</Button>
+				</Modal.Footer>
+			</Modal>
 		</div>;
 }
 
