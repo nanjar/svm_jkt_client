@@ -4,9 +4,9 @@ import Home from "../components/home/index";
 
 import Sale from "../components/sale/index";
 import SaleSucces from "../components/sale/success";
+import NoStock from "../components/sale/NoStock";
 
 import DispenseError from "../components/dispense/dispense_error";
-import DispenseNoStock from "../components/dispense/no_stock";
 import DispenseSuccess from "../components/dispense/dispense_success";
 import Dispensing from '../components/dispense/Dispensing';
 
@@ -29,11 +29,11 @@ export default (
 		{/* Sale */}
 		<Route path="/sales/:product_id/:amount" component={Sale} />
 		<Route path="/sales/success" exact component={SaleSucces} />
+		<Route path="/sales/no_stock" exact component={NoStock} />
 
 		{/* Dispense */}
 		<Route path="/dispense/:slot_id/:sale_id" exact component={Dispensing} />
 		<Route path="/dispense/error" exact component={DispenseError} />
-		<Route path="/dispense/no_stock" exact component={DispenseNoStock} />
 		<Route path="/dispense/success" exact component={DispenseSuccess} />
 
 		{/* Management */}

@@ -16,20 +16,21 @@ const Management = (props) => {
 			return;
 		}
 		return () => {}
-	}, []);
-	const min = 10; // 10 minutes
+	});
 
-	let timer = 1000 * 60 * min; // set timer
+	const duration = 10; // 10 minutes
+
+	let timer = 1000 * 60 * duration; // set timer
 
 	const handleOnAction = (event) => {
 		console.log("user did something", event);
-		timer = 1000 * 60 * min; // reset timer
+		timer = 1000 * 60 * duration; // reset timer
 		console.log("remaining time 1 ", getRemainingTime());
 	}
 
 	const handleOnActive = (event) => {
 		console.log("user is active", event);
-		timer = 1000 * 60 * min; // reset timer
+		timer = 1000 * 60 * duration; // reset timer
 		console.log("remaining time 2 ", getRemainingTime());
 	}
 

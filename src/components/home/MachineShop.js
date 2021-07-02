@@ -4,16 +4,25 @@ import SERVER_REQ  from '../../helpers/Request';
 import {useHistory} from 'react-router-dom';
 import logo from '../../assets/static_images/Logo.png';
 import btn_press from '../../assets/static_images/button.gif';
+<<<<<<< HEAD
 import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
+=======
+// import { Container, Row, Col, Button, Carousel } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
+>>>>>>> 28f07f3b499a3b9dafb0603f7d4798513eff2c71
 
 const BUTTON_E = "button_pressed";
+
 const activate_button = (socket) => {
 	socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: BUTTON_E })
 }
+
 const MachineShop = () => {
 	const [showAlert, setShowAlert] = useState(false);
     const socket = useContext(SocketContext);
     const history = useHistory();
+		// const carouselInterval = 10 * 1000; // 10 seconds, can set by backend, may be more than one interval
+
     useEffect(() => {
         let button_pressed = false;
         socket.on('connect', function(){
@@ -36,7 +45,7 @@ const MachineShop = () => {
             socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
             console.log('pressed')
             const button_req = await SERVER_REQ.get(`/api/buttons/${button}.json`);
-			console.log(button_req)
+			console.log(button_req);
 			const button_response = button_req.response
 			if(!button_response.success){
 				button_pressed=false;
@@ -90,21 +99,44 @@ const MachineShop = () => {
 				<Container fluid>
 					<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
 					<Button className="custom-t2" style={{position: "absolute", top: "0px", right: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
-					<Row>
-							<Col lg={7} className='justify-content-center'>
-									<div className='p-2 align-self-center text-center'>
-											<img src={logo} className='img-thumbnail border-0' alt='Logo' />
-									</div>
-							</Col>
-							<Col lg={5} className='justify-content-center'>
-									<div className='p-2 align-self-center text-center'>
-										<img src={btn_press} className='product-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
-									</div>
-							</Col>
-					</Row>
-					<Row className='justify-content-center mt-4'>
-							<p className='text-center custom-t1'><strong>SILAHKAN MEMULAI DENGAN MENEKAN TOMBOL PRODUK YANG MAU DIPILIH</strong></p>
-					</Row>
+					{/* <Carousel>
+						<Carousel.Item interval={carouselInterval}> */}
+							<Row>
+									<Col lg={7} className='justify-content-center'>
+											<div className='p-2 align-self-center text-center'>
+													<img src={logo} className='img-thumbnail border-0' alt='Logo' />
+											</div>
+									</Col>
+									<Col lg={5} className='justify-content-center'>
+											<div className='p-2 align-self-center text-center'>
+												<img src={btn_press} className='product-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
+											</div>
+									</Col>
+							</Row>
+							<Row className='justify-content-center mt-4'>
+									<p className='text-center custom-t1'><strong>SILAHKAN MEMULAI DENGAN MENEKAN TOMBOL PRODUK YANG MAU DIPILIH</strong></p>
+							</Row>
+						{/* </Carousel.Item> */}
+
+						{/* <Carousel.Item  interval={carouselInterval}>
+							<Row>
+									<Col lg={7} className='justify-content-center'>
+											<div className='p-2 align-self-center text-center'>
+													<img src={logo} className='img-thumbnail border-0' alt='Logo' />
+											</div>
+									</Col>
+									<Col lg={5} className='justify-content-center'>
+											<div className='p-2 align-self-center text-center'>
+												<img src={btn_press} className='product-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
+											</div>
+									</Col>
+							</Row>
+							<Row className='justify-content-center mt-4'>
+									<p className='text-center custom-t1'><strong>SILAHKAN MEMULAI DENGAN MENEKAN TOMBOL PRODUK YANG MAU DIPILIH</strong></p>
+							</Row>
+						</Carousel.Item>
+					</Carousel> */}
+						
 			</Container>
 			<Modal show={showAlert} size="lg" centered>
 				<Modal.Body>

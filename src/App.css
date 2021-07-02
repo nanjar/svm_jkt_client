@@ -18,8 +18,8 @@
 }
 
 .info-thumbnail {
-	width: 25% !important;
-	height: 35% !important;
+	width: 50% !important;
+	/* height: 30% !important; */
 }
 
 .table-thumbnail {

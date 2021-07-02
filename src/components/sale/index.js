@@ -74,7 +74,7 @@ class Sale extends React.Component {
 							statusChanged: "timeout",
 							showModal: true
 						});
-						this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
+						this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 10 seconds if user doesn't close the popup
 					}
 				}
 			} else {
@@ -118,7 +118,7 @@ class Sale extends React.Component {
 						statusChanged: "qrerror",
 						showModal: true
 					});
-					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
+					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 10 seconds if user doesn't close the popup
 				}
 			}
 		}
@@ -149,7 +149,7 @@ class Sale extends React.Component {
 						statusChanged: "timeout",
 						showModal: true
 					});
-					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
+					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 10 seconds if user doesn't close the popup
 				}
 			} else if (statusChanged === "timeout") {
 				this.handleTimeout();
@@ -196,7 +196,7 @@ class Sale extends React.Component {
 							showModal: true
 						});
 					}
-					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 3 seconds if user doesn't close the popup
+					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 10 seconds if user doesn't close the popup
 				}
 			}
 		}
@@ -261,18 +261,18 @@ class Sale extends React.Component {
 		const {product, qrCodeURL, checkQrStatus, countdown = 121, showModal, showCancel, titleMsg, contentMsg, imgWidth, imgHeight} = this.state;
 
 		return (<div className="vw-100 vh-100 d-flex align-items-center">
-			<Container fluid className="text-uppercase m-3">
+			<Container fluid className="text-uppercase">
 				<Row>
 					<Col lg={5} className="text-center"> 
-						<p className="custom-t4 mb-3">ANDA TELAH MEMILIH </p><br/> {/* you have choose */}
+						<p className="custom-t4 mb-3">ANDA TELAH MEMILIH </p> {/* you have choose */}
 						<p className="custom-t1">{product.name}</p>
 						<img src={`${FORMATTER.api_base_url()}${product.url}`} className="img-thumbnail custom-thumbnail border-0  text-center" alt="product" />
-						<p className="mt-3 custom-t1"><strong>{FORMATTER.money(product.price)}</strong></p>
+						<p className="custom-t1"><strong>{FORMATTER.money(product.price)}</strong></p>
 					</Col>
 
 					<Col lg={7} className="justify-content-center text-center">
 						<div className="p-2 align-self-center">
-							<p className="custom-t4 mb-3">{checkQrStatus ? 'PINDAH KODE QR UNTUK PEMBAYARAN' : 'MEMINTA KODE QR'}</p>
+							<p className="custom-t4">{checkQrStatus ? 'PINDAH KODE QR UNTUK PEMBAYARAN' : 'MEMINTA KODE QR'}</p>
 						</div> {/* cond 1: scan qr code to pay, cond 2: requesting qr code */}
 						<div className="w-100 text-center m-3">
 							<img src={qrCodeURL} className="img-fluid" style={{width: imgWidth, height: imgHeight}} alt="QR CODE"></img>

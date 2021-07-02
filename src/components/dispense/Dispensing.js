@@ -18,7 +18,8 @@ const DISPENSE_CODE_TEXT = {
     6: "Ack is needed",
     7: "Invalid motor steps",
     8: "Machine no response",
-    9: "Unknown failure"
+    9: "Slot is empty",
+		255: "Unknown failure"
 }
 
 const Dispensing = () => {
