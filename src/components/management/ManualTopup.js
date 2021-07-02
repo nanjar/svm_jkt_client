@@ -118,6 +118,7 @@ const ManualTopup = (props) => {
 		setSlotId("");
 		setProductURL(imgURL);
 		setProductName("");
+		setShowSpan("d-none");
 	}
 
 	const handleShowNumpad = () => {
@@ -166,8 +167,6 @@ const ManualTopup = (props) => {
 
 	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']];
 	
-	// const limitValidator = (value) => parseInt(value, 10) > -1 && parseInt(value, 10) <= 60;
-	
 	let slotList = [];
 	Object.values(slotData).forEach((slot) => {
 		slotList.push(<option key={slot.slot_id} value={slot.product_id}>{slot.slot_id}</option>);
@@ -189,7 +188,7 @@ const ManualTopup = (props) => {
 
 				<Col lg={7} className="align-self-center text-uppercase custom-t2">
 					<Row className="mb-2">
-						<label className="text-uppercase custom-t2">SLOT <span className={"text-uppercase custom-t3 text-warning " + showSpan}>(slotnya penuh)</span></label><br/>
+						<label className="text-uppercase custom-t2">SLOT <span className={"text-uppercase custom-t3 text-danger " + showSpan}>(slotnya penuh)</span></label><br/>
 						<Col lg={10} className="p-0">
 							<input type="text" onClick={handleShowNumpad} value={slotId} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="MASUKKAN NOMOR SLOT" /> {/* enter the slot number */}
 						</Col>

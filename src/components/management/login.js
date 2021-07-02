@@ -3,6 +3,7 @@ import SERVER_REQ from '../../helpers/Request';
 import '../../App.css';
 import { Container, Row, Col, Modal, Button } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
+import { useIdleTimer } from 'react-idle-timer';
 
 const Login = (props) => {
 	const [numInput, setNumInput] = useState("");
@@ -15,11 +16,40 @@ const Login = (props) => {
 	
 	useEffect(() => {
 		timerId.current = setTimeout(() => { handleTimeout(); }, 30000); // redirect to home page after 30 seconds of no interaction
-
+		console.log("Timer", timerId);
 		return function cleanup() {
 			clearTimeout(timerId.current); 
 		}		
 	}); 
+
+	const duration = 1; // 1 minutes
+
+	let timer = 1000 * 60 * duration; // set timer
+
+	const handleOnAction = (event) => {
+		console.log("user did something", event);
+		timer = 1000 * 60 * duration; // reset timer
+		console.log("remaining time 1 ", getRemainingTime());
+	}
+
+	const handleOnActive = (event) => {
+		console.log("user is active", event);
+		timer = 1000 * 60 * duration; // reset timer
+		console.log("remaining time 2 ", getRemainingTime());
+	}
+
+	const handleOnIdle = (event) => {
+		console.log("user is idle", event);
+		console.log("remaining time 3 ", getRemainingTime());
+		props.history.push("/");
+	}
+
+	const { getRemainingTime } = useIdleTimer({
+		timeout: timer,
+		onIdle: handleOnIdle,
+		onActive: handleOnActive,
+		onAction: handleOnAction
+	});
 
 	const handleNumInput = (event) => {
 		let oldNum = numInput;
