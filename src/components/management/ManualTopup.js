@@ -20,6 +20,7 @@ const ManualTopup = (props) => {
 	const [contentMsg, setContentMsg] = useState("");
 	const [maxNumRestock, setMaxNumRestock] = useState("");
 	const [btnDisable, setBtndisable] = useState("");
+	const [showSpan, setShowSpan] = useState("d-none");
 
 	useEffect(() => {
 		const url = `${FORMATTER.api_base_url()}/api/topups/layouts.json`; 
@@ -67,7 +68,6 @@ const ManualTopup = (props) => {
 		console.log(uniqSlotId);
 		if (uniqSlotId.includes(parseInt(slotId))) {
 			slotData.forEach(slot => {
-				setToStockQty(0);
 				console.log(parseInt(slotId), slot.slot_id);
 				if (parseInt(slotId) === slot.slot_id) {
 					console.log(slot.to_stock, typeof slot.to_stock)
@@ -77,15 +77,19 @@ const ManualTopup = (props) => {
 					setProductName(slot.product_name);
 					setMaxNumRestock(slot.to_stock);
 					if (slot.to_stock === 0) {
-						setContentMsg("slotnya penuh"); // slot is full
-						setShowModal(true); // show alert when to_stock is 0
+						setShowSpan("");
+					// 	setContentMsg("slotnya penuh"); // slot is full
+					// 	setShowModal(true); // show alert when to_stock is 0
+					} else {
+						setShowSpan("d-none");
 					}
-				} 
+				}
 			});
 		} else {
 			let msg = (parseInt(slotId) > 60) ? "SLOT TIDAK SAH! HARAP MASUKKAN NOMOR SLOT YANG SAH" : "Slot " + slotId + "  TIDAK AKTIF. HARAP MASUKKAN NOMOR SLOT AKTIF"; // cond 1: invalid slot! please key in the valid slot number, cond 2: Slot slot_id is inactive. please key in the active slot number.
 			setShowModal(true);
 			setContentMsg(msg);
+			setToStockQty(0);
 		}
 	}
 
@@ -95,7 +99,12 @@ const ManualTopup = (props) => {
 			setShowModal(true);
 			setContentMsg(msg);
 		} else {
-			const button_post = await SERVER_REQ.post(`/api/stocks.json`, {'slot_id': slotId, 'to_stock': toStockQty, 'product_id': productId});
+			let preparedData = {};
+			preparedData[`stock[0][slot_id]`] = parseInt(slotId);
+			preparedData[`stock[0][to_stock]`] = toStockQty;
+			preparedData[`stock[0][product_id]`] = productId;
+			console.log(preparedData);
+			const button_post = await SERVER_REQ.post(`/api/stocks.json`, preparedData);
 			console.log(button_post);
 			if (button_post.response.success) {
 				props.history.push("/management");
@@ -180,7 +189,7 @@ const ManualTopup = (props) => {
 
 				<Col lg={7} className="align-self-center text-uppercase custom-t2">
 					<Row className="mb-2">
-						<label className="text-uppercase custom-t2">SLOT</label><br/>
+						<label className="text-uppercase custom-t2">SLOT <span className={"text-uppercase custom-t3 text-warning " + showSpan}>(slotnya penuh)</span></label><br/>
 						<Col lg={10} className="p-0">
 							<input type="text" onClick={handleShowNumpad} value={slotId} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="MASUKKAN NOMOR SLOT" /> {/* enter the slot number */}
 						</Col>
@@ -232,14 +241,14 @@ const ManualTopup = (props) => {
 				<label className="custom-t2" style={{paddingLeft: "90%", cursor: "pointer"}} onClick={handleHideNumpad}>&times;</label>
 				<Modal.Body className="m-3 mt-0">
 					<Row>
-						<input type="text" value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} />
+						<input type="text" value={numInput} className="form-control border form-control-lg custom-t1" readOnly={true} />
 					</Row>
 					{
 						numData.map((rowData, rowIndex) => (
 							<Row key={'row-' + rowIndex} className="justify-content-center">
 								{
 									rowData.map((num, index) => (
-										<Col key={index} onClick={handleNumInput} className="col align-self-center text-center border border-1 bg-slot btn-slot" data-num={num}><p data-num={num} className="custom-t3 mt-3 mb-3" >{num}</p></Col>
+										<Col key={index} onClick={handleNumInput} className="col align-self-center text-center border bg-slot btn-slot" data-num={num}><p data-num={num} className="custom-t3 mt-3 mb-3" >{num}</p></Col>
 									))
 								}	
 							</Row>

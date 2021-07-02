@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import SERVER_REQ from '../../helpers/Request';
 import '../../App.css';
 import { Container, Row, Col, Modal, Button } from 'react-bootstrap';
-import { useHistory, useLocation, useParams, useRouteMatch } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const Login = (props) => {
 	const [numInput, setNumInput] = useState("");
@@ -12,7 +12,6 @@ const Login = (props) => {
 	const [showModal,setShowModal] = useState(false);
 	const timerId = useRef(0);
 	const history = useHistory();
-	const location = useLocation();
 	
 	useEffect(() => {
 		timerId.current = setTimeout(() => { handleTimeout(); }, 30000); // redirect to home page after 30 seconds of no interaction
@@ -51,11 +50,12 @@ const Login = (props) => {
 			const success = button_post.response.success;
 			console.log(button_post);
 			if (success) {
+				const routeName = (window.location.hostname === "localhost") ? '/management' : '/management/info_stock';
 				const locationProps = {
-					pathname: '/management',
+					pathname: routeName,
 					state: { login: true }
 				}
-				history.push(locationProps)
+				history.push(locationProps);
 			} else {
 				setContentMsg("KATA SANDI TIDAK VALID"); // invalid password
 				setShowModal(true);
