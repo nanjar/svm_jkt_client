@@ -167,8 +167,6 @@ const ManualTopup = (props) => {
 
 	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']];
 	
-	// const limitValidator = (value) => parseInt(value, 10) > -1 && parseInt(value, 10) <= 60;
-	
 	let slotList = [];
 	Object.values(slotData).forEach((slot) => {
 		slotList.push(<option key={slot.slot_id} value={slot.product_id}>{slot.slot_id}</option>);

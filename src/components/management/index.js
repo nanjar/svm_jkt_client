@@ -17,7 +17,7 @@ const Management = (props) => {
 			return;
 		}
 		return () => {}
-	}, []);
+	});
 
 	const duration = 10; // 10 minutes
 

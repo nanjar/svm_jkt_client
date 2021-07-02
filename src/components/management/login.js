@@ -20,7 +20,7 @@ const Login = (props) => {
 		return function cleanup() {
 			clearTimeout(timerId.current); 
 		}		
-	}, []); 
+	}); 
 
 	const duration = 1; // 1 minutes
 
