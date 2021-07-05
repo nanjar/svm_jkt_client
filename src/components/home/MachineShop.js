@@ -17,7 +17,9 @@ const MachineShop = () => {
 	const [showAlert, setShowAlert] = useState(false);
     const socket = useContext(SocketContext);
     const history = useHistory();
-		// const carouselInterval = 10 * 1000; // 10 seconds, can set by backend, may be more than one interval
+	// const carouselInterval = 10 * 1000; // 10 seconds, can set by backend, may be more than one interval
+	const [start, setStart] = useState(0);
+	const [clickBtn1, setClickBtn1] = useState(false);
 
     useEffect(() => {
         let button_pressed = false;
@@ -61,17 +63,15 @@ const MachineShop = () => {
             socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
         }
     },[]);
+
 	const handleButtonOk = () => {
 		setShowAlert(false);
 		activate_button(socket);
 	}
 
 	const handleMouseDown = () => {
-			// start = new Date();
 			setStart(new Date());
 	}
-	const [start, setStart] = useState(0);
-	const [clickBtn1, setClickBtn1] = useState(false);
 
 	const handleMouseUp = (event) => {
 		let btn = event.target.dataset.btn;

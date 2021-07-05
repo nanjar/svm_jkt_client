@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 // import SERVER_REQ from '../../helpers/Request';
 import { Row, Col, Container } from 'react-bootstrap';
 import { useIdleTimer } from 'react-idle-timer';
@@ -9,10 +9,9 @@ const Management = (props) => {
 	const [machineTemp] = useState(0);
 	
 	const location = useLocation();
-	const history = useHistory()
 	useEffect(()=>{
 		if(!(location.state && location.state.login)){
-			// history.push('/management/login');d0
+			// history.push('/management/login');
 			return;
 		}
 		return () => {}

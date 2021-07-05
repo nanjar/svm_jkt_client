@@ -6,6 +6,8 @@ import { useHistory } from "react-router-dom";
 import { useIdleTimer } from 'react-idle-timer';
 
 const Login = (props) => {
+	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']]; // data for numpad, cannot be changed
+
 	const [numInput, setNumInput] = useState("");
 	const [showNumpad, setShowNumpad] = useState(false);
 	const [pin, setPin] = useState("");
@@ -15,7 +17,8 @@ const Login = (props) => {
 	const history = useHistory();
 	
 	useEffect(() => {
-		timerId.current = setTimeout(() => { handleTimeout(); }, 30000); // redirect to home page after 30 seconds of no interaction
+		// redirect home page after 30 seconds 
+		timerId.current = setTimeout(() => { handleTimeout(); }, 30000); 
 		console.log("Timer", timerId);
 		return function cleanup() {
 			clearTimeout(timerId.current); 
@@ -113,8 +116,6 @@ const Login = (props) => {
 	const handleButtonOk = () => {
 		setShowModal(false);
 	}
-
-	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']];
 		
 	return (<div className="vw-100 vh-100 d-flex align-items-center">
 		<Container fluid>

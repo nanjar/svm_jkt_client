@@ -65,7 +65,7 @@ const Dispensing = () => {
 								<p className="text-center custom-t4">MESIN SEDANG MENYIAPKAN PRODUK ANDA ...</p> {/* machine is dispensing your product  */}
 							</div>
 							<div className="p-2 text-center mb-3">
-								<img src={LoadingImage} className="img-thumbnail border-0" alt="Loading..."></img>
+								<img src={LoadingImage} className="img-thumbnail border-0" alt="loading..."></img>
 							</div>
 						</Row>
 					:

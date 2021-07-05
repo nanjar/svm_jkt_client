@@ -15,7 +15,7 @@ const Home = (props) => {
 	const history = useHistory()
 
 	useEffect(() => {
-		if(window.location.hostname !== "localhost"){
+		if(window.location.hostname !== "localhost") {
 			history.push('/management/login')
 			return;
 		}
@@ -48,20 +48,20 @@ const Home = (props) => {
 	const MachineSetup = () => {	
 		let code, configsWarn, resourcesWarn;
 		if (machineCode) {
-			// MACHINE CODE
+			// machien code
 			code = <p className='text-center custom-t0 align-self-center'>KODE MESIN - <span className="custom-t0"><strong> {machineCode} </strong></span></p>;
 
 			if (chkMissingConfigs.includes(false)) {
-				//Missing configs
+				// missing configs 
 				configsWarn = <p className='text-center text-uppercase text-warning custom-t0 align-self-center'>KONFIGURASI HILANG!</p>;
 			}
 
 			if (chkMissingResources.includes(false)) {
-				// Missing resources!
+				// missing resources
 				resourcesWarn = <p className='text-center text-uppercase text-warning custom-t0 align-self-center'>SUMBER DARA HILANG!</p>;
 			}
 		} else {
-			// Machine Setup ... 
+			// machine setup
 			code = <p className='text-center text-uppercase custom-t0 align-self-center'>PENGATURAN MESIN</p>;
 		}
 
@@ -71,16 +71,16 @@ const Home = (props) => {
 					<Spinner animation="border" className="custom-spinner custom-t0" />
 					<br />
 				</Row>
-				<Row className='justify-content-center mt-4'>{code}</Row>
-				<Row className='justify-content-center mt-4'>{configsWarn}</Row>
-				<Row className='justify-content-center mt-4'>{resourcesWarn}</Row>
+				<Row className='justify-content-center mt-4'>{ code }</Row>
+				<Row className='justify-content-center mt-4'>{ configsWarn }</Row>
+				<Row className='justify-content-center mt-4'>{ resourcesWarn }</Row>
 			</Container>
 		</div>;
 	};
 
 	return <Container fluid>
 	{
-		(machineCode==="" || chkMissingConfigs.includes(false) || chkMissingResources.includes(false)) ? <MachineSetup/> : <MachineShop />
+		(machineCode === "" || chkMissingConfigs.includes(false) || chkMissingResources.includes(false)) ? <MachineSetup/> : <MachineShop />
 	}
 	</Container>;
 }

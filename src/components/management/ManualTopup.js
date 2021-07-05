@@ -7,6 +7,8 @@ import imgURL from '../../assets/static_images/no_image.png';
 import { Container, Row, Col, Modal } from 'react-bootstrap';
 
 const ManualTopup = (props) => {
+	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']]; // data for numpad, cannot be changed
+
 	const [slotData, setSlotData] = useState({});
 	const [productURL, setProductURL] = useState(imgURL);
 	const [productName, setProductName] = useState("");
@@ -105,7 +107,8 @@ const ManualTopup = (props) => {
 					}
 				});
 			} else {
-				let msg = (parseInt(slotId) > 60) ? "SLOT TIDAK SAH! HARAP MASUKKAN NOMOR SLOT YANG SAH" : "Slot " + slotId + "  TIDAK AKTIF. HARAP MASUKKAN NOMOR SLOT AKTIF"; // cond 1: invalid slot! please key in the valid slot number, cond 2: Slot slot_id is inactive. please key in the active slot number.
+				// cond 1: invalid slot! please key in the valid slot number, cond 2: Slot slot_id is inactive. please key in the active slot number.
+				let msg = (parseInt(slotId) > 60) ? "SLOT TIDAK SAH! HARAP MASUKKAN NOMOR SLOT YANG SAH" : "Slot " + slotId + "  TIDAK AKTIF. HARAP MASUKKAN NOMOR SLOT AKTIF"; 
 				setShowModal(true);
 				setContentMsg(msg);
 				setToStockQty(0);
@@ -194,8 +197,6 @@ const ManualTopup = (props) => {
 			}
 		}
 	}
-
-	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']];
 	
 	let slotList = [];
 	Object.values(slotData).forEach((slot) => {

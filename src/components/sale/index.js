@@ -24,7 +24,7 @@ class Sale extends React.Component {
 			countdown: 121,
 			cancelBtnClicked: false,
 			product:{id: '', name: '', url: '', price: 1},
-			showCancel: false, // flag for cancel button of popup box
+			showCancel: false, // modal's cancel button flag
 			loadingQR: true,
 			showModal: false,
 			imgWidth: "80vh",
@@ -74,11 +74,12 @@ class Sale extends React.Component {
 							statusChanged: "timeout",
 							showModal: true
 						});
-						this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 10 seconds if user doesn't close the popup
+						// set timeout to redirect home page after 10 seconds
+						this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); 
 					}
 				}
 			} else {
-				// invoke handleInitialStateChanges to request QR code again
+				// invoke handleInitialStateChanges to request QR code every 5 seconds while retry flag is less than 4
 				if (this._isMounted) {
 					this._timerId = setTimeout(() => { this.handleInitialStateChanges(); this._timerId = 0; }, 5000);
 				}
@@ -109,7 +110,8 @@ class Sale extends React.Component {
 						this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
 					});
 				}
-			} else if (reqQrCode.response.status_code === "406") {
+			} else if (reqQrCode.response.status_code === "400" || reqQrCode.response.status_code === "401" || reqQrCode.response.status_code === "402" || reqQrCode.response.status_code === "406" || reqQrCode.response.status_code === "410") { 
+				// possible error codes for payment is 400, 401, 402, 406, and 410
 				console.log("Status code - " + reqQrCode.response.status_code);
 				if (this._isMounted) {
 					this.setState({
@@ -118,7 +120,9 @@ class Sale extends React.Component {
 						statusChanged: "qrerror",
 						showModal: true
 					});
-					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 10 seconds if user doesn't close the popup
+
+					// set timeout to redirect home page after 10 seconds
+					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); 
 				}
 			}
 		}
@@ -138,7 +142,7 @@ class Sale extends React.Component {
 	}
 
 	handleInitialStateChanges = () => {
-		console.log("hello")
+		console.log("sale starts");
 		const {checkQrStatus, statusChanged, retry} = this.state;
 		if (checkQrStatus) {
 			if (statusChanged === "initial") {
@@ -149,7 +153,9 @@ class Sale extends React.Component {
 						statusChanged: "timeout",
 						showModal: true
 					});
-					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 10 seconds if user doesn't close the popup
+
+					// set timeout to redirect home page after 10 seconds
+					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); 
 				}
 			} else if (statusChanged === "timeout") {
 				this.handleTimeout();
@@ -162,12 +168,13 @@ class Sale extends React.Component {
 		}
 	}
 
-	handleButtonOk(event) {
+	handleButtonOk = (event) => {
 		const {statusChanged} = this.state;
 		this.setState({ showModal: false });
 		if (statusChanged === "warned") {
 			if (this._isMounted) {
-				this._timerId = setTimeout(() => { this.cancelAtTimeOut(); this._timerId = 0; }, 60000); // wait 1 extra min for payment before invoke cancel even
+				// set timeout to wait 1 extra minute for payment, then invoke cancelAtTimeOut function
+				this._timerId = setTimeout(() => { this.cancelAtTimeOut(); this._timerId = 0; }, 60000); 
 			}
 		} else if (statusChanged === "timeout" || statusChanged === "qrerror") {
 			this.handleTimeout();
@@ -183,7 +190,8 @@ class Sale extends React.Component {
 		if (reqCancelQrCode.response) {
 			console.log("Transaction Status - " + reqCancelQrCode.response.transaction_status);
 			console.log("Transaction Status Code - " + reqCancelQrCode.response.status_code);
-			if (reqCancelQrCode.response.transaction_status === "cancel" || reqCancelQrCode.response.status_code === "412") { // successful cancel transaction and transaction_status="cancel"
+			// cond: check payment cancellation by status or status code
+			if (reqCancelQrCode.response.transaction_status === "cancel" || reqCancelQrCode.response.status_code === "412") { 
 				if (cancelBtnClicked) {
 					this.handleTimeout();
 				} else {
@@ -196,7 +204,9 @@ class Sale extends React.Component {
 							showModal: true
 						});
 					}
-					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); // set auto timeout and redirect back to home page after 10 seconds if user doesn't close the popup
+					
+					// set timeout to redirect home page after 10 seconds
+					this._timerId = setTimeout(() => { this.handleTimeout(); this._timerId = 0; }, 10000); 
 				}
 			}
 		}
@@ -212,7 +222,8 @@ class Sale extends React.Component {
 		if (response) {
 			console.log("Transaction status - " + reqPaymentStatus.response.transaction_status);
 			if (reqPaymentStatus.response.transaction_status === "settlement") {
-				this.props.history.push(`/dispense/${response.slot_id}/${response.sale_id}`); // Change after confirm what to response
+				// redirect dispensing after payment success
+				this.props.history.push(`/dispense/${response.slot_id}/${response.sale_id}`); 
 			} else {
 				if (this._isMounted) {
 					this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
@@ -225,13 +236,13 @@ class Sale extends React.Component {
 		}
 	}
 
-	// Redirect back to Home Page and clear all the timers and intervals
-	handleTimeout() {
+	// function to redirect home page and clear all intervals, timeouts and states
+	handleTimeout = () => {
 		this.setState({ showModal: false });
 		this.props.history.push(this.state.redirectURL);
 	}
 
-	handleCancelPayment() {
+	handleCancelPayment = () => {
 		const {transactionId} = this.state;
 		console.log(this._isMounted);
 		if (transactionId) {

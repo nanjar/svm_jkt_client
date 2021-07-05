@@ -7,9 +7,11 @@ const Success = () => {
 	return (<div className="vw-100 vh-100 d-flex align-items-center">
 		<Row className="justify-content-center m-3 text-uppercase">
 			<div className="p-2 align-self-center mb-3">
+				{/* your payment is successful */}
 				<p className="text-center custom-t0">PEMBAYARAN ANDA TELAH BERHASIL!</p>
 			</div>
 			<div className="p-2 align-self-center mb-3">
+				{/* take your goods */}
 				<p className="text-center custom-t0">MENGAMBIL BARANG ANDA!</p>
 			</div>
 			<div className="p-2 text-center">
