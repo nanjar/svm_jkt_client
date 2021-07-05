@@ -9,11 +9,10 @@ const Management = (props) => {
 	const [machineTemp] = useState(0);
 	
 	const location = useLocation();
-	const history = useHistory();
-
-	useEffect(() => {
-		if(!(location.state && location.state.login) && (window.location.hostname !== "localhost")){
-			history.push('/management/login');
+	const history = useHistory()
+	useEffect(()=>{
+		if(!(location.state && location.state.login)){
+			// history.push('/management/login');d0
 			return;
 		}
 		return () => {}

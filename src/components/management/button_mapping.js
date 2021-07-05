@@ -35,7 +35,8 @@ class ButtonMapping extends React.Component {
 	startSocket = () => {
 		const self=this;
 		let button_pressed = false;
-
+		if(window.location.hostname !== "localhost" )
+			return
 		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: 'set_button' });
 		this.context.on('set_button', (data) => {
 			data = JSON.parse(data);
@@ -60,6 +61,8 @@ class ButtonMapping extends React.Component {
 	}
 
 	stopSocket = () => {
+		if(window.location.hostname !== "localhost" )
+			return
 		this.context.offAny('set_button');
 		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 500, reply_to: 'set_button' });
 	}
@@ -109,7 +112,7 @@ class ButtonMapping extends React.Component {
 	handleSubmitBtn = async () => {
 		const {tappedButton, selectedProduct} = this.state;
 		console.log(tappedButton, selectedProduct);
-		const button_post = await SERVER_REQ.put(`/api/buttons//${tappedButton}.json`, {'button[product_id]': selectedProduct});
+		const button_post = await SERVER_REQ.put(`/api/buttons/${tappedButton}.json`, {'button[product_id]': selectedProduct});
 		if (button_post.response.success) {
 			const button_get =  await SERVER_REQ.get(`/api/buttons/${tappedButton}/detail.json`);
 			if (button_get.response.detail.product) {

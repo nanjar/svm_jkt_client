@@ -4,8 +4,12 @@ import SERVER_REQ  from '../../helpers/Request';
 import {useHistory} from 'react-router-dom';
 import logo from '../../assets/static_images/Logo.png';
 import btn_press from '../../assets/static_images/button.gif';
+<<<<<<< HEAD
+import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
+=======
 // import { Container, Row, Col, Button, Carousel } from 'react-bootstrap';
 import { Container, Row, Col, Button } from 'react-bootstrap';
+>>>>>>> 28f07f3b499a3b9dafb0603f7d4798513eff2c71
 
 const BUTTON_E = "button_pressed";
 
@@ -14,6 +18,7 @@ const activate_button = (socket) => {
 }
 
 const MachineShop = () => {
+	const [showAlert, setShowAlert] = useState(false);
     const socket = useContext(SocketContext);
     const history = useHistory();
 		// const carouselInterval = 10 * 1000; // 10 seconds, can set by backend, may be more than one interval
@@ -43,9 +48,8 @@ const MachineShop = () => {
 			console.log(button_req);
 			const button_response = button_req.response
 			if(!button_response.success){
-				activate_button(socket);
-				// redirect to no stock page if get "Out of Stock" reply
-				// if (button_response.message === "Out of Stock") { history.push("/sales/no_stock"); } 
+				button_pressed=false;
+				setShowAlert(true);
 				return;
 			}
             const button_detail = button_req.response.data;
@@ -61,6 +65,10 @@ const MachineShop = () => {
             socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
         }
     },[]);
+	const handleButtonOk = () => {
+		setShowAlert(false);
+		activate_button(socket);
+	}
 
 	const handleMouseDown = () => {
 			// start = new Date();
@@ -130,6 +138,17 @@ const MachineShop = () => {
 					</Carousel> */}
 						
 			</Container>
+			<Modal show={showAlert} size="lg" centered>
+				<Modal.Body>
+					<Row className="w-100 justify-content-center text-center">
+						<p className="text-uppsercase custom-t2">KEHABISAN STOK</p>
+					</Row>
+
+				</Modal.Body>
+				<Modal.Footer className="justify-content-center text-center">
+					<Button variant="info" onClick={handleButtonOk} className="text-uppercase custom-t2">OK</Button>
+				</Modal.Footer>
+			</Modal>
 		</div>;
 }
 
