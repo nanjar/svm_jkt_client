@@ -80,7 +80,7 @@ const Login = (props) => {
 			const success = button_post.response.success;
 			console.log(button_post);
 			if (success) {
-				const routeName = (window.location.hostname === "localhost") ? '/management' : '/management/info_stock';
+				const routeName = (window.location.hostname === "localhost") ? '/management' : '/management/auto_topup';
 				const locationProps = {
 					pathname: routeName,
 					state: { login: true }
