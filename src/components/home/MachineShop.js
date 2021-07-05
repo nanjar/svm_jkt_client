@@ -4,12 +4,8 @@ import SERVER_REQ  from '../../helpers/Request';
 import {useHistory} from 'react-router-dom';
 import logo from '../../assets/static_images/Logo.png';
 import btn_press from '../../assets/static_images/button.gif';
-<<<<<<< HEAD
-import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
-=======
 // import { Container, Row, Col, Button, Carousel } from 'react-bootstrap';
-import { Container, Row, Col, Button } from 'react-bootstrap';
->>>>>>> 28f07f3b499a3b9dafb0603f7d4798513eff2c71
+import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 
 const BUTTON_E = "button_pressed";
 
