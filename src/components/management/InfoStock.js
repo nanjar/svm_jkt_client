@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import FORMATTER from '../../helpers/Formatter';
 import { Link } from 'react-router-dom';
 import '../../App.css';
-import { Container, Row, Table } from 'react-bootstrap';
+import { Container, Row, Col, Table } from 'react-bootstrap';
 
 const InfoStock = (props) => {
 	const [slotData, setSlotData] = useState([]);
@@ -53,7 +53,14 @@ const InfoStock = (props) => {
 
 	return <Container fluid className="text-uppercase m-3">
 		<Row className="justify-content-center">
-			<p className="text-center custom-t2">Stock Data</p> {/*  `${FORMATTER.api_base_url()}${productURL}` */}
+			<Col lg={2}>
+				<p className="text-center custom-t2">Stock Data</p> {/*  `${FORMATTER.api_base_url()}${productURL}` */}
+			</Col>
+			<Col lg={{span:2, offset: 8}}>
+				<Link to="/management/auto_topup" className="btn btn-lg btn-info text-center text-uppercase custom-t3">
+					topup {/* cancel */}
+				</Link>
+			</Col>
 		</Row>
 
 		<Row className="justify-content-center">
