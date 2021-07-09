@@ -19,7 +19,7 @@ const LandingPage = (props) => {
 
 	return <Container fluid className="p-3 background-Img">
 			<Row className="justify-content-center text-center">
-				<p className="text-center text-uppercase custom-t1">TEKAN TOMBOL UNTUL PEMETAAN</p> {/* press button to map */}
+				<p className="text-center text-uppercase custom-t1">TEKAN TOMBOL UNTUK PRODUK</p> {/* press button to map */}
 				<br/>
 			</Row>
 			<Row className="justify-content-center text-center">

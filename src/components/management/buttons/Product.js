@@ -9,7 +9,7 @@ const Product = (props) => {
 	// }
 	return <Container fluid className="p-3 background-Img">
 		<Row className="justify-content-center">
-			<h1 className="text-center text-uppercase display-4 mb-4">PILIH PRODUK UNTUK PEMETAAN</h1> {/* Choose the product to map */}
+			<h1 className="text-center text-uppercase display-4 mb-4">PILIH PRODUK</h1> {/* Choose the product to map */}
 		</Row>
 		<Row className="justify-content-center">
 			{

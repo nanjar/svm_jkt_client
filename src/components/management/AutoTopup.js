@@ -65,7 +65,7 @@ const AutoTopup = (props) => {
 				console.log(slotList)
 			})
 			.catch(error => console.log(error.message));
-	}, [modifiedSlotData]);
+	}, []);
 
 	const handlePlus = () => {
 		if (parseInt(maxNumRestock) !== parseInt(maxQty)) {
@@ -97,7 +97,8 @@ const AutoTopup = (props) => {
 				} else {
 					setShowSpan("d-none");
 				}
-				setToStockQty(data.to_stock); // initialise the stocakable quantity. it'll will change on +/- button click
+				// setToStockQty(data.to_stock); // initialise the stocakable quantity. it'll will change on +/- button click
+				setToStockQty(0); // initialise the stocakable quantity. it'll will change on +/- button click
 				setMaxNumRestock(data.to_stock); // set maximum number of restockalble quantity 
 				setSlotId(slotId);
 				setMaxQty(data.max_qty);
@@ -186,10 +187,10 @@ const AutoTopup = (props) => {
 
 	const cancelTxt = (isLocal) ? "batal" : "cancel";
 	const confirmTxt = (isLocal) ? "lanjut" : "confirm";
-	const titleTxt = (isLocal) ? "KONFIRMASI UNTUK JUMLAH RESTOCK SLOT" : "restock quantity for slots";
+	const titleTxt = (isLocal) ? "KONFIRMASI UNTUK JUMLAH STOK" : "restock quantity for slots";
 	const quantityTxt = (isLocal) ? "jumlah" : "quantity";
 	const alertTxt = (isLocal) ? "tidak perlu penyetokan" : "no need to stock";
-	const modalTitleTxt = (isLocal) ? "KONFIRMASI JUMLAH STOK ULANG" : "confirm restock quantity";
+	const modalTitleTxt = (isLocal) ? "KONFIRMASI JUMLAH STOK" : "confirm restock quantity";
 
 	return ( <div className="vw-100 vh-100 d-flex align-items-center background-Img">
 			<Container fluid className="text-uppercase">
@@ -206,7 +207,7 @@ const AutoTopup = (props) => {
 							}
 						</Row>
 					)) : modifiedSlotData.map((rowData, index) => (
-						<Row key={index} className="justify-content-center">
+						<Row key={index} className="justify-content-center background-Color">
 							{
 								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.to_stock && (data.max_qty>data.current_stock)) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
 							}

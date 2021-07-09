@@ -132,8 +132,8 @@ class Sale extends React.Component {
 	warningTimeOut = () => {
 		if (this._isMounted) {
 			this.setState({
-				titleMsg: "PERINGATAN KEDALUWARSA PEMBAYARAN", // payment expiry warning
-				contentMsg: "PEMBAYARAN ANDA AKAN SEGERA KEDALUWARSA. KLIK “OK” JIKA ANDA MEMERLUKAN WAKTU UNTUK PEMBAYARAN", // your payment is going to expire soon. click OK if you still need time to pay
+				titleMsg: "WAKTU TUNGGU AKAN SEGERA HABIS", // the waiting time will end soon
+				contentMsg: "TAMBAHKAN WAKTU TUNGGU?", // add waiting time
 				statusChanged: "warned",
 				showCancel: true,
 				showModal: true
@@ -198,8 +198,8 @@ class Sale extends React.Component {
 				} else {
 					if (this._isMounted) {
 						this.setState({
-							titleMsg: "PEMBAYARAN KEDARLUWARSA", // payment expired
-							contentMsg: "HARAP COBA KEMBALI!", // please try again
+							titleMsg: "PEMBAYARAN TIDAK BERHASIL", // payment expired
+							contentMsg: "MOHON DICOBA KEMBALI", // please try again
 							statusChanged: "timeout",
 							showCancel: false,
 							showModal: true
@@ -294,7 +294,7 @@ class Sale extends React.Component {
 					<Col lg={5}> 
 						<p className="mb-3" style={{fontSize: "3vw"}}>ANDA TELAH MEMILIH </p> {/* you have choose */}
 						<p className="cyan-text" style={{fontSize: "6vw"}}><strong>{FORMATTER.money(product.price)}</strong></p>
-						<p style={{fontSize: "3vw"}}>{checkQrStatus ? 'PINDAH KODE QR UNTUK PEMBAYARAN' : 'MEMINTA KODE QR'}</p> {/* cond 1: scan qr code to pay, cond 2: requesting qr code */}
+						<p style={{fontSize: "3vw"}}>{checkQrStatus ? 'PINDAI KODE QR UNTUK PEMBAYARAN' : ''}</p> {/* cond 1: scan qr code to pay, cond 2: requesting qr code */}
 					</Col>
 				</Row>
 

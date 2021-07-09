@@ -90,7 +90,7 @@ const ManualTopup = (props) => {
 			if (slotIds.includes(parseInt(slotId))) {
 				slotData.forEach(slot => {
 					if (parseInt(slotId) === slot.slot_id) {
-						setToStockQty(slot.to_stock);
+						// setToStockQty(slot.to_stock);
 						setProductId(slot.product_id);
 						setProductURL(`${FORMATTER.api_base_url()}${slot.image}`);
 						setProductName(slot.product_name);

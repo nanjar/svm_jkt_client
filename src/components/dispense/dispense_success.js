@@ -20,7 +20,7 @@ const DispenseSuccess = () => {
 			</div>
 			<div className="p-2 align-self-center">
 				{/* thanks for the purchase! */}
-				<p className="text-center custom-t1">Terima Kasih atas pembeliannya!</p>
+				<p className="text-center custom-t1">TERIMA KASIH, SELAMAT MENIKMATI!</p>
 			</div>
 		</Row>
 	);
