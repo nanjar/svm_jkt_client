@@ -3,9 +3,8 @@ import { SocketContext } from '../../services/socket';
 import SERVER_REQ  from '../../helpers/Request';
 import {useHistory} from 'react-router-dom';
 import logo from '../../assets/static_images/Logo.png';
-import btn_press from '../../assets/static_images/button.gif';
 // import { Container, Row, Col, Button, Carousel } from 'react-bootstrap';
-import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Button, Modal } from 'react-bootstrap';
 
 const BUTTON_E = "button_pressed";
 
@@ -91,27 +90,27 @@ const MachineShop = () => {
 		}
 	}
 
-    return <div className="vw-100 vh-100 d-flex align-items-center">
+    return <div className="vw-100 vh-100 d-flex align-items-center background-Img">
 				<Container fluid>
 					<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
 					<Button className="custom-t2" style={{position: "absolute", top: "0px", right: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
 					{/* <Carousel>
 						<Carousel.Item interval={carouselInterval}> */}
 							<Row>
-									<Col lg={7} className='justify-content-center'>
-											<div className='p-2 align-self-center text-center'>
-													<img src={logo} className='img-thumbnail border-0' alt='Logo' />
-											</div>
-									</Col>
-									<Col lg={5} className='justify-content-center'>
-											<div className='p-2 align-self-center text-center'>
-												<img src={btn_press} className='product-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
-											</div>
-									</Col>
+								<Row className='justify-content-center mb-3'>
+									<div className='p-2 align-self-center text-center'>
+											<img src={logo} className='mini-logo2' alt='Logo' />
+									</div>
+								</Row>
+								<Row className='justify-content-center mt-3'>
+									<div className='p-2 text-center align-self-center machine-shop-div'>
+										<span className='machine-shop-div-text'><strong>SILAHKAN MEMULAI DENGAN MENEKAN <br/> TOMBOL PRODUK YANG MAU DIPILIH</strong></span>
+									</div>
+								</Row>
 							</Row>
-							<Row className='justify-content-center mt-4'>
+							{/* <Row className='justify-content-center mt-4'>
 									<p className='text-center custom-t1'><strong>SILAHKAN MEMULAI DENGAN MENEKAN TOMBOL PRODUK YANG MAU DIPILIH</strong></p>
-							</Row>
+							</Row> */}
 						{/* </Carousel.Item> */}
 
 						{/* <Carousel.Item  interval={carouselInterval}>

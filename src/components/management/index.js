@@ -46,7 +46,7 @@ const Management = (props) => {
 		onAction: handleOnAction
 	});
 
-	return <div className="vw-100 vh-100 d-flex align-items-center">
+	return <div className="vw-100 vh-100 d-flex align-items-center background-Img">
 		<Container fluid>
 			<Row className="mt-1">
 				<Col lg={6}><span className="text-uppercase custom-t2">SUHU PERANGKAT - {piTemp} C</span></Col> {/* device/pi temp */}

@@ -65,7 +65,7 @@ const Home = (props) => {
 			code = <p className='text-center text-uppercase custom-t0 align-self-center'>PENGATURAN MESIN</p>;
 		}
 
-		return <div className="vw-100 vh-100 d-flex align-items-center">
+		return <div className="vw-100 vh-100 d-flex align-items-center background-Img">
 			<Container fluid>
 				<Row className='justify-content-center'>
 					<Spinner animation="border" className="custom-spinner custom-t0" />

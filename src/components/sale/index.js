@@ -2,7 +2,8 @@ import React from "react";
 import SERVER_REQ from '../../helpers/Request';
 import FORMATTER from '../../helpers/Formatter';
 import '../../App.css';
-import logoImage from '../../assets/static_images/loading_qr.gif';
+import logo from '../../assets/static_images/Logo.png';
+import loadingQr from '../../assets/static_images/loadingQr.png';
 import { Modal, Container, Row, Col } from 'react-bootstrap';
 
 class Sale extends React.Component {
@@ -13,7 +14,7 @@ class Sale extends React.Component {
 		super(props); 
 		this.state = { 
 			sale_data: {},
-			qrCodeURL: logoImage,
+			qrCodeURL: loadingQr,
 			transactionId: "",
 			titleMsg: "",
 			contentMsg: "",
@@ -27,8 +28,8 @@ class Sale extends React.Component {
 			showCancel: false, // modal's cancel button flag
 			loadingQR: true,
 			showModal: false,
-			imgWidth: "80vh",
-			imgHeight: "50vh",
+			imgWidth: "40vw",
+			imgHeight: "65vh",
 			intervalId: false
 		}
 
@@ -90,8 +91,8 @@ class Sale extends React.Component {
 				if (this._isMounted) {
 					this.setState({
 						qrCodeURL: qr.url,
-						imgWidth: "60vh",
-						imgHeight: "60vh",
+						imgWidth: "38vw",
+						imgHeight: "65vh",
 						transactionId: reqQrCode.response.transaction_id,
 						checkQrStatus: true,
 						intervalId: setInterval(() => {
@@ -271,35 +272,34 @@ class Sale extends React.Component {
 	render() {
 		const {product, qrCodeURL, checkQrStatus, countdown = 121, showModal, showCancel, titleMsg, contentMsg, imgWidth, imgHeight} = this.state;
 
-		return (<div className="vw-100 vh-100 d-flex align-items-center">
+		return (<div className="vw-100 vh-100 d-flex justify-content-center background-Img">
 			<Container fluid className="text-uppercase">
-				<Row>
-					<Col lg={5} className="text-center"> 
-						<p className="custom-t4 mb-3">ANDA TELAH MEMILIH </p> {/* you have choose */}
-						<p className="custom-t1">{product.name}</p>
-						<img src={`${FORMATTER.api_base_url()}${product.url}`} className="img-thumbnail custom-thumbnail border-0  text-center" alt="product" />
-						<p className="custom-t1"><strong>{FORMATTER.money(product.price)}</strong></p>
-					</Col>
-
-					<Col lg={7} className="justify-content-center text-center">
-						<div className="p-2 align-self-center">
-							<p className="custom-t4">{checkQrStatus ? 'PINDAH KODE QR UNTUK PEMBAYARAN' : 'MEMINTA KODE QR'}</p>
-						</div> {/* cond 1: scan qr code to pay, cond 2: requesting qr code */}
+				<Row className="align-items-center m-5">
+					<Col lg={7} className="text-center">
+						<div className="p-2">
+							<img src={logo} className="img-fluid mini-logo" alt="logo"></img>
+						</div> 
 						<div className="w-100 text-center m-3">
 							<img src={qrCodeURL} className="img-fluid" style={{width: imgWidth, height: imgHeight}} alt="QR CODE"></img>
 						</div>
 
-						<div className="align-self-center text-center">
+						<div className="text-center">
 							{countdown === 121 ? "" : <div>QR Code expire in {countdown} second(s)</div>}
-							<button type="button" className="btn btn-primary btn-lg btn-info" onClick={this.handleCancelPayment}>
-								<p className="custom-t1 mb-3 text-uppercase">BATALKAN PEMBAYARAN</p> {/* cancel payment */}
+							<button type="button" className="btn btn-primary btn-lg btn-warning custom-t1 text-uppercase cancel-btn-style" onClick={this.handleCancelPayment} >
+								BATALKAN PEMBAYARAN {/* cancel payment */}
 							</button>
 						</div>
 					</Col>
+
+					<Col lg={5}> 
+						<p className="mb-3" style={{fontSize: "3vw"}}>ANDA TELAH MEMILIH </p> {/* you have choose */}
+						<p className="cyan-text" style={{fontSize: "6vw"}}><strong>{FORMATTER.money(product.price)}</strong></p>
+						<p style={{fontSize: "3vw"}}>{checkQrStatus ? 'PINDAH KODE QR UNTUK PEMBAYARAN' : 'MEMINTA KODE QR'}</p> {/* cond 1: scan qr code to pay, cond 2: requesting qr code */}
+					</Col>
 				</Row>
 
-				<Modal show={showModal} size="xl" centered>
-					<Modal.Header>
+				<Modal show={showModal} size="xl" centered className="rounded-3">
+					<Modal.Header className="modal-background">
 						<Modal.Title>
 							<p className="custom-t2 text-uppercase">{titleMsg}</p>
 						</Modal.Title>

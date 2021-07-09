@@ -191,7 +191,7 @@ const AutoTopup = (props) => {
 	const alertTxt = (isLocal) ? "tidak perlu penyetokan" : "no need to stock";
 	const modalTitleTxt = (isLocal) ? "KONFIRMASI JUMLAH STOK ULANG" : "confirm restock quantity";
 
-	return ( <div className="vw-100 vh-100 d-flex align-items-center">
+	return ( <div className="vw-100 vh-100 d-flex align-items-center background-Img">
 			<Container fluid className="text-uppercase">
 				<Row className="justify-content-center">
 					<p className="text-center custom-t2">{titleTxt}</p> {/* confirm the restocked quantity for slots  */}
@@ -200,7 +200,7 @@ const AutoTopup = (props) => {
 				{
 					(modifiedSlotData.length === 0) ? 
 					slotData.map((rowData, index) => (
-						<Row key={index} className="justify-content-center">
+						<Row key={index} className="justify-content-center background-Color">
 							{
 								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.to_stock && (data.max_qty>data.current_stock)) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
 							}
@@ -228,7 +228,7 @@ const AutoTopup = (props) => {
 				</Row>
 
 				<Modal show={showModal} size="xl" centered>
-					<Modal.Header>
+					<Modal.Header className="modal-background">
 						<Modal.Title className="custom-t2 text-uppercase">
 							{modalTitleTxt} {/* confirm restocked quantity */}
 						</Modal.Title>

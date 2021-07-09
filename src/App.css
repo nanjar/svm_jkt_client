@@ -1,3 +1,25 @@
+.background-Img {
+	background: url("./assets/static_images/background.png") no-repeat center center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-ms-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+.background-ImgWithLogo {
+	background: url("./assets/static_images/dispenseBackground.png") no-repeat center center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-ms-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+.background-Color {
+	background-color: #fff !important;
+}
+
 .custom-center {
   display: flex;
   align-items: center;
@@ -52,6 +74,10 @@
 
 .custom-t1 {
 	font-size: 60px;
+}
+
+.custom-t11{
+	font-size: 58px !important;
 }
 
 .custom-t2 {
@@ -139,3 +165,77 @@
 	background-color: rgba(0, 0, 0, 0.8);
 	display: block !important;
 }
+
+.cancel-btn-style {
+	background-color: #d11f27;
+	color: #fff;
+	border: 10px solid #fff;
+	border-radius: 25px;
+}
+
+.cyan-text {
+	color: #04859e !important;
+}
+
+.modal-background {
+	background-color: #04859e !important;
+	color: #fff !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #04859e;
+	border-color: #04859e;
+}
+
+.btn-info:hover {
+	color: #fff;
+	background-color: #369DB1;
+	border-color: #369DB1;
+}
+
+.mini-logo {
+	width: 10vw;
+	height: 11vh;
+}
+
+.mini-logo2 {
+	width: 15vw;
+	height: 16vh;
+}
+
+.machine-shop-div {
+	background: url("./assets/static_images/homeDivBackground.png") no-repeat center center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-ms-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	width: 85vw;
+	height: 55vh;
+}
+
+.machine-shop-div-text { 
+	position: relative; 
+	top: 21vh; 
+	left: 7vw;
+	color: #fff;
+	font-size: 3vw;
+} 
+
+.payment-success-div {
+	background: url("./assets/static_images/dispenseDivBackground.png") no-repeat center center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-ms-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	width: 62vw;
+	height: 67vh;
+}
+
+.payment-success-div-text { 
+	position: relative; 
+	top: 40vh; 
+	color: #fff;
+} 

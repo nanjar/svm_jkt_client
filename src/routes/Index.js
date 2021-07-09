@@ -4,7 +4,6 @@ import Home from "../components/home/index";
 
 import Sale from "../components/sale/index";
 import SaleSucces from "../components/sale/success";
-import NoStock from "../components/sale/NoStock";
 
 import DispenseError from "../components/dispense/dispense_error";
 import DispenseSuccess from "../components/dispense/dispense_success";
@@ -14,7 +13,6 @@ import ManagementLogin from "../components/management/login";
 import ManagementIndex from "../components/management/index";
 import ManagementAutoTopup from "../components/management/AutoTopup";
 import ManagementManualTopup from "../components/management/ManualTopup";
-import ManagementInfoStock from "../components/management/InfoStock";
 import ManagementButtonConfig from "../components/management/button_mapping";
 
 import ErrorNotFound from "../components/error/404_error";
@@ -29,7 +27,6 @@ export default (
 		{/* Sale */}
 		<Route path="/sales/:product_id/:amount" component={Sale} />
 		<Route path="/sales/success" exact component={SaleSucces} />
-		<Route path="/sales/no_stock" exact component={NoStock} />
 
 		{/* Dispense */}
 		<Route path="/dispense/:slot_id/:sale_id" exact component={Dispensing} />
@@ -42,7 +39,6 @@ export default (
 		<Route path="/management/auto_topup" exact component={ManagementAutoTopup} />
 		<Route path="/management/manual_topup" exact component={ManagementManualTopup} />
 		<Route path="/management/button_config" exact component={ManagementButtonConfig} />
-		<Route path="/management/info_stock" exact component={ManagementInfoStock} />
 
 		{/* Error */}
 		<Route path="/error/404" exact component={ErrorNotFound} />

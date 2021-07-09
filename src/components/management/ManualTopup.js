@@ -203,13 +203,13 @@ const ManualTopup = (props) => {
 		slotList.push(<option key={slot.slot_id} value={slot.product_id}>{slot.slot_id}</option>);
 	});
 
-	return ( <div className="vw-100 vh-100 d-flex align-items-center">
+	return ( <div className="vw-100 vh-100 d-flex align-items-center background-Img">
 		<Container fluid>
 			<Row className="justify-content-center mb-5">
 				<h1 className="text-center text-uppercase display-3">KONFIRMASI JUMLAH PENYETOKAN ULANG</h1> {/* confirm/edit the restocked quantity */}
 			</Row>
 
-			<Row className="justify-content-center mt-5 mb-5">
+			<Row className="justify-content-center pt-5 pb-5 background-Color">
 				<Col lg={5} className="text-center">
 					<div className="p-2 align-self-center">
 						<img src={productURL} className="img-thumbnail border-0" alt={productName} />

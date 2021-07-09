@@ -5,21 +5,22 @@ import { Row } from 'react-bootstrap';
 
 const DispenseSuccess = () => {
 	return (
-		<Row className="justify-content-center text-uppercase m-3">
-			<div className="p-2 align-self-center mb-3">
+		<Row className="justify-content-center text-uppercase mt-5 mb-3">
+			<br/><br/><br/>
+			<div className="align-self-center">
 				{/* purchase completed */}
-				<p className="text-center custom-t0">Pembelian Selesai</p>
+				<p className="text-center custom-t1">Pembelian Selesai</p>
 			</div>
-			<div className="p-2 align-self-center mb-3">
+			<div className="align-self-center">
 				{/* please take your purchase */}
-				<p className="text-center custom-t0">Silahkan ambil pembelian anda</p>
+				<p className="text-center custom-t1">Silahkan ambil pembelian anda</p>
 			</div>
-			<div className="p-2 text-center mb-3">
-				<img src={img_down} className="img-thumbnail border-0" alt="please take your purchase"></img>
+			<div className="p-2 text-center">
+				<img src={img_down} className="border-0" alt="please take your purchase"></img>
 			</div>
 			<div className="p-2 align-self-center">
 				{/* thanks for the purchase! */}
-				<p className="text-center custom-t0">Terima Kasih atas pembeliannya!</p>
+				<p className="text-center custom-t1">Terima Kasih atas pembeliannya!</p>
 			</div>
 		</Row>
 	);

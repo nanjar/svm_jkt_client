@@ -70,7 +70,7 @@ class ButtonMapping extends React.Component {
 	componentDidMount() {
 		this.startSocket();
 		// const self=this;
-		// const button = 2;
+		// const button = 5;
 		// self.setState({ tappedButton: button }, async () => {
 		// 	const url = `http://vending.smartvending.com/api/buttons/${button}/detail.json`;
 		// 	const button_req = await SERVER_REQ.get(url);
@@ -151,7 +151,7 @@ class ButtonMapping extends React.Component {
 		console.log(products);
 
 		return (
-			<Container fluid>
+			<Container fluid className="vw-100 vh-100 background-Img">
 				{tappedButton ? <Product products={products} selectedProduct={selectedProduct} handleCancelBtn={this.handleModalCancelBtn} handleOnRadioChange={this.handleOnRadioChange} handleSubmitBtn={this.handleSubmitBtn} /> : <LandingPage handleCancelBtn={this.handleCancelBtn} />}
 
 				<Modal show={showModal} size="lg" centered>

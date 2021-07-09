@@ -117,7 +117,7 @@ const Login = (props) => {
 		setShowModal(false);
 	}
 		
-	return (<div className="vw-100 vh-100 d-flex align-items-center">
+	return (<div className="vw-100 vh-100 d-flex align-items-center background-Img">
 		<Container fluid>
 			<Row className="justify-content-center">
 				<Col lg={5}>
