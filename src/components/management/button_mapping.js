@@ -20,7 +20,7 @@ class ButtonMapping extends React.Component {
 			showModal: false,
 			selectedProduct: false,
 			hideCancelBtn: "",
-			modalTextPostFix: "APAKAH ANDA INGIN MENYUNTING?", // do you want to edit?
+			modalTextPostFix: "APAKAH INGIN DISUNTING?", // do you want to edit?
 			confirmButtonText: "LANJUT" // confirm 
 		}
 		this.handleCancelBtn = this.handleCancelBtn.bind(this);
@@ -70,7 +70,7 @@ class ButtonMapping extends React.Component {
 	componentDidMount() {
 		this.startSocket();
 		// const self=this;
-		// const button = 2;
+		// const button = 6;
 		// self.setState({ tappedButton: button }, async () => {
 		// 	const url = `http://vending.smartvending.com/api/buttons/${button}/detail.json`;
 		// 	const button_req = await SERVER_REQ.get(url);
@@ -151,14 +151,14 @@ class ButtonMapping extends React.Component {
 		console.log(products);
 
 		return (
-			<Container fluid>
+			<Container fluid className="vw-100 vh-100 background-Img">
 				{tappedButton ? <Product products={products} selectedProduct={selectedProduct} handleCancelBtn={this.handleModalCancelBtn} handleOnRadioChange={this.handleOnRadioChange} handleSubmitBtn={this.handleSubmitBtn} /> : <LandingPage handleCancelBtn={this.handleCancelBtn} />}
 
 				<Modal show={showModal} size="lg" centered>
 					<Modal.Body>
 						<Row className="w-100 justify-content-center text-center">
 							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_base_url()}${mappedProduct.image_url}`} />
-							<p className="text-uppsercase custom-t2">TOMBOL {tappedButton} DIPETAKAN UNTUK {mappedProduct.name}. {modalTextPostFix}</p>
+							<p className="text-uppsercase custom-t22">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> <br/>{modalTextPostFix}</p>
 						</Row> {/* button 5 is mapped to */}
 
 					</Modal.Body>

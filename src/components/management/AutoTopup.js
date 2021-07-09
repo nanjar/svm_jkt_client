@@ -46,7 +46,7 @@ const AutoTopup = (props) => {
 					let iter = 0;
 					while(len > iter){
 						slotList[data[0].tied].push({
-							slot_id: Date.now().toString(36) + Math.random().toString(36).substring(2),
+							slot_id: Date.now().toString(36) + Math.random().toString(36).substring(2), // add dummy unique data for the inactive/free slots of a level, to use it as the key value of the HTML element
 							max_qty: null,
 							tied: null,
 							product_id: null,
@@ -65,7 +65,7 @@ const AutoTopup = (props) => {
 				console.log(slotList)
 			})
 			.catch(error => console.log(error.message));
-	}, [modifiedSlotData]);
+	}, []);
 
 	const handlePlus = () => {
 		if (parseInt(maxNumRestock) !== parseInt(maxQty)) {
@@ -97,14 +97,14 @@ const AutoTopup = (props) => {
 				} else {
 					setShowSpan("d-none");
 				}
-				setToStockQty(data.to_stock); // initial to stock quantity. it'll will change when +/- button on click
-				setMaxNumRestock(data.to_stock); // set max num to restock
+				// setToStockQty(data.to_stock); // initialise the stocakable quantity. it'll will change on +/- button click
+				setToStockQty(0); // initialise the stocakable quantity. it'll will change on +/- button click
+				setMaxNumRestock(data.to_stock); // set maximum number of restockalble quantity 
 				setSlotId(slotId);
 				setMaxQty(data.max_qty);
 				setProductURL(data.image);
 				setProductName(data.product_name);
 				setShowModal(true);
-				
 			}
 		});
 	} 
@@ -129,6 +129,7 @@ const AutoTopup = (props) => {
 		let preparedData = {};
 		let preparedDataIndex =0;
 
+		// prepare data to post to server
 		slotData.forEach(data => {
 			data.forEach(element => {
 				let x, y, z;
@@ -137,12 +138,12 @@ const AutoTopup = (props) => {
 				z = element.product_id;
 				if (toStockData.length > 0) {
 					toStockData.forEach(tostock => {
-						if (parseInt(tostock.slot_id) === parseInt(element.slot_id) && parseInt(tostock.tostock_qty) !== parseInt(element.slot_id)) {
+						if (parseInt(tostock.slot_id) === parseInt(element.slot_id) && parseInt(tostock.tostock_qty) !== parseInt(element.slot_id)) { // update the edited quantity of slot for preparedData object
 							if (y) {
 								x = element.slot_id; 
 								y = tostock.tostock_qty;
 								z = element.product_id;
-								preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
+								preparedData[`stock[${preparedDataIndex}][slot_id]`] = x; 
 								preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
 								preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
 								preparedDataIndex++;
@@ -167,7 +168,8 @@ const AutoTopup = (props) => {
 			});
 		});
 
-		console.log(preparedData);
+		console.log("auto topup post", preparedData);
+		// data sample : preparedData - {[stock[0][slot_id]: 1, stock[0]['to_stock']: 2, stock[0]['product_id']: 3]}
 		const button_put = await SERVER_REQ.put(`/api/stocks/1.json`, preparedData);
 		console.log(button_put);
 		if (button_put.response.success) {
@@ -185,27 +187,27 @@ const AutoTopup = (props) => {
 
 	const cancelTxt = (isLocal) ? "batal" : "cancel";
 	const confirmTxt = (isLocal) ? "lanjut" : "confirm";
-	const titleTxt = (isLocal) ? "KONFIRMASI UNTUK JUMLAH RESTOCK SLOT" : "restock quantity for slots";
+	const titleTxt = (isLocal) ? "KONFIRMASI UNTUK JUMLAH STOK" : "restock quantity for slots";
 	const quantityTxt = (isLocal) ? "jumlah" : "quantity";
 	const alertTxt = (isLocal) ? "tidak perlu penyetokan" : "no need to stock";
-	const modalTitleTxt = (isLocal) ? "KONFIRMASI JUMLAH STOK ULANG" : "confirm restock quantity";
+	const modalTitleTxt = (isLocal) ? "KONFIRMASI JUMLAH STOK" : "confirm restock quantity";
 
-	return ( <div className="vw-100 vh-100 d-flex align-items-center">
+	return ( <div className="vw-100 vh-100 d-flex align-items-center background-Img">
 			<Container fluid className="text-uppercase">
 				<Row className="justify-content-center">
 					<p className="text-center custom-t2">{titleTxt}</p> {/* confirm the restocked quantity for slots  */}
-					{!isLocal ? <span>1/2/3/ - (1: to stock quantity, 2: current quantity, 3: maximum quantity)</span> : ""}
+					{!isLocal ? <span>1/2/3/ - (1: stockable quantity, 2: current quantity, 3: maximum quantity)</span> : ""}
 				</Row>
 				{
 					(modifiedSlotData.length === 0) ? 
 					slotData.map((rowData, index) => (
-						<Row key={index} className="justify-content-center">
+						<Row key={index} className="justify-content-center background-Color">
 							{
 								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.to_stock && (data.max_qty>data.current_stock)) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
 							}
 						</Row>
 					)) : modifiedSlotData.map((rowData, index) => (
-						<Row key={index} className="justify-content-center">
+						<Row key={index} className="justify-content-center background-Color">
 							{
 								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.to_stock && (data.max_qty>data.current_stock)) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
 							}
@@ -227,7 +229,7 @@ const AutoTopup = (props) => {
 				</Row>
 
 				<Modal show={showModal} size="xl" centered>
-					<Modal.Header>
+					<Modal.Header className="modal-background">
 						<Modal.Title className="custom-t2 text-uppercase">
 							{modalTitleTxt} {/* confirm restocked quantity */}
 						</Modal.Title>

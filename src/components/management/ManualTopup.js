@@ -7,6 +7,8 @@ import imgURL from '../../assets/static_images/no_image.png';
 import { Container, Row, Col, Modal } from 'react-bootstrap';
 
 const ManualTopup = (props) => {
+	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']]; // data for numpad, cannot be changed
+
 	const [slotData, setSlotData] = useState({});
 	const [productURL, setProductURL] = useState(imgURL);
 	const [productName, setProductName] = useState("");
@@ -88,7 +90,7 @@ const ManualTopup = (props) => {
 			if (slotIds.includes(parseInt(slotId))) {
 				slotData.forEach(slot => {
 					if (parseInt(slotId) === slot.slot_id) {
-						setToStockQty(slot.to_stock);
+						// setToStockQty(slot.to_stock);
 						setProductId(slot.product_id);
 						setProductURL(`${FORMATTER.api_base_url()}${slot.image}`);
 						setProductName(slot.product_name);
@@ -105,7 +107,8 @@ const ManualTopup = (props) => {
 					}
 				});
 			} else {
-				let msg = (parseInt(slotId) > 60) ? "SLOT TIDAK SAH! HARAP MASUKKAN NOMOR SLOT YANG SAH" : "Slot " + slotId + "  TIDAK AKTIF. HARAP MASUKKAN NOMOR SLOT AKTIF"; // cond 1: invalid slot! please key in the valid slot number, cond 2: Slot slot_id is inactive. please key in the active slot number.
+				// cond 1: invalid slot! please key in the valid slot number, cond 2: Slot slot_id is inactive. please key in the active slot number.
+				let msg = (parseInt(slotId) > 60) ? "SLOT TIDAK SAH! HARAP MASUKKAN NOMOR SLOT YANG SAH" : "Slot " + slotId + "  TIDAK AKTIF. HARAP MASUKKAN NOMOR SLOT AKTIF"; 
 				setShowModal(true);
 				setContentMsg(msg);
 				setToStockQty(0);
@@ -194,21 +197,19 @@ const ManualTopup = (props) => {
 			}
 		}
 	}
-
-	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']];
 	
 	let slotList = [];
 	Object.values(slotData).forEach((slot) => {
 		slotList.push(<option key={slot.slot_id} value={slot.product_id}>{slot.slot_id}</option>);
 	});
 
-	return ( <div className="vw-100 vh-100 d-flex align-items-center">
+	return ( <div className="vw-100 vh-100 d-flex align-items-center background-Img">
 		<Container fluid>
 			<Row className="justify-content-center mb-5">
 				<h1 className="text-center text-uppercase display-3">KONFIRMASI JUMLAH PENYETOKAN ULANG</h1> {/* confirm/edit the restocked quantity */}
 			</Row>
 
-			<Row className="justify-content-center mt-5 mb-5">
+			<Row className="justify-content-center pt-5 pb-5 background-Color">
 				<Col lg={5} className="text-center">
 					<div className="p-2 align-self-center">
 						<img src={productURL} className="img-thumbnail border-0" alt={productName} />

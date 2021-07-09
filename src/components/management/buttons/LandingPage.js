@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import SERVER_REQ from '../../../helpers/Request';
 import FORMATTER from '../../../helpers/Formatter';
-import { Button, Container, Row, Col, Image, Table } from 'react-bootstrap';
+import { Button, Container, Row, Col, Image } from 'react-bootstrap';
 
 const LandingPage = (props) => {
 	const [products, setProducts] = useState([]);
@@ -17,34 +17,35 @@ const LandingPage = (props) => {
 
 	console.log("LP", products);
 
-	return <Container>
-		<Row className="justify-content-center text-center">
-			<p className="text-center text-uppercase custom-t1">TEKAN TOMBOL UNTUL PEMETAAN</p> {/* press button to map */}
+	return <Container fluid className="p-3 background-Img">
+			<Row className="justify-content-center text-center">
+				<p className="text-center text-uppercase custom-t1">TEKAN TOMBOL UNTUK PRODUK</p> {/* press button to map */}
+				<br/>
+			</Row>
+			<Row className="justify-content-center text-center">
+				{
+					products.map((data, index) => (
+						(data.product) ?
+							<Col key={index} lg={3} className="text-uppercase border background-Color">
+								<p className="custom-t2">TOMBOL {data.uuid}</p>
+								<Image
+									src={`${FORMATTER.api_base_url()}${data.product.image_url}`}
+									className="product-thumbnail"
+									alt={data.name}
+								/>
+							</Col>
+						: ""
+					))
+				}
+			</Row>
 			<br/>
-		</Row>
-		<Row className="justify-content-center text-center">
-			{
-				products.map((data, index) => (
-					(data.product) ?
-						<Col key={index} lg={2} className="text-uppercase border">
-							<p className="custom-t2">TOMBOL {data.uuid}</p>
-							<Image
-								src={`${FORMATTER.api_base_url()}${data.product.image_url}`}
-								className="product-thumbnail"
-								alt={data.name}
-							/>
-						</Col>
-					: ""
-				))
-			}
-		</Row>
-		<Row className="justify-content-center text-center mt-4">
-			<Col lg={2}> 
-				<Button variant="warning" className="text-uppercase custom-t1" onClick={props.handleCancelBtn}>
-					BATAL 
-				</Button> {/* cancel */}
-			</Col>
-		</Row>
+			<Row className="justify-content-center text-center mt-2">
+				<Col lg={2}> 
+					<Button variant="warning" className="text-uppercase custom-t1" onClick={props.handleCancelBtn}>
+						BATAL 
+					</Button> {/* cancel */}
+				</Col>
+			</Row>
 	</Container>
 }
 
