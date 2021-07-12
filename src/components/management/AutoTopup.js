@@ -62,7 +62,7 @@ const AutoTopup = (props) => {
 
 				setSlotData(slotList);
 				setRawSlotData(rawSlots);
-				console.log(slotList)
+				console.log(slotList);
 			})
 			.catch(error => console.log(error.message));
 	}, []);
@@ -80,9 +80,11 @@ const AutoTopup = (props) => {
 	}
 
 	const handleMinus = () => {
-		if (parseInt(toStockQty) > 0) {
-			setToStockQty(parseInt(toStockQty) - 1);
-		}
+		// if (parseInt(toStockQty) > 0) {
+		// 	setToStockQty(parseInt(toStockQty) - 1);
+		// }
+		// to allow negative value 
+		setToStockQty(parseInt(toStockQty) - 1);
 	}
 
 	const handleBtnSlotOnClick = (event) => {
