@@ -63,9 +63,12 @@ const ManualTopup = (props) => {
 	}
 
 	const handleMinus = () => {
-		if (parseInt(toStockQty) > 0) {
-			setToStockQty(parseInt(toStockQty) - 1);
-		}
+		// if (parseInt(toStockQty) > 0) {
+		// 	setToStockQty(parseInt(toStockQty) - 1);
+		// }
+
+		// to allow negative value
+		setToStockQty(parseInt(toStockQty) - 1);
 	}
 
 	// Slot +/- buttons will work on the activeSlots indexes
@@ -91,6 +94,7 @@ const ManualTopup = (props) => {
 				slotData.forEach(slot => {
 					if (parseInt(slotId) === slot.slot_id) {
 						// setToStockQty(slot.to_stock);
+						setToStockQty(0);
 						setProductId(slot.product_id);
 						setProductURL(`${FORMATTER.api_base_url()}${slot.image}`);
 						setProductName(slot.product_name);
@@ -125,20 +129,27 @@ const ManualTopup = (props) => {
 			setShowModal(true);
 			setContentMsg(msg);
 		} else {
-			// console.log("clicked confirm button", slotId, toStockQty, productId);
+			console.log("clicked confirm button", slotId, toStockQty, productId);
 			if (parseInt(toStockQty) !== 0) {
 				let preparedData = {};
-				preparedData[`stock[0][slot_id]`] = parseInt(slotId);
-				preparedData[`stock[0][to_stock]`] = toStockQty;
-				preparedData[`stock[0][product_id]`] = productId;
+				preparedData[`stock[slot_id]`] = parseInt(slotId);
+				preparedData[`stock[to_stock]`] = toStockQty;
+				preparedData[`stock[product_id]`] = productId;
+				console.log("max_qty", maxQty);
 				console.log(preparedData);
 				const button_post = await SERVER_REQ.post(`/api/stocks.json`, preparedData);
+				const resp_current_stock = button_post.response.current_stock;
+				setCurrentStock(resp_current_stock);
+				setToStockQty(0);
+				if (maxQty - resp_current_stock !== 0) {
+					setShowSpan("d-none");
+				}
 				console.log(button_post);
 				if (button_post.response.success) {
 					props.history.push("/management/manual_topup");
 				}
 			} else {
-				let msg = "slot is full. no need to topup"; // slot is full. no need to topup.
+				let msg = "TIDAK PERLU PENYETOKAN"; // slot is full. no need to topup.
 				setShowModal(true);
 				setContentMsg(msg);
 			}
@@ -219,7 +230,7 @@ const ManualTopup = (props) => {
 
 				<Col lg={7} className="align-self-center text-uppercase custom-t2">
 					<Row className="mb-2">
-						<label className="text-uppercase custom-t2">SLOT <span className={"text-uppercase custom-t3 text-danger " + showSpan}>(tidak perlu penyetokan)</span></label><br/>
+						<label className="text-uppercase custom-t2">SLOT <span className={"text-uppercase custom-t3 text-danger " + showSpan}>(TIDAK PERLU PENYETOKAN)</span></label><br/>
 						{/* <Col lg={10} className="p-0">
 							<input type="text" onClick={handleShowNumpad} value={slotId} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="MASUKKAN NOMOR SLOT" /> enter the slot number
 						</Col> */}
