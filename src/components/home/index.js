@@ -51,8 +51,8 @@ const Home = (props) => {
 
 	const MachineSetup = () => {	
 		let code, configsWarn, missingConf, resourcesWarn, missingRes;
-		let confData = "missing configs - ";
-		let resData = "missing resources - ";
+		let confData = "";
+		let resData = "";
 
 		if (missingConfigs.length > 0) {
 			missingConfigs.forEach((element, i) => {
