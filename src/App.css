@@ -243,3 +243,13 @@
 	top: 40vh; 
 	color: #fff;
 } 
+
+.carousel-control-prev {
+	visibility: hidden;
+}
+
+.carousel-control-next {
+	visibility: hidden;
+}
+
+.carousel-indicators li { visibility: hidden; }

@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
 import { SocketContext } from '../../services/socket';
 import SERVER_REQ  from '../../helpers/Request';
+import FORMATTER  from '../../helpers/Formatter';
 import {useHistory} from 'react-router-dom';
 import logo from '../../assets/static_images/Logo.png';
 // import { Container, Row, Col, Button, Carousel } from 'react-bootstrap';
-import { Container, Row, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Button, Modal, Carousel } from 'react-bootstrap';
 
 const BUTTON_E = "button_pressed";
 
@@ -13,22 +14,23 @@ const activate_button = (socket) => {
 }
 
 const MachineShop = () => {
-	const [showAlert, setShowAlert] = useState(false);
-    const socket = useContext(SocketContext);
-    const history = useHistory();
-	// const carouselInterval = 10 * 1000; // 10 seconds, can set by backend, may be more than one interval
-	const [start, setStart] = useState(0);
-	const [clickBtn1, setClickBtn1] = useState(false);
+		const [showAlert, setShowAlert] = useState(false);
+		const socket = useContext(SocketContext);
+		const history = useHistory();
+		const carouselInterval = 10 * 1000; // 10 seconds, can set by backend, may be more than one interval
+		const [start, setStart] = useState(0);
+		const [clickBtn1, setClickBtn1] = useState(false);
+		const [carouselItems, setCarouselItems] = useState([]);
 
     useEffect(() => {
         let button_pressed = false;
         socket.on('connect', function(){
             console.log('connected')
         })
-		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: BUTTON_E })
-        socket.on('error', function(){
-            console.log('error')
-        });
+				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: BUTTON_E });
+				socket.on('error', function(){
+						console.log('error')
+				});
         
         socket.on(BUTTON_E, async (data) => {
             data = JSON.parse(data);
@@ -42,20 +44,37 @@ const MachineShop = () => {
             socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
             console.log('pressed')
             const button_req = await SERVER_REQ.get(`/api/buttons/${button}.json`);
-			console.log(button_req);
-			const button_response = button_req.response
-			if(!button_response.success){
-				button_pressed=false;
-				setShowAlert(true);
-				return;
-			}
+						console.log(button_req);
+						const button_response = button_req.response
+						if(!button_response.success){
+							button_pressed=false;
+							setShowAlert(true);
+							return;
+						}
             const button_detail = button_req.response.data;
 			
             const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url}
             const url_params = new URLSearchParams(product_detail);
             console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
             history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
-        })
+        });
+
+				// Get Carousel Items
+				const url = `${FORMATTER.api_base_url()}/api/banners.json`;
+				fetch(url)
+					.then(response => {
+						if (response.ok) {
+							return response.json();
+						}
+						throw new Error("Network response was not ok.");
+					})
+					.then(response => {
+						console.log("Carousels", response.data.image_urls);
+						setCarouselItems(response.data.image_urls);
+						// response.data.image_urls.forEach(element => { console.log(element) });
+					})
+					.catch(error => console.log(error.message));
+
         return () => {
             console.log('Log out')
             socket.off(BUTTON_E)
@@ -64,8 +83,8 @@ const MachineShop = () => {
     },[]);
 
 	const handleButtonOk = () => {
-		setShowAlert(false);
-		activate_button(socket);
+			setShowAlert(false);
+			activate_button(socket);
 	}
 
 	const handleMouseDown = () => {
@@ -91,47 +110,33 @@ const MachineShop = () => {
 	}
 
     return <div className="vw-100 vh-100 d-flex align-items-center background-Img">
-				<Container fluid>
+			<Container fluid>
 					<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
 					<Button className="custom-t2" style={{position: "absolute", top: "0px", right: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
-					{/* <Carousel>
-						<Carousel.Item interval={carouselInterval}> */}
-							<Row>
-								<Row className='justify-content-center mb-3'>
-									<div className='p-2 align-self-center text-center'>
-											<img src={logo} className='mini-logo2' alt='Logo' />
-									</div>
-								</Row>
-								<Row className='justify-content-center mt-3'>
-									<div className='p-2 text-center align-self-center machine-shop-div'>
-										<span className='machine-shop-div-text'><strong>SILAHKAN MEMULAI DENGAN MENEKAN <br/> TOMBOL PRODUK YANG MAU DIPILIH</strong></span>
-									</div>
-								</Row>
-							</Row>
-							{/* <Row className='justify-content-center mt-4'>
-									<p className='text-center custom-t1'><strong>SILAHKAN MEMULAI DENGAN MENEKAN TOMBOL PRODUK YANG MAU DIPILIH</strong></p>
-							</Row> */}
-						{/* </Carousel.Item> */}
-
-						{/* <Carousel.Item  interval={carouselInterval}>
-							<Row>
-									<Col lg={7} className='justify-content-center'>
-											<div className='p-2 align-self-center text-center'>
-													<img src={logo} className='img-thumbnail border-0' alt='Logo' />
-											</div>
-									</Col>
-									<Col lg={5} className='justify-content-center'>
-											<div className='p-2 align-self-center text-center'>
-												<img src={btn_press} className='product-thumbnail border-0' alt='TEKAN TOMBOL UNTUK MEMULAI'></img>
-											</div>
-									</Col>
-							</Row>
-							<Row className='justify-content-center mt-4'>
-									<p className='text-center custom-t1'><strong>SILAHKAN MEMULAI DENGAN MENEKAN TOMBOL PRODUK YANG MAU DIPILIH</strong></p>
-							</Row>
-						</Carousel.Item>
-					</Carousel> */}
-						
+					
+					<Carousel className="p-3"> 
+						{
+							(carouselItems.length > 0) ?
+ 								carouselItems.map(element => (
+									<Carousel.Item interval={carouselInterval}> 
+										<Row>
+											<Row className='justify-content-center mb-3'>
+												<div className='p-2 align-self-center text-center'>
+														<img src={logo} className='mini-logo2' alt='Logo' />
+												</div>
+											</Row>
+											<Row className='justify-content-center mt-3'>
+												{/* <div className='p-2 text-center align-self-center machine-shop-div'>
+													<span className='machine-shop-div-text'><strong>SILAHKAN MEMULAI DENGAN MENEKAN <br/> TOMBOL PRODUK YANG MAU DIPILIH</strong></span>
+												</div> */}
+												<img src={`${FORMATTER.api_base_url()}${element}`} alt='Carousel Item'  style={{width: "80vw", height: "70vh"}} />
+											</Row>
+										</Row>
+									</Carousel.Item>	
+								))
+							: <Carousel.Item></Carousel.Item>
+						}
+					</Carousel> 	
 			</Container>
 			<Modal show={showAlert} size="lg" centered>
 				<Modal.Body>
