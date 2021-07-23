@@ -126,15 +126,25 @@ const MachineShop = () => {
 												</div>
 											</Row>
 											<Row className='justify-content-center mt-3'>
-												{/* <div className='p-2 text-center align-self-center machine-shop-div'>
-													<span className='machine-shop-div-text'><strong>SILAHKAN MEMULAI DENGAN MENEKAN <br/> TOMBOL PRODUK YANG MAU DIPILIH</strong></span>
-												</div> */}
 												<img src={`${FORMATTER.api_base_url()}${element}`} alt='Carousel Item'  style={{width: "80vw", height: "70vh"}} />
 											</Row>
 										</Row>
 									</Carousel.Item>	
 								))
-							: <Carousel.Item></Carousel.Item>
+							: <Carousel.Item>
+								<Row>
+									<Row className='justify-content-center mb-3'>
+										<div className='p-2 align-self-center text-center'>
+												<img src={logo} className='mini-logo2' alt='Logo' />
+										</div>
+									</Row>
+									<Row className='justify-content-center mt-3'>
+										<div className='p-2 text-center align-self-center machine-shop-div'>
+											<span className='machine-shop-div-text'><strong>SILAHKAN MEMULAI DENGAN MENEKAN <br/> TOMBOL PRODUK YANG MAU DIPILIH</strong></span>
+										</div>
+									</Row>
+								</Row>
+							</Carousel.Item>
 						}
 					</Carousel> 	
 			</Container>
