@@ -69,9 +69,9 @@ const MachineShop = () => {
 						throw new Error("Network response was not ok.");
 					})
 					.then(response => {
-						console.log("Carousels", response.data.image_urls);
+						// console.log("Carousels", response.data.image_urls);
 						setCarouselItems(response.data.image_urls);
-						// response.data.image_urls.forEach(element => { console.log(element) });
+						// response.data.image_urls.forEach((element, index) => { console.log(index) });
 					})
 					.catch(error => console.log(error.message));
 
@@ -110,43 +110,41 @@ const MachineShop = () => {
 	}
 
     return <div className="vw-100 vh-100 d-flex align-items-center background-Img">
-			<Container fluid>
-					<Button className="custom-t2" style={{position: "absolute", top: "0px", left: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
-					<Button className="custom-t2" style={{position: "absolute", top: "0px", right: "0px", opacity: "0", width: 200, height: 200}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
-					
-					<Carousel className="p-3"> 
-						{
-							(carouselItems.length > 0) ?
- 								carouselItems.map(element => (
-									<Carousel.Item interval={carouselInterval}> 
-										<Row>
-											<Row className='justify-content-center mb-3'>
-												<div className='p-2 align-self-center text-center'>
-														<img src={logo} className='mini-logo2' alt='Logo' />
-												</div>
-											</Row>
-											<Row className='justify-content-center mt-3'>
-												<img src={`${FORMATTER.api_base_url()}${element}`} alt='Carousel Item'  style={{width: "80vw", height: "70vh"}} />
-											</Row>
-										</Row>
-									</Carousel.Item>	
-								))
-							: <Carousel.Item>
-								<Row>
-									<Row className='justify-content-center mb-3'>
-										<div className='p-2 align-self-center text-center'>
-												<img src={logo} className='mini-logo2' alt='Logo' />
-										</div>
-									</Row>
-									<Row className='justify-content-center mt-3'>
-										<div className='p-2 text-center align-self-center machine-shop-div'>
-											<span className='machine-shop-div-text'><strong>SILAHKAN MEMULAI DENGAN MENEKAN <br/> TOMBOL PRODUK YANG MAU DIPILIH</strong></span>
-										</div>
-									</Row>
-								</Row>
-							</Carousel.Item>
-						}
+			<Container fluid className="p-0">
+			{
+				(carouselItems.length > 0) ?
+					<Carousel> 
+					{
+						carouselItems.map((element, index) => (
+							<Carousel.Item interval={carouselInterval} key={index} className='carousel-container justify-content-center'> 
+								{/* <Row className='justify-content-center mb-3'> */}
+								<Button className="custom-t2 carousel-button" style={{position: "absolute", top: "0", left: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
+								<Button className="custom-t2 carousel-button" style={{position: "absolute", top: "0", right: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
+								{/* </Row> */}
+								{/* <Row className='justify-content-center mt-3'> */}
+									<img src={`${FORMATTER.api_base_url()}${element}`} alt='Carousel Item' className='carousel-image'/>
+								{/* </Row> */}
+							</Carousel.Item>	
+						))
+					}
 					</Carousel> 	
+				:
+				<Row>
+					<Row className='justify-content-center mb-3'>
+						<Button className="custom-t2" style={{position: "absolute", top: "0", left: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
+						<div className='p-2 align-self-center text-center'>
+								<img src={logo} className='mini-logo2' alt='Logo' />
+						</div>
+						<Button className="custom-t2" style={{position: "absolute", top: "0", right: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
+					</Row>
+
+					<Row className='justify-content-center mt-3'>
+						<div className='p-2 text-center align-self-center machine-shop-div'>
+							<span className='machine-shop-div-text'><strong>SILAHKAN MEMULAI DENGAN MENEKAN <br/> TOMBOL PRODUK YANG MAU DIPILIH</strong></span>
+						</div>
+					</Row>
+				</Row>
+			}
 			</Container>
 			<Modal show={showAlert} size="lg" centered>
 				<Modal.Body>
