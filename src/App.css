@@ -259,10 +259,11 @@
 }
 
 .carousel-image {
-	width: 100%;
-	height: auto;
+	width: 100vw;
+	height: 100vh;
 }
 
 .carousel-button {
 	position: absolute;
+	z-index: 1001;
 }
