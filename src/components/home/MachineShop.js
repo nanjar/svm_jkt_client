@@ -4,7 +4,6 @@ import SERVER_REQ  from '../../helpers/Request';
 import FORMATTER  from '../../helpers/Formatter';
 import {useHistory} from 'react-router-dom';
 import logo from '../../assets/static_images/Logo.png';
-// import { Container, Row, Col, Button, Carousel } from 'react-bootstrap';
 import { Container, Row, Button, Modal, Carousel } from 'react-bootstrap';
 
 const BUTTON_E = "button_pressed";
