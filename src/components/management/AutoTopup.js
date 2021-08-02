@@ -7,6 +7,7 @@ import imgURL from '../../assets/static_images/no_image.png';
 import { Container, Row, Col, Modal, Button } from 'react-bootstrap';
 
 const AutoTopup = (props) => {
+	const isLocal = (window.location.hostname === "localhost") ? true : false;
 	const [slotData, setSlotData] = useState([]);
 	const [modifiedSlotData, setModifiedSlotData] = useState([]);
 	const [rawSlotData, setRawSlotData] = useState([]);
@@ -45,7 +46,7 @@ const AutoTopup = (props) => {
 					let iter = 0;
 					while(len > iter){
 						slotList[data[0].tied].push({
-							slot_id: Date.now().toString(36) + Math.random().toString(36).substring(2),
+							slot_id: Date.now().toString(36) + Math.random().toString(36).substring(2), // add dummy unique data for the inactive/free slots of a level, to use it as the key value of the HTML element
 							max_qty: null,
 							tied: null,
 							product_id: null,
@@ -61,9 +62,10 @@ const AutoTopup = (props) => {
 
 				setSlotData(slotList);
 				setRawSlotData(rawSlots);
+				console.log(slotList);
 			})
 			.catch(error => console.log(error.message));
-	}, [modifiedSlotData]);
+	}, []);
 
 	const handlePlus = () => {
 		if (parseInt(maxNumRestock) !== parseInt(maxQty)) {
@@ -78,14 +80,11 @@ const AutoTopup = (props) => {
 	}
 
 	const handleMinus = () => {
-		if (parseInt(toStockQty) > 0) {
-			setToStockQty(parseInt(toStockQty) - 1);
-		}
-	}
-
-	const handleValueChange = (event) => {
-		const x = Number(event.target.value);
-		setToStockQty(x);
+		// if (parseInt(toStockQty) > 0) {
+		// 	setToStockQty(parseInt(toStockQty) - 1);
+		// }
+		// to allow negative value 
+		setToStockQty(parseInt(toStockQty) - 1);
 	}
 
 	const handleBtnSlotOnClick = (event) => {
@@ -100,19 +99,20 @@ const AutoTopup = (props) => {
 				} else {
 					setShowSpan("d-none");
 				}
-				setToStockQty(data.to_stock); // initial to stock quantity. it'll will change when +/- button on click
-				setMaxNumRestock(data.to_stock); // set max num to restock
+				// setToStockQty(data.to_stock); // initialise the stocakable quantity. it'll will change on +/- button click
+				setToStockQty(0); // initialise the stocakable quantity. it'll will change on +/- button click
+				setMaxNumRestock(data.to_stock); // set maximum number of restockalble quantity 
 				setSlotId(slotId);
 				setMaxQty(data.max_qty);
 				setProductURL(data.image);
 				setProductName(data.product_name);
 				setShowModal(true);
-				
 			}
 		});
 	} 
 
 	const handleBtnSubConfirmOnClick = (event) => {
+		console.log("modal clicked");
 		slotData.forEach((rowData, i) => {
 			rowData.forEach((slot, j) => {
 				if (parseInt(slotId) === parseInt(slot.slot_id)) {
@@ -131,6 +131,7 @@ const AutoTopup = (props) => {
 		let preparedData = {};
 		let preparedDataIndex =0;
 
+		// prepare data to post to server
 		slotData.forEach(data => {
 			data.forEach(element => {
 				let x, y, z;
@@ -139,12 +140,12 @@ const AutoTopup = (props) => {
 				z = element.product_id;
 				if (toStockData.length > 0) {
 					toStockData.forEach(tostock => {
-						if (parseInt(tostock.slot_id) === parseInt(element.slot_id) && parseInt(tostock.tostock_qty) !== parseInt(element.slot_id)) {
+						if (parseInt(tostock.slot_id) === parseInt(element.slot_id) && parseInt(tostock.tostock_qty) !== parseInt(element.slot_id)) { // update the edited quantity of slot for preparedData object
 							if (y) {
 								x = element.slot_id; 
 								y = tostock.tostock_qty;
 								z = element.product_id;
-								preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
+								preparedData[`stock[${preparedDataIndex}][slot_id]`] = x; 
 								preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
 								preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
 								preparedDataIndex++;
@@ -169,7 +170,8 @@ const AutoTopup = (props) => {
 			});
 		});
 
-		console.log(preparedData);
+		console.log("auto topup post", preparedData);
+		// data sample : preparedData - {[stock[0][slot_id]: 1, stock[0]['to_stock']: 2, stock[0]['product_id']: 3]}
 		const button_put = await SERVER_REQ.put(`/api/stocks/1.json`, preparedData);
 		console.log(button_put);
 		if (button_put.response.success) {
@@ -185,82 +187,90 @@ const AutoTopup = (props) => {
 	// 	setShowAlert(false);
 	// }
 
-	return ( <div className="vw-100 vh-100 d-flex align-items-center">
+	const cancelTxt = (isLocal) ? "batal" : "cancel";
+	const confirmTxt = (isLocal) ? "lanjut" : "confirm";
+	const titleTxt = (isLocal) ? "KONFIRMASI UNTUK JUMLAH STOK" : "restock quantity for slots";
+	const quantityTxt = (isLocal) ? "jumlah" : "quantity";
+	const alertTxt = (isLocal) ? "tidak perlu penyetokan" : "no need to stock";
+	const modalTitleTxt = (isLocal) ? "KONFIRMASI JUMLAH STOK" : "confirm restock quantity";
+
+	return ( <div className="vw-100 vh-100 d-flex align-items-center background-Img">
 			<Container fluid className="text-uppercase">
 				<Row className="justify-content-center">
-					<p className="text-center custom-t2">KONFIRMASI UNTUK JUMLAH RESTOCK SLOT</p> {/* confirm the restocked quantity for slots  */}
+					<p className="text-center custom-t2">{titleTxt}</p> {/* confirm the restocked quantity for slots  */}
+					{!isLocal ? <span>1/2/3/ - (1: stockable quantity, 2: current quantity, 3: maximum quantity)</span> : ""}
 				</Row>
 				{
 					(modifiedSlotData.length === 0) ? 
 					slotData.map((rowData, index) => (
-						<Row key={index} className="justify-content-center">
+						<Row key={index} className="justify-content-center background-Color">
 							{
-								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t3 mt-3 mb-3" data-slotid={data.slot_id} >{(data.slot_active ? (((data.to_stock && (data.max_qty>data.current_stock)) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
+								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.to_stock && (data.max_qty>data.current_stock)) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
 							}
 						</Row>
 					)) : modifiedSlotData.map((rowData, index) => (
-						<Row key={index} className="justify-content-center">
+						<Row key={index} className="justify-content-center background-Color">
 							{
-								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onDoubleClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} ><p className="custom-t3 mt-3 mb-3" data-slotid={data.slot_id} >{(data.slot_active ? (((data.to_stock && (data.max_qty>data.current_stock)) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
+								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.to_stock && (data.max_qty>data.current_stock)) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
 							}
 						</Row>
 					))
 				}
-				<Row className="justify-content-center mt-5">
+				<Row className={"justify-content-center" + ((isLocal) ? " mt-5" : " mt-1")}>
 					<div className="text-center col p-2 align-self-center">
 						<Link to="/management" className="btn btn-lg btn-warning">
-							<h2 className="text-center text-uppercase display-4">BATAL</h2> {/* cancel */}
+							<h2 className="text-center text-uppercase display-4">{cancelTxt}</h2> {/* cancel */}
 						</Link>
 					</div>
 
 					<div className="text-center col p-2 align-self-center">
 						<button type="button" className="btn btn-lg btn-info text-uppercase font-weight-bold" onClick={handleBtnMainConfirmOnClick}>
-							<h2 className="text-center text-uppercase display-4">LANJUT</h2> {/* confirm */}
+							<h2 className="text-center text-uppercase display-4">{confirmTxt}</h2> {/* confirm */}
 						</button>
 					</div>
 				</Row>
-			<Modal show={showModal} size="xl" centered>
-				<Modal.Header>
-					<Modal.Title className="custom-t2 text-uppercase">
-						KONFIRMASI JUMLAH STOCK ULANG {/* confirm restocked quantity */}
-					</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<Row className="justify-content-center">
-						<Col lg={5} className="text-center">
-							<div className="p-1 align-self-center">
-								<img src={`${FORMATTER.api_base_url()}${productURL}`} className="img-thumbnail border-0" alt={productName} />
-								<h1 className="text-center text-uppercase custom-t3">{productName}</h1>
-							</div>
-						</Col>
+
+				<Modal show={showModal} size="xl" centered>
+					<Modal.Header className="modal-background">
+						<Modal.Title className="custom-t2 text-uppercase">
+							{modalTitleTxt} {/* confirm restocked quantity */}
+						</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<Row className="justify-content-center">
+							<Col lg={5} className="text-center">
+								<div className="p-1 align-self-center">
+									<img src={`${FORMATTER.api_base_url()}${productURL}`} className="img-thumbnail border-0" alt={productName} />
+									<h1 className="text-center text-uppercase custom-t3">{productName}</h1>
+								</div>
+							</Col>
 
 							<Col lg={7} className="align-self-center text-uppercase custom-t2">
 								<Row>
-									<label className="text-uppercase custom-t2">JUMLAH</label><span className={"text-uppercase custom-t3 text-danger " + showSpan}>(slotnya penuh)</span><br/> {/* quantity */}
+									<label className="text-uppercase custom-t2">{quantityTxt}</label><span className={"text-uppercase custom-t3 text-danger " + showSpan}>{alertTxt}</span><br/> {/* quantity */}
 									<Col lg={2} className="p-0">
 										<input type="button" value="-" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t2" onClick={handleMinus} />
 									</Col>
 									<Col lg={6} className="p-0">
-										<input type="number" value={toStockQty} className="form-control border border-1 form-control-lg custom-t2" onChange={handleValueChange} readOnly={true} />
+										<input type="number" value={toStockQty} className="form-control border border-1 form-control-lg custom-t2" readOnly={true} />
 									</Col>
 									<Col lg={2} className="p-0">
 										<input type="button" value="+" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t2" onClick={handlePlus} />
 									</Col>
 								</Row>
 							</Col>
-
 						</Row>
 					</Modal.Body>
 					<Modal.Footer className="text-center">
 						<div className="text-center">
 							<Button variant="warning" type="button" className="text-uppercase" onClick={handleModalClose}>
-								<h2 className="text-center text-uppercase custom-t3">BATAL</h2> {/* cancel */}
+								<h2 className="text-center text-uppercase custom-t3">{cancelTxt}</h2> {/* cancel */}
 							</Button>
 						</div>
 
 						<div className="text-center">
 							<Button variant="info" type="button" className="text-uppercase" onClick={handleBtnSubConfirmOnClick}>
-								<h2 className="text-center text-uppercase custom-t3">LANJUT</h2> {/* confirm */}
+								<h2 className="text-center text-uppercase custom-t3">{confirmTxt}</h2> {/* confirm */}
 							</Button>
 						</div>
 					</Modal.Footer>

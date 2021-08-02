@@ -6,6 +6,8 @@ import { useHistory } from "react-router-dom";
 import { useIdleTimer } from 'react-idle-timer';
 
 const Login = (props) => {
+	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']]; // data for numpad, cannot be changed
+
 	const [numInput, setNumInput] = useState("");
 	const [showNumpad, setShowNumpad] = useState(false);
 	const [pin, setPin] = useState("");
@@ -15,7 +17,8 @@ const Login = (props) => {
 	const history = useHistory();
 	
 	useEffect(() => {
-		timerId.current = setTimeout(() => { handleTimeout(); }, 30000); // redirect to home page after 30 seconds of no interaction
+		// redirect home page after 30 seconds 
+		timerId.current = setTimeout(() => { handleTimeout(); }, 30000); 
 		console.log("Timer", timerId);
 		return function cleanup() {
 			clearTimeout(timerId.current); 
@@ -80,7 +83,7 @@ const Login = (props) => {
 			const success = button_post.response.success;
 			console.log(button_post);
 			if (success) {
-				const routeName = (window.location.hostname === "localhost") ? '/management' : '/management/info_stock';
+				const routeName = (window.location.hostname === "localhost") ? '/management' : '/management/auto_topup';
 				const locationProps = {
 					pathname: routeName,
 					state: { login: true }
@@ -113,14 +116,12 @@ const Login = (props) => {
 	const handleButtonOk = () => {
 		setShowModal(false);
 	}
-
-	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']];
 		
-	return (<div className="vw-100 vh-100 d-flex align-items-center">
+	return (<div className="vw-100 vh-100 d-flex align-items-center background-Img">
 		<Container fluid>
 			<Row className="justify-content-center">
 				<Col lg={5}>
-					<input type="text" onClick={handleShowNumpad} value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="JENIS KODE KATA SANDI" /> {/* type passcode */}
+					<input type="text" onClick={handleShowNumpad} value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="KODE SANDI" /> {/* type passcode */}
 				</Col>
 			</Row>
 

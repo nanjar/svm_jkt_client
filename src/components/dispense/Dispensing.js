@@ -3,9 +3,9 @@ import { useHistory, useParams } from "react-router-dom";
 import { Container, Row } from 'react-bootstrap';
 import SERVER_REQ from '../../helpers/Request';
 import { SocketContext } from "../../services/socket";
-import LoadingImage from '../../assets/static_images/success.gif';
 import DispenseSuccess from "./dispense_success";
 import DispenseError from "./dispense_error";
+
 const DISPENSE_E = "dispense";
 
 const DISPENSE_CODE_TEXT = {
@@ -54,18 +54,19 @@ const Dispensing = () => {
 		}
 	}, [slot_id, socket])
 	return (
-		<div className="vw-100 vh-100 d-flex align-items-center">
+		<div className="vw-100 vh-100 d-flex align-items-center background-ImgWithLogo">
 			<Container fluid>
 				{
 					isDispensing 
 					? 
 						<Row className="justify-content-center text-uppercase m-3">
-							<div className="p-2 align-self-center mb-3">
-								<p className="text-center custom-t0">PEMBAYARAN BERHASIL</p> {/* payment success */}
-								<p className="text-center custom-t4">MESIN SEDANG MENYIAPKAN PRODUK ANDA ...</p> {/* machine is dispensing your product  */}
-							</div>
-							<div className="p-2 text-center mb-3">
-								<img src={LoadingImage} className="img-thumbnail border-0" alt="Loading..."></img>
+							<div className="container p-2 text-center mt-5 mb-3 payment-success-div">
+								<p className='custom-t0 payment-success-div-text'>PEMBAYARAN BERHASIL</p>
+								<p className='custom-t1 payment-success-div-text'>MESIN SEDANG MENYIAPKAN PRODUK ANDA</p>
+								{/*
+									payment success - PEMBAYARAN BERHASIL
+									machine is dispensing your product - MESIN SEDANG MENYIAPKAN PRODUK ANDA
+								*/}
 							</div>
 						</Row>
 					:

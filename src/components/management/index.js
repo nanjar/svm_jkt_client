@@ -9,10 +9,11 @@ const Management = (props) => {
 	const [machineTemp] = useState(0);
 	
 	const location = useLocation();
-	const history = useHistory()
+	const history = useHistory();
 	useEffect(()=>{
+		console.log("loc state ", !(location.state && location.state.login));
 		if(!(location.state && location.state.login)){
-			// history.push('/management/login');d0
+			history.push('/management/login'); // redirecting to login page for the desktop browsers
 			return;
 		}
 		return () => {}
@@ -47,7 +48,7 @@ const Management = (props) => {
 		onAction: handleOnAction
 	});
 
-	return <div className="vw-100 vh-100 d-flex align-items-center">
+	return <div className="vw-100 vh-100 d-flex align-items-center background-Img">
 		<Container fluid>
 			<Row className="mt-1">
 				<Col lg={6}><span className="text-uppercase custom-t2">SUHU PERANGKAT - {piTemp} C</span></Col> {/* device/pi temp */}

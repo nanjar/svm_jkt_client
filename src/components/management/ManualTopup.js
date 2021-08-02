@@ -7,12 +7,15 @@ import imgURL from '../../assets/static_images/no_image.png';
 import { Container, Row, Col, Modal } from 'react-bootstrap';
 
 const ManualTopup = (props) => {
+	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']]; // data for numpad, cannot be changed
+
 	const [slotData, setSlotData] = useState({});
 	const [productURL, setProductURL] = useState(imgURL);
 	const [productName, setProductName] = useState("");
 	const [productId, setProductId] = useState(false);
 	const [toStockQty, setToStockQty] = useState(0);
-	const [maxQty] = useState(0);
+	const [currentStock, setCurrentStock] = useState(0);
+	const [maxQty, setMaxQty] = useState(0);
 	const [showModal, setShowModal] = useState(false);
 	const [slotId, setSlotId] = useState("");
 	const [showNumpad, setShowNumpad] = useState(false);
@@ -21,6 +24,7 @@ const ManualTopup = (props) => {
 	const [maxNumRestock, setMaxNumRestock] = useState("");
 	const [btnDisable, setBtndisable] = useState("");
 	const [showSpan, setShowSpan] = useState("d-none");
+	const [activeSlots, setActiveSlots] = useState([]);
 
 	useEffect(() => {
 		const url = `${FORMATTER.api_base_url()}/api/topups/layouts.json`; 
@@ -33,10 +37,20 @@ const ManualTopup = (props) => {
 				throw new Error("Network response was not ok.");
 			})
 			.then(response => {
-				setSlotData(response.data);
+				const data = response.data;
+				setSlotData(data);
+				let temp = [];
+				data.forEach(x => {
+					if (x['slot_active']) {
+						temp.push(x['slot_id']);
+					}
+				});
+				setActiveSlots(temp);
 			})
 			.catch(error => console.log(error.message));
-	}, []);
+		console.log('Do something after slot has changed', slotId);
+		if (!showNumpad) handleSlotId();
+	}, [slotId]);
 
 	const handlePlus = () => {
 		if (parseInt(toStockQty) === parseInt(maxNumRestock)) {
@@ -49,65 +63,95 @@ const ManualTopup = (props) => {
 	}
 
 	const handleMinus = () => {
-		if (parseInt(toStockQty) > 0) {
-			setToStockQty(parseInt(toStockQty) - 1);
-		}
+		// if (parseInt(toStockQty) > 0) {
+		// 	setToStockQty(parseInt(toStockQty) - 1);
+		// }
+
+		// to allow negative value
+		setToStockQty(parseInt(toStockQty) - 1);
 	}
 
-	const handleValueChange = (event) => {
-		const x = Number(event.target.value);
-		setToStockQty(x);
+	// Slot +/- buttons will work on the activeSlots indexes
+	const handleSlotPlus = () => 	{
+		const activeSlotIndex = activeSlots.indexOf(parseInt(slotId));
+		setSlotId((activeSlotIndex === -1)? activeSlots[0] : ((activeSlotIndex + 1 < activeSlots.length) ? activeSlots[activeSlotIndex+1] : activeSlots[activeSlotIndex]));
+	}
+
+	const handleSlotMinus = () => {
+		const activeSlotIndex = activeSlots.indexOf(parseInt(slotId));
+		setSlotId((activeSlotIndex === -1) ? "" : (activeSlots[(activeSlotIndex !== 0) ? (activeSlotIndex - 1) : activeSlotIndex]));
 	}
 
 	// show alert if slot is inactive else set the data to send 
 	const handleSlotId = () => {
-		console.log("num " + numInput);
-		console.log("slot " + slotId);
-		const uniqSlotId = (slotData.length > 0) ? slotData.map(x => x['slot_id']) : [];
+		console.log("num", numInput);
+		console.log("slot", slotId);
+		const slotIds = (slotData.length > 0) ? slotData.map(x => x['slot_id']) : [];
 		setBtndisable(false); // reset disabled button
-		console.log(uniqSlotId);
-		if (uniqSlotId.includes(parseInt(slotId))) {
-			slotData.forEach(slot => {
-				console.log(parseInt(slotId), slot.slot_id);
-				if (parseInt(slotId) === slot.slot_id) {
-					console.log(slot.to_stock, typeof slot.to_stock)
-					setToStockQty(slot.to_stock);
-					setProductId(slot.product_id);
-					setProductURL(`${FORMATTER.api_base_url()}${slot.image}`);
-					setProductName(slot.product_name);
-					setMaxNumRestock(slot.to_stock);
-					if (slot.to_stock === 0) {
-						setShowSpan("");
-					// 	setContentMsg("slotnya penuh"); // slot is full
-					// 	setShowModal(true); // show alert when to_stock is 0
-					} else {
-						setShowSpan("d-none");
+		// console.log("slot ids", slotIds);
+		if (slotId !== "") {
+			if (slotIds.includes(parseInt(slotId))) {
+				slotData.forEach(slot => {
+					if (parseInt(slotId) === slot.slot_id) {
+						// setToStockQty(slot.to_stock);
+						setToStockQty(0);
+						setProductId(slot.product_id);
+						setProductURL(`${FORMATTER.api_base_url()}${slot.image}`);
+						setProductName(slot.product_name);
+						setMaxNumRestock(slot.to_stock);
+						setCurrentStock(slot.current_stock);
+						setMaxQty(slot.max_qty);
+						if (slot.to_stock === 0) {
+							setShowSpan("");
+						// 	setContentMsg("slotnya penuh"); // slot is full
+						// 	setShowModal(true); // show alert when to_stock is 0
+						} else {
+							setShowSpan("d-none");
+						}
 					}
-				}
-			});
-		} else {
-			let msg = (parseInt(slotId) > 60) ? "SLOT TIDAK SAH! HARAP MASUKKAN NOMOR SLOT YANG SAH" : "Slot " + slotId + "  TIDAK AKTIF. HARAP MASUKKAN NOMOR SLOT AKTIF"; // cond 1: invalid slot! please key in the valid slot number, cond 2: Slot slot_id is inactive. please key in the active slot number.
-			setShowModal(true);
-			setContentMsg(msg);
-			setToStockQty(0);
+				});
+			} else {
+				// cond 1: invalid slot! please key in the valid slot number, cond 2: Slot slot_id is inactive. please key in the active slot number.
+				let msg = (parseInt(slotId) > 60) ? "SLOT TIDAK SAH! HARAP MASUKKAN NOMOR SLOT YANG SAH" : "Slot " + slotId + "  TIDAK AKTIF. HARAP MASUKKAN NOMOR SLOT AKTIF"; 
+				setShowModal(true);
+				setContentMsg(msg);
+				setToStockQty(0);
+				setCurrentStock(0);
+				setMaxQty(0);
+			}
 		}
 	}
 
 	const handleBtnConfirmOnClick = async() => {
-		if (slotId === "" || toStockQty === 0) {
+		console.log("click confirm", slotId, toStockQty, productId);
+		if (slotId === "") {
 			let msg = "HARAP MASUKKAN NOMOR SLOT DAN SETEL JUMLAH PRODUK"; // please key in the slot number and set the quantity.
 			setShowModal(true);
 			setContentMsg(msg);
 		} else {
-			let preparedData = {};
-			preparedData[`stock[0][slot_id]`] = parseInt(slotId);
-			preparedData[`stock[0][to_stock]`] = toStockQty;
-			preparedData[`stock[0][product_id]`] = productId;
-			console.log(preparedData);
-			const button_post = await SERVER_REQ.post(`/api/stocks.json`, preparedData);
-			console.log(button_post);
-			if (button_post.response.success) {
-				props.history.push("/management");
+			console.log("clicked confirm button", slotId, toStockQty, productId);
+			if (parseInt(toStockQty) !== 0) {
+				let preparedData = {};
+				preparedData[`stock[slot_id]`] = parseInt(slotId);
+				preparedData[`stock[to_stock]`] = toStockQty;
+				preparedData[`stock[product_id]`] = productId;
+				console.log("max_qty", maxQty);
+				console.log(preparedData);
+				const button_post = await SERVER_REQ.post(`/api/stocks.json`, preparedData);
+				const resp_current_stock = button_post.response.current_stock;
+				setCurrentStock(resp_current_stock);
+				setToStockQty(0);
+				if (maxQty - resp_current_stock !== 0) {
+					setShowSpan("d-none");
+				}
+				console.log(button_post);
+				if (button_post.response.success) {
+					props.history.push("/management/manual_topup");
+				}
+			} else {
+				let msg = "TIDAK PERLU PENYETOKAN"; // slot is full. no need to topup.
+				setShowModal(true);
+				setContentMsg(msg);
 			}
 		}
 	}
@@ -164,21 +208,19 @@ const ManualTopup = (props) => {
 			}
 		}
 	}
-
-	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']];
 	
 	let slotList = [];
 	Object.values(slotData).forEach((slot) => {
 		slotList.push(<option key={slot.slot_id} value={slot.product_id}>{slot.slot_id}</option>);
 	});
 
-	return ( <div className="vw-100 vh-100 d-flex align-items-center">
+	return ( <div className="vw-100 vh-100 d-flex align-items-center background-Img">
 		<Container fluid>
 			<Row className="justify-content-center mb-5">
-				<h1 className="text-center text-uppercase display-3">KONFIRMASI/SUNTING JUMLAH STOCK ULANG</h1> {/* confirm/edit the restocked quantity */}
+				<h1 className="text-center text-uppercase display-3">KONFIRMASI JUMLAH PENYETOKAN ULANG</h1> {/* confirm/edit the restocked quantity */}
 			</Row>
 
-			<Row className="justify-content-center mt-5 mb-5">
+			<Row className="justify-content-center pt-5 pb-5 background-Color">
 				<Col lg={5} className="text-center">
 					<div className="p-2 align-self-center">
 						<img src={productURL} className="img-thumbnail border-0" alt={productName} />
@@ -188,19 +230,29 @@ const ManualTopup = (props) => {
 
 				<Col lg={7} className="align-self-center text-uppercase custom-t2">
 					<Row className="mb-2">
-						<label className="text-uppercase custom-t2">SLOT <span className={"text-uppercase custom-t3 text-danger " + showSpan}>(slotnya penuh)</span></label><br/>
-						<Col lg={10} className="p-0">
-							<input type="text" onClick={handleShowNumpad} value={slotId} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="MASUKKAN NOMOR SLOT" /> {/* enter the slot number */}
+						<label className="text-uppercase custom-t2">SLOT <span className={"text-uppercase custom-t3 text-danger " + showSpan}>(TIDAK PERLU PENYETOKAN)</span></label><br/>
+						{/* <Col lg={10} className="p-0">
+							<input type="text" onClick={handleShowNumpad} value={slotId} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="MASUKKAN NOMOR SLOT" /> enter the slot number
+						</Col> */}
+						<Col lg={2} className="p-0">
+							<input type="button" value="-" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={handleSlotMinus} />
+						</Col>
+						<Col lg={6} className="p-0">
+							<input type="number" value={slotId} className="form-control border border-1 form-control-lg custom-t1" onClick={handleShowNumpad} readOnly={true} />
+						</Col>
+						<Col lg={2} className="p-0">
+							<input type="button" value="+" className={"form-control btn border border-1 form-control-lg font-weight-bold custom-t1 " + btnDisable} onClick={handleSlotPlus} />
 						</Col>
 					</Row>
 
 					<Row>
-						<label className="text-uppercase custom-t2">Quantity</label><br/>
+						<label className="text-uppercase custom-t2">JUMLAH STOK</label><br/> {/* quantity */}
+						<label className="text-uppercase custom-t5">KUANTITAS SEKARANG - {currentStock}, KUANTITAS MAKSIMAL - {maxQty}</label><br/> {/* current quantity, max quantity */}
 						<Col lg={2} className="p-0">
 							<input type="button" value="-" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t1" onClick={handleMinus} />
 						</Col>
 						<Col lg={6} className="p-0">
-							<input type="number" value={toStockQty} className="form-control border border-1 form-control-lg custom-t1" onChange={handleValueChange} readOnly={true} />
+							<input type="number" value={toStockQty} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} />
 						</Col>
 						<Col lg={2} className="p-0">
 							<input type="button" value="+" className={"form-control btn border border-1 form-control-lg font-weight-bold custom-t1 " + btnDisable} onClick={handlePlus} />
