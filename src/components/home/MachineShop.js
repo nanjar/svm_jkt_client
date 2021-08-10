@@ -4,7 +4,8 @@ import SERVER_REQ  from '../../helpers/Request';
 import FORMATTER  from '../../helpers/Formatter';
 import {useHistory} from 'react-router-dom';
 import logo from '../../assets/static_images/Logo.png';
-import { Container, Row, Button, Modal, Carousel } from 'react-bootstrap';
+import { Container, Row, Button, Modal, Carousel, CarouselItem } from 'react-bootstrap';
+import { useIdleTimer } from 'react-idle-timer';
 
 const BUTTON_E = "button_pressed";
 
@@ -37,6 +38,7 @@ const MachineShop = () => {
             if(button_pressed)
                 return;
             button_pressed = true;
+			if (button_pressed) { setShowAlert(false); } // close EmptyStockModal at the button pressed
             const button = data.button_no
             if(button === 0 )
                 return;
@@ -81,10 +83,35 @@ const MachineShop = () => {
         }
     },[]);
 
-	const handleButtonOk = () => {
-			setShowAlert(false);
-			activate_button(socket);
+	// const handleButtonOk = () => {
+	// 		setShowAlert(false);
+	// 		activate_button(socket);
+	// }
+
+	let timer = 10000; // set timer as 10 seconds
+
+	const handleOnAction = (event) => {
+		console.log("user did something", event);
+		console.log("remaining time 1 ", getRemainingTime());
 	}
+
+	const handleOnActive = (event) => {
+		console.log("user is active", event);
+		console.log("remaining time 2 ", getRemainingTime());
+	}
+
+	const handleOnIdle = (event) => {
+		console.log("user is idle", event);
+		console.log("remaining time 3 ", getRemainingTime());
+		setShowAlert(false); // close EmptyStockModal after 10 seconds
+	}
+
+	const { getRemainingTime } = useIdleTimer({
+		timeout: timer,
+		onIdle: handleOnIdle,
+		onActive: handleOnActive,
+		onAction: handleOnAction
+	});
 
 	const handleMouseDown = () => {
 			setStart(new Date());
@@ -108,25 +135,26 @@ const MachineShop = () => {
 		}
 	}
 
-    return <div className="vw-100 vh-100 d-flex align-items-center background-Img">
-			<Container fluid className="p-0">
+    return <div className="align-items-center background-Img p-0">
 			{
 				(carouselItems.length > 0) ?
-					<Carousel> 
-					{
-						carouselItems.map((element, index) => (
-							<Carousel.Item interval={carouselInterval} key={index} className='carousel-container justify-content-center'> 
-								{/* <Row className='justify-content-center mb-3'> */}
-								<Button className="custom-t2 carousel-button" style={{position: "absolute", top: "0", left: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
-								<Button className="custom-t2 carousel-button" style={{position: "absolute", top: "0", right: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
-								{/* </Row> */}
-								{/* <Row className='justify-content-center mt-3'> */}
-									<img src={`${FORMATTER.api_base_url()}${element}`} alt='Carousel Item' className='carousel-image'/>
-								{/* </Row> */}
-							</Carousel.Item>	
-						))
-					}
-					</Carousel> 	
+					<Row>
+						<Carousel style={{height: "100%"}}>  
+						{
+							carouselItems.map((element, index) => (
+								<Carousel.Item interval={carouselInterval} key={index} className='carousel-container justify-content-center'  style={{width: "100%", objectFit: "contain"}}> 
+									{/* <Row className='justify-content-center mb-3'> */}
+									<Button className="custom-t2 carousel-button" style={{position: "absolute", top: "0", left: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
+									<Button className="custom-t2 carousel-button" style={{position: "absolute", top: "0", right: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
+									{/* </Row> */}
+									{/* <Row className='justify-content-center'> */}
+										<img src={`${FORMATTER.api_base_url()}${element}`} alt='Carousel Item' className='carousel-image'/>
+									{/* </Row> */}
+								</Carousel.Item>	
+							))
+						}
+						</Carousel> 
+					</Row>	
 				:
 				<Row>
 					<Row className='justify-content-center mb-3'>
@@ -144,17 +172,15 @@ const MachineShop = () => {
 					</Row>
 				</Row>
 			}
-			</Container>
 			<Modal show={showAlert} size="lg" centered>
 				<Modal.Body>
 					<Row className="w-100 justify-content-center text-center">
 						<p className="text-uppsercase custom-t2">KEHABISAN STOK</p>
 					</Row>
-
 				</Modal.Body>
-				<Modal.Footer className="justify-content-center text-center">
+				{/* <Modal.Footer className="justify-content-center text-center">
 					<Button variant="info" onClick={handleButtonOk} className="text-uppercase custom-t2">OK</Button>
-				</Modal.Footer>
+				</Modal.Footer> */}
 			</Modal>
 		</div>;
 }

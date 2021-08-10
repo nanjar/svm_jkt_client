@@ -12,8 +12,13 @@ const Management = (props) => {
 	const history = useHistory();
 	useEffect(()=>{
 		console.log("loc state ", !(location.state && location.state.login));
-		if(!(location.state && location.state.login)){
-			history.push('/management/login'); // redirecting to login page for the desktop browsers
+		// if(!(location.state && location.state.login)){
+		// 	history.push('/management/login'); // redirecting to login page for the desktop browsers
+		// 	return;
+		// }
+		// console.log(window.location.hostname)
+		if(window.location.hostname !== "localhost") {
+			history.push('/management/login')
 			return;
 		}
 		return () => {}

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import SERVER_REQ from '../../helpers/Request';
 import '../../App.css';
 import { Container, Row, Col, Modal, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
 import { useIdleTimer } from 'react-idle-timer';
 
@@ -25,7 +26,7 @@ const Login = (props) => {
 		}		
 	}); 
 
-	const duration = 1; // 1 minutes
+	const duration = 5; // 5 minutes
 
 	let timer = 1000 * 60 * duration; // set timer
 
@@ -109,7 +110,7 @@ const Login = (props) => {
 	const handleTimeout = () => {
 		clearTimeout(timerId.current);
 		setShowModal(false);
-		if(window.location.hostname !== "localhost")
+		if(window.location.hostname === "localhost")
 			props.history.push("/");
 	}
 
@@ -125,9 +126,21 @@ const Login = (props) => {
 				</Col>
 			</Row>
 
-			<Row className="justify-content-center text-center mt-4">
+			{/* <Row className="justify-content-center text-center mt-4">
 				<Col lg={4}>
+					<Button variant="info" className="text-uppercase custom-t1" onClick={handleLoginButtonClick}>MASUK</Button> {/* login 
+				</Col>
+			</Row> */}
+
+			<Row className="justify-content-center text-center pt-4">
+				<Col lg={2}>
 					<Button variant="info" className="text-uppercase custom-t1" onClick={handleLoginButtonClick}>MASUK</Button> {/* login */}
+				</Col>
+
+				<Col lg={2}>
+					<Link to="/">
+						<Button variant="warning" type="button" className="text-center text-uppercase custom-t1">BATAL</Button> {/* cancel */}
+					</Link>
 				</Col>
 			</Row>
 

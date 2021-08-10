@@ -99,15 +99,15 @@ const Home = (props) => {
 				<Row className='justify-content-center mt-4'>{ code }</Row>
 				<Row className='justify-content-center mt-4'>{ configsWarn }</Row>
 				<Row className='justify-content-center mt-4'>{ missingConf }</Row>
-				<Row className='justify-content-center mt-4'>{ resourcesWarn }</Row>
+				{/* <Row className='justify-content-center mt-4'>{ resourcesWarn }</Row> */}
 				<Row className='justify-content-center mt-4'>{ missingRes }</Row>
 			</Container>
 		</div>;
 	};
 
-	return <Container fluid>
+	return <Container fluid className="overflow-hidden">
 	{
-		(machineCode === "" || chkMissingConfigs.includes(false) || chkMissingResources.includes(false)) ? <MachineSetup/> : <MachineShop />
+		(machineCode === "" || chkMissingConfigs.includes(false) || chkMissingResources.includes(false)) ? <MachineShop/> : <MachineShop />
 	}
 	</Container>;
 }

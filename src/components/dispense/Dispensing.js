@@ -61,8 +61,8 @@ const Dispensing = () => {
 					? 
 						<Row className="justify-content-center text-uppercase m-3">
 							<div className="container p-2 text-center mt-5 mb-3 payment-success-div">
-								<p className='custom-t0 payment-success-div-text'>PEMBAYARAN BERHASIL</p>
-								<p className='custom-t1 payment-success-div-text'>MESIN SEDANG MENYIAPKAN PRODUK ANDA</p>
+								<p className='custom-t2 payment-success-div-text'>PEMBAYARAN BERHASIL</p>
+								<p className='custom-t3 payment-success-div-text'>MESIN SEDANG MENYIAPKAN PRODUK ANDA</p>
 								{/*
 									payment success - PEMBAYARAN BERHASIL
 									machine is dispensing your product - MESIN SEDANG MENYIAPKAN PRODUK ANDA
