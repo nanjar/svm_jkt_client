@@ -5,10 +5,13 @@ import { Link } from 'react-router-dom';
 import '../../App.css';
 import imgURL from '../../assets/static_images/no_image.png';
 import { Container, Row, Col, Modal, Button } from 'react-bootstrap';
+import { useIdleTimer } from 'react-idle-timer';
+import LoadingOverlay from 'react-loading-overlay';
 
 const AutoTopup = (props) => {
 	const isLocal = (window.location.hostname === "localhost") ? true : false;
 	const [slotData, setSlotData] = useState([]);
+	const [isLoadingActive, setIsLoadingActive] = useState(false);
 	const [modifiedSlotData, setModifiedSlotData] = useState([]);
 	const [rawSlotData, setRawSlotData] = useState([]);
 	const [productURL, setProductURL] = useState(imgURL);
@@ -66,6 +69,35 @@ const AutoTopup = (props) => {
 			})
 			.catch(error => console.log(error.message));
 	}, []);
+
+	const duration = 10; // 10 minutes
+
+	let timer = 1000 * 60 * duration; // set timer
+
+	const handleOnAction = (event) => {
+		console.log("user did something", event);
+		timer = 1000 * 60 * duration; // reset timer
+		console.log("remaining time 1 ", getRemainingTime());
+	}
+
+	const handleOnActive = (event) => {
+		console.log("user is active", event);
+		timer = 1000 * 60 * duration; // reset timer
+		console.log("remaining time 2 ", getRemainingTime());
+	}
+
+	const handleOnIdle = (event) => {
+		console.log("user is idle", event);
+		console.log("remaining time 3 ", getRemainingTime());
+		props.history.push("/");
+	}
+
+	const { getRemainingTime } = useIdleTimer({
+		timeout: timer,
+		onIdle: handleOnIdle,
+		onActive: handleOnActive,
+		onAction: handleOnAction
+	});
 
 	const handlePlus = () => {
 		if (parseInt(maxNumRestock) !== parseInt(maxQty)) {
@@ -127,6 +159,7 @@ const AutoTopup = (props) => {
 	}
 
 	const handleBtnMainConfirmOnClick = async(event) => {
+		setIsLoadingActive(true);
 		console.log("hello")
 		let preparedData = {};
 		let preparedDataIndex =0;
@@ -173,7 +206,8 @@ const AutoTopup = (props) => {
 		console.log("auto topup post", preparedData);
 		// data sample : preparedData - {[stock[0][slot_id]: 1, stock[0]['to_stock']: 2, stock[0]['product_id']: 3]}
 		const button_put = await SERVER_REQ.put(`/api/stocks/1.json`, preparedData);
-		console.log(button_put);
+		if (button_put.status === 200) { setIsLoadingActive(false); }
+		console.log("button_put", button_put);
 		if (button_put.response.success) {
 			props.history.push("/management")
 		}
@@ -193,12 +227,13 @@ const AutoTopup = (props) => {
 	const quantityTxt = (isLocal) ? "jumlah" : "quantity";
 	const alertTxt = (isLocal) ? "tidak perlu penyetokan" : "no need to stock";
 	const modalTitleTxt = (isLocal) ? "KONFIRMASI JUMLAH STOK" : "confirm restock quantity";
-
-	return ( <div className="vw-100 vh-100 d-flex align-items-center background-Img">
+		
+	return (  <LoadingOverlay active={isLoadingActive} spinner text='Loading ...'>
+		<div className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">
 			<Container fluid className="text-uppercase">
 				<Row className="justify-content-center">
 					<p className="text-center custom-t2">{titleTxt}</p> {/* confirm the restocked quantity for slots  */}
-					{!isLocal ? <span>1/2/3/ - (1: stockable quantity, 2: current quantity, 3: maximum quantity)</span> : ""}
+					{!isLocal ? <span>1/2/3/ - (1: to stock item count, 2: current item count, 3: max item count)</span> : ""}
 				</Row>
 				{
 					(modifiedSlotData.length === 0) ? 
@@ -218,13 +253,13 @@ const AutoTopup = (props) => {
 				}
 				<Row className={"justify-content-center" + ((isLocal) ? " mt-5" : " mt-1")}>
 					<div className="text-center col p-2 align-self-center">
-						<Link to="/management" className="btn btn-lg btn-warning">
+						<Link to="/management" className="btn btn-lg btn-warning p-3">
 							<h2 className="text-center text-uppercase display-4">{cancelTxt}</h2> {/* cancel */}
 						</Link>
 					</div>
 
 					<div className="text-center col p-2 align-self-center">
-						<button type="button" className="btn btn-lg btn-info text-uppercase font-weight-bold" onClick={handleBtnMainConfirmOnClick}>
+						<button type="button" className="btn btn-lg btn-info text-uppercase font-weight-bold p-3" onClick={handleBtnMainConfirmOnClick}>
 							<h2 className="text-center text-uppercase display-4">{confirmTxt}</h2> {/* confirm */}
 						</button>
 					</div>
@@ -263,13 +298,13 @@ const AutoTopup = (props) => {
 					</Modal.Body>
 					<Modal.Footer className="text-center">
 						<div className="text-center">
-							<Button variant="warning" type="button" className="text-uppercase" onClick={handleModalClose}>
+							<Button variant="warning" type="button" className="text-uppercase p-3" onClick={handleModalClose}>
 								<h2 className="text-center text-uppercase custom-t3">{cancelTxt}</h2> {/* cancel */}
 							</Button>
 						</div>
 
 						<div className="text-center">
-							<Button variant="info" type="button" className="text-uppercase" onClick={handleBtnSubConfirmOnClick}>
+							<Button variant="info" type="button" className="text-uppercase p-3" onClick={handleBtnSubConfirmOnClick}>
 								<h2 className="text-center text-uppercase custom-t3">{confirmTxt}</h2> {/* confirm */}
 							</Button>
 						</div>
@@ -290,7 +325,7 @@ const AutoTopup = (props) => {
 				</Modal> */} 
 			</Container>
 		</div>
-	);
+	</LoadingOverlay>);
 }
 
 export default AutoTopup;
