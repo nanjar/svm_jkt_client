@@ -1,3 +1,6 @@
+html{
+  overscroll-behavior-x: none;
+}
 body {
   margin: 0;
   /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -18,6 +21,7 @@ body {
 	-o-background-size: cover;
 	background-size: cover;
   height: 100vh;
+  overscroll-behavior-x: none;
 }
 
 *{

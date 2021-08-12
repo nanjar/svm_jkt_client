@@ -91,14 +91,19 @@ const ManualTopup = (props) => {
 	}
 
 	const handleMinus = () => {
-		setSlotStocks(slotStocks.map(stock => {
-			if (parseInt(stock.slot_id) === parseInt(slotID)) {
-				stock.to_stock -= 1;
-			} else {
-				stock.to_stock = 0;
-			}
-			return stock;
-		}))
+		const slot = slots.find(x => parseInt(x.slot_id) === parseInt(slotID));
+		if (slot && slotStock) {
+			setSlotStocks(slotStocks.map(stock => {
+				if (parseInt(stock.slot_id) === parseInt(slotID)) {
+					if ((parseInt(stock.to_stock) * -1) < slot.to_stock) {
+						stock.to_stock -= 1;
+					}
+				} else {
+					stock.to_stock = 0;
+				}
+				return stock;
+			}));
+		}
 	}
 
 	const handleButtonOk = () => {
