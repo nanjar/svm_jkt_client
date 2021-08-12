@@ -279,7 +279,7 @@ class Sale extends React.Component {
 		return (<div className="vw-100 vh-100 d-flex justify-content-center background-Img">
 			<Container fluid className="text-uppercase">
 				<Row className="align-items-center m-5">
-					<Col lg={7} className="text-center">
+					<Col lg={6} className="text-center">
 						<div className="p-2">
 							<img src={logo} className="img-fluid mini-logo" alt="logo"></img>
 						</div> 
@@ -295,13 +295,24 @@ class Sale extends React.Component {
 						</div>
 					</Col>
 
-					<Col lg={5}> 
-						<p className="mb-3" style={{fontSize: "3vw"}}>ANDA TELAH MEMILIH </p> {/* you have choose */}
-						<img src={`${FORMATTER.api_base_url()}${product.url}`} className="img-fluid" style={{width: "15vw", height: "13vw"}} alt="Product"></img>
-						{/* <img src={sampleImage} className="img-fluid" style={{width: "15vw", height: "13vw"}} alt="QR CODE"></img> */}
-						<p style={{fontSize: "2vw"}}>{product.name}</p>
-						<p className="cyan-text" style={{fontSize: "4vw"}}><strong>{FORMATTER.money(product.price)}</strong></p>
-						<p style={{fontSize: "3vw"}}>{checkQrStatus ? 'PINDAI KODE QR UNTUK PEMBAYARAN' : ''}</p> {/* cond 1: scan qr code to pay, cond 2: requesting qr code */}
+					<Col lg={6}> 
+						<Row className="mb-3">
+							<p style={{fontSize: "3vw"}}>ANDA TELAH MEMILIH </p> {/* you have choose */}
+						</Row>
+						<Row className="align-items-center">
+							<Col className="text-center">
+								<img src={`${FORMATTER.api_base_url()}${product.url}`} className="img-fluid" style={{width: "18vw", height: "16vw"}} alt="Product"></img>
+								{/* <img src={sampleImage} className="img-fluid" style={{width: "18vw", height: "16vw"}} alt="QR CODE"></img> */}
+							</Col>
+							<Col className>
+								<p style={{fontSize: "2vw"}}>{product.name}</p>
+								{/* <p style={{fontSize: "2vw"}}>Coca Coca Coca Coca Coca Coca Coca Cola</p> */}
+								<p className="cyan-text" style={{fontSize: "4vw"}}><strong>{FORMATTER.money(product.price)}</strong></p>
+							</Col>
+						</Row>
+						<Row className="p-3">
+							<p style={{fontSize: "3vw"}}>{checkQrStatus ? 'PINDAI KODE QR UNTUK PEMBAYARAN' : ''}</p> {/* cond 1: scan qr code to pay, cond 2: requesting qr code */}
+						</Row>
 					</Col>
 				</Row>
 
