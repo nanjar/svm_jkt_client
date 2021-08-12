@@ -278,9 +278,9 @@ class Sale extends React.Component {
 
 		return (<div className="vw-100 vh-100 d-flex justify-content-center background-Img">
 			<Container fluid className="text-uppercase">
-				<Row className="align-items-center m-5">
-					<Col lg={6} className="text-center">
-						<div className="p-2">
+				<Row className="align-items-center mt-4 mb-5 ml-5 mr-5">
+					<Col lg={5} className="text-center">
+						<div className="pt-1 pb-2">
 							<img src={logo} className="img-fluid mini-logo" alt="logo"></img>
 						</div> 
 						<div className="w-100 text-center m-3">
@@ -289,19 +289,19 @@ class Sale extends React.Component {
 
 						<div className="text-center">
 							{countdown === 121 ? "" : <div>QR Code expire in {countdown} second(s)</div>}
-							<button type="button" className="btn btn-primary btn-lg btn-warning custom-t1 text-uppercase cancel-btn-style" onClick={this.handleCancelPayment} >
+							<button type="button" className="btn btn-primary btn-lg btn-warning custom-t2 text-uppercase cancel-btn-style p-5" onClick={this.handleCancelPayment} >
 								BATALKAN PEMBAYARAN {/* cancel payment */}
 							</button>
 						</div>
 					</Col>
 
-					<Col lg={6}> 
-						<Row className="mb-3">
+					<Col lg={7} className="p-5"> 
+						<Row className="mb-3 pl-5">
 							<p style={{fontSize: "3vw"}}>ANDA TELAH MEMILIH </p> {/* you have choose */}
 						</Row>
 						<Row className="align-items-center">
-							<Col className="text-center">
-								<img src={`${FORMATTER.api_base_url()}${product.url}`} className="img-fluid" style={{width: "18vw", height: "16vw"}} alt="Product"></img>
+							<Col>
+								<img src={`${FORMATTER.api_base_url()}${product.url}`} className="img-fluid" style={{width: "22vw", height: "20vw"}} alt="Product"></img>
 								{/* <img src={sampleImage} className="img-fluid" style={{width: "18vw", height: "16vw"}} alt="QR CODE"></img> */}
 							</Col>
 							<Col className>
@@ -310,8 +310,8 @@ class Sale extends React.Component {
 								<p className="cyan-text" style={{fontSize: "4vw"}}><strong>{FORMATTER.money(product.price)}</strong></p>
 							</Col>
 						</Row>
-						<Row className="p-3">
-							<p style={{fontSize: "3vw"}}>{checkQrStatus ? 'PINDAI KODE QR UNTUK PEMBAYARAN' : ''}</p> {/* cond 1: scan qr code to pay, cond 2: requesting qr code */}
+						<Row className="mt-4">
+							<p style={{fontSize: "2.5vw"}}>{checkQrStatus ? 'PINDAI KODE QR UNTUK PEMBAYARAN' : ''}</p> {/* cond 1: scan qr code to pay, cond 2: requesting qr code */}
 						</Row>
 					</Col>
 				</Row>
