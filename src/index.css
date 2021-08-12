@@ -10,6 +10,14 @@ body {
 	font-size: 1rem;
 	font-weight: 400;
 	line-height: 1.5;
+
+	background: url("./assets/static_images/background.png") no-repeat center center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-ms-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+  height: 100vh;
 }
 
 *{

@@ -25,16 +25,16 @@ const MachineShop = () => {
     useEffect(() => {
         let button_pressed = false;
         socket.on('connect', function(){
-            console.log('connected')
+            // console.log('connected')
         })
-				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: BUTTON_E });
+				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
 				socket.on('error', function(){
 						console.log('error')
 				});
         
         socket.on(BUTTON_E, async (data) => {
             data = JSON.parse(data);
-            console.log(data);
+            // console.log(data);
             if(button_pressed)
                 return;
             button_pressed = true;
@@ -42,21 +42,22 @@ const MachineShop = () => {
             const button = data.button_no
             if(button === 0 )
                 return;
-            socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
-            console.log('pressed')
+            socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 1000, reply_to: BUTTON_E });
+            // console.log('pressed')
             const button_req = await SERVER_REQ.get(`/api/buttons/${button}.json`);
-						console.log(button_req);
+						// console.log(button_req);
 						const button_response = button_req.response
 						if(!button_response.success){
 							button_pressed=false;
-							setShowAlert(true);
+							setShowAlert(false);
+							setTimeout( () => socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 200, reply_to: BUTTON_E }), 500);
 							return;
 						}
             const button_detail = button_req.response.data;
 			
-            const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url}
+            const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available}
             const url_params = new URLSearchParams(product_detail);
-            console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
+            // console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
             history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
         });
 
@@ -77,7 +78,7 @@ const MachineShop = () => {
 					.catch(error => console.log(error.message));
 
         return () => {
-            console.log('Log out')
+            // console.log('Log out')
             socket.off(BUTTON_E)
             socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
         }
@@ -90,27 +91,13 @@ const MachineShop = () => {
 
 	let timer = 10000; // set timer as 10 seconds
 
-	const handleOnAction = (event) => {
-		console.log("user did something", event);
-		console.log("remaining time 1 ", getRemainingTime());
-	}
-
-	const handleOnActive = (event) => {
-		console.log("user is active", event);
-		console.log("remaining time 2 ", getRemainingTime());
-	}
-
 	const handleOnIdle = (event) => {
-		console.log("user is idle", event);
-		console.log("remaining time 3 ", getRemainingTime());
 		setShowAlert(false); // close EmptyStockModal after 10 seconds
 	}
 
 	const { getRemainingTime } = useIdleTimer({
 		timeout: timer,
-		onIdle: handleOnIdle,
-		onActive: handleOnActive,
-		onAction: handleOnAction
+		onIdle: handleOnIdle
 	});
 
 	const handleMouseDown = () => {
@@ -119,23 +106,23 @@ const MachineShop = () => {
 
 	const handleMouseUp = (event) => {
 		let btn = event.target.dataset.btn;
-		console.log("btn", start, btn);
+		// console.log("btn", start, btn);
 		const minTime = 5000; 
 		const maxTime = 10000;
 		let delta;
 		let end = new Date();
 		delta = end - start;
-		console.log("Delta - " + delta);
+		// console.log("Delta - " + delta);
 		if (delta > minTime && delta < maxTime) {
 			if (btn === "1") { setClickBtn1(true) }
 			if (btn === "2") { 
 				if(clickBtn1) { history.push(`/management/login`); }
-				console.log("BtnClicked", clickBtn1, btn);
+				// console.log("BtnClicked", clickBtn1, btn);
 			}
 		}
 	}
 
-    return <div className="align-items-center background-Img p-0">
+    return <div>
 			{
 				(carouselItems.length > 0) ?
 					<Row>

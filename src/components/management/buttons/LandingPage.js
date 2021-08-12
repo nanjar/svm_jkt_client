@@ -15,7 +15,7 @@ const LandingPage = (props) => {
 		getData();
 	}, []);
 
-	console.log("LP", products);
+	// console.log("LP", products);
 
 	return <Container fluid className="p-3 background-Img">
 			<Row className="justify-content-center text-center">

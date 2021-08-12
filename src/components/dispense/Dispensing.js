@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, useLocation } from "react-router-dom";
 import { Container, Row } from 'react-bootstrap';
 import SERVER_REQ from '../../helpers/Request';
 import { SocketContext } from "../../services/socket";
@@ -19,42 +19,60 @@ const DISPENSE_CODE_TEXT = {
     7: "Invalid motor steps",
     8: "Machine no response",
     9: "Slot is empty",
-		255: "Unknown failure"
+	255: "Unknown failure"
 }
 
 const Dispensing = () => {
-	const {slot_id, sale_id} = useParams();
+	const {sale_id} = useParams();
+	const {search} = useLocation();
 	const [dispenseResult, setDispenseResult] = useState(4); // change to 0 to check the dispense success, change to other number to check dispense success
 	const [isDispensing, setDespensing] = useState(true); // change to false to see the dispense error or success
 	const socket = useContext(SocketContext);
 	const history = useHistory()
 	useEffect(()=>{
 		// change slot to numeric
-		const slot = parseInt(slot_id);
-		
-		socket.emit('vendingv1-indo', {"command":"single_dispense","slot": slot,"reply_to": DISPENSE_E});
+		// const slot = parseInt(slot_id);
+		const urlParams = new URLSearchParams(search);
+		let slots = urlParams.get('slots').split(",");
+		let slotDispenseIndex = 0
+		let isDispensing = true
+		socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
 
 		socket.on(DISPENSE_E, (data) => {
 			const {type, slot=false, status=false} = JSON.parse(data);
 			console.log(!(["single_dispense_response", "multiple_dispense_response"].includes(type)), type)
 			if ( !(["single_dispense_response", "multiple_dispense_response"].includes(type)) )
 				return;
-				
-			setDespensing(false);
-			setDispenseResult(status);
+			
+			if( parseInt(status) !== 0){
+				slotDispenseIndex += 1
+				if(slotDispenseIndex < slots.length){
+					isDispensing = true
+					socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
+				}else{
+					isDispensing = false
+					setDespensing(false);
+					setDispenseResult(status);
+				}
+			}else{
+				isDispensing = false
+				setDespensing(false);
+				setDispenseResult(status);
+			}
 			// :dispense_code, :dispense_status
 			console.log({"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status]});
-			SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status]})
+			SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot})
 			// received_dispense = true
 			console.log(type, slot, status)
-			setTimeout(() => history.push("/"), 10000);
+			if(!isDispensing)
+				setTimeout(() => history.push("/"), 10000);
 		})
 		return () => {
 			socket.offAny(DISPENSE_E)
 		}
-	}, [slot_id, socket])
+	}, [])
 	return (
-		<div className="vw-100 vh-100 d-flex align-items-center background-ImgWithLogo">
+		<div className="vw-100 vh-100 d-flex align-items-center background-ImgWithLogo overflow-hidden">
 			<Container fluid>
 				{
 					isDispensing 

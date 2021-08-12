@@ -5,6 +5,7 @@ import { Container, Row, Col, Modal, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
 import { useIdleTimer } from 'react-idle-timer';
+import LoadingOverlay from 'react-loading-overlay';
 
 const Login = (props) => {
 	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']]; // data for numpad, cannot be changed
@@ -16,11 +17,12 @@ const Login = (props) => {
 	const [showModal,setShowModal] = useState(false);
 	const timerId = useRef(0);
 	const history = useHistory();
+	const [isLoadingActive, setIsLoadingActive] = useState(false);
 	
 	useEffect(() => {
 		// redirect home page after 30 seconds 
 		timerId.current = setTimeout(() => { handleTimeout(); }, 30000); 
-		console.log("Timer", timerId);
+		// console.log("Timer", timerId);
 		return function cleanup() {
 			clearTimeout(timerId.current); 
 		}		
@@ -31,20 +33,20 @@ const Login = (props) => {
 	let timer = 1000 * 60 * duration; // set timer
 
 	const handleOnAction = (event) => {
-		console.log("user did something", event);
+		// console.log("user did something", event);
 		timer = 1000 * 60 * duration; // reset timer
-		console.log("remaining time 1 ", getRemainingTime());
+		// console.log("remaining time 1 ", getRemainingTime());
 	}
 
 	const handleOnActive = (event) => {
-		console.log("user is active", event);
+		// console.log("user is active", event);
 		timer = 1000 * 60 * duration; // reset timer
-		console.log("remaining time 2 ", getRemainingTime());
+		// console.log("remaining time 2 ", getRemainingTime());
 	}
 
 	const handleOnIdle = (event) => {
-		console.log("user is idle", event);
-		console.log("remaining time 3 ", getRemainingTime());
+		// console.log("user is idle", event);
+		// console.log("remaining time 3 ", getRemainingTime());
 		props.history.push("/");
 	}
 
@@ -74,16 +76,18 @@ const Login = (props) => {
 	}
 
 	const handleLoginButtonClick = async() => {
-		console.log(pin);
+		// console.log(pin);
 		setNumInput("");
 		if (pin === "") {
 			setContentMsg("JENIS KODE KATA SANDI"); // type password
 			setShowModal(true);
 		} else {
+			setIsLoadingActive(true);
 			const button_post = await SERVER_REQ.get(`/api/users.json`, {'pin': pin});
 			const success = button_post.response.success;
-			console.log(button_post);
+			// console.log(button_post);
 			if (success) {
+				setIsLoadingActive(false);
 				const routeName = (window.location.hostname === "localhost") ? '/management' : '/management/auto_topup';
 				const locationProps = {
 					pathname: routeName,
@@ -92,6 +96,7 @@ const Login = (props) => {
 				history.push(locationProps);
 			} else {
 				setContentMsg("KATA SANDI TIDAK VALID"); // invalid password
+				setIsLoadingActive(false);
 				setShowModal(true);
 			}
 		}
@@ -118,66 +123,68 @@ const Login = (props) => {
 		setShowModal(false);
 	}
 		
-	return (<div className="vw-100 vh-100 d-flex align-items-center background-Img">
-		<Container fluid>
-			<Row className="justify-content-center">
-				<Col lg={5}>
-					<input type="text" onClick={handleShowNumpad} value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="KODE SANDI" /> {/* type passcode */}
-				</Col>
-			</Row>
+	return (<LoadingOverlay active={isLoadingActive} spinner text='Loading ...'>
+		<div className="vw-100 vh-100 d-flex align-items-center background-Img">
+			<Container fluid>
+				<Row className="justify-content-center">
+					<Col lg={5}>
+						<input type="text" onClick={handleShowNumpad} value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="KODE SANDI" /> {/* type passcode */}
+					</Col>
+				</Row>
 
-			{/* <Row className="justify-content-center text-center mt-4">
-				<Col lg={4}>
-					<Button variant="info" className="text-uppercase custom-t1" onClick={handleLoginButtonClick}>MASUK</Button> {/* login 
-				</Col>
-			</Row> */}
+				{/* <Row className="justify-content-center text-center mt-4">
+					<Col lg={4}>
+						<Button variant="info" className="text-uppercase custom-t1" onClick={handleLoginButtonClick}>MASUK</Button> {/* login 
+					</Col>
+				</Row> */}
 
-			<Row className="justify-content-center text-center pt-4">
-				<Col lg={2}>
-					<Button variant="info" className="text-uppercase custom-t1" onClick={handleLoginButtonClick}>MASUK</Button> {/* login */}
-				</Col>
+				<Row className="justify-content-center text-center pt-4">
+					<Col lg={2}>
+						<Button variant="info" className="text-uppercase custom-t1" onClick={handleLoginButtonClick}>MASUK</Button> {/* login */}
+					</Col>
 
-				<Col lg={2}>
-					<Link to="/">
-						<Button variant="warning" type="button" className="text-center text-uppercase custom-t1">BATAL</Button> {/* cancel */}
-					</Link>
-				</Col>
-			</Row>
+					<Col lg={2}>
+						<Link to="/">
+							<Button variant="warning" type="button" className="text-center text-uppercase custom-t1">BATAL</Button> {/* cancel */}
+						</Link>
+					</Col>
+				</Row>
 
-			<Modal show={showNumpad} size="md" centered className="text-uppercase">
-				<label className="custom-t2" style={{paddingLeft: "90%", cursor: "pointer"}} onClick={handleHideNumpad}>&times;</label>
-				<Modal.Body className="m-3 mt-0">
-					<Row>
-						<input type="text" value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} />
-					</Row>
-					{
-						numData.map((rowData, rowIndex) => (
-							<Row key={'row-' + rowIndex} className="justify-content-center">
-								{
-									rowData.map((num, index) => (
-										<Col key={index} onClick={handleNumInput} className="col align-self-center text-center border border-1 bg-slot btn-slot" data-num={num}><p data-num={num} className="custom-t3 mt-3 mb-3" >{num}</p></Col>
-									))
-								}	
-							</Row>
-						))
-					}
-				</Modal.Body>
-			</Modal>
-			
-			<Modal show={showModal} size="xl" centered>
-				<Modal.Body>
-					<p className="custom-t2 text-uppercase">{contentMsg}</p>
-				</Modal.Body>
-				<Modal.Footer className="text-center">
-					<div className="text-center">
-						<button type="button" onClick={handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
-							<h2 className="text-center text-uppercase custom-t2">OK</h2>
-						</button>
-					</div>
-				</Modal.Footer>
-			</Modal>
-		</Container>
-	</div>);
+				<Modal show={showNumpad} size="md" centered className="text-uppercase">
+					<label className="custom-t2" style={{paddingLeft: "90%", cursor: "pointer"}} onClick={handleHideNumpad}>&times;</label>
+					<Modal.Body className="m-3 mt-0">
+						<Row>
+							<input type="text" value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} />
+						</Row>
+						{
+							numData.map((rowData, rowIndex) => (
+								<Row key={'row-' + rowIndex} className="justify-content-center">
+									{
+										rowData.map((num, index) => (
+											<Col key={index} onClick={handleNumInput} className="col align-self-center text-center border border-1 bg-slot btn-slot" data-num={num}><p data-num={num} className="custom-t3 mt-3 mb-3" >{num}</p></Col>
+										))
+									}	
+								</Row>
+							))
+						}
+					</Modal.Body>
+				</Modal>
+				
+				<Modal show={showModal} size="xl" centered>
+					<Modal.Body>
+						<p className="custom-t2 text-uppercase">{contentMsg}</p>
+					</Modal.Body>
+					<Modal.Footer className="text-center">
+						<div className="text-center">
+							<button type="button" onClick={handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
+								<h2 className="text-center text-uppercase custom-t2">OK</h2>
+							</button>
+						</div>
+					</Modal.Footer>
+				</Modal>
+			</Container>
+		</div>
+	</LoadingOverlay>);
 }
 
 export default Login;

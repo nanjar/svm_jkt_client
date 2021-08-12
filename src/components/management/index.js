@@ -11,7 +11,7 @@ const Management = (props) => {
 	const location = useLocation();
 	const history = useHistory();
 	useEffect(()=>{
-		console.log("loc state ", !(location.state && location.state.login));
+		// console.log("loc state ", !(location.state && location.state.login));
 		// if(!(location.state && location.state.login)){
 		// 	history.push('/management/login'); // redirecting to login page for the desktop browsers
 		// 	return;
@@ -29,20 +29,20 @@ const Management = (props) => {
 	let timer = 1000 * 60 * duration; // set timer
 
 	const handleOnAction = (event) => {
-		console.log("user did something", event);
+		// console.log("user did something", event);
 		timer = 1000 * 60 * duration; // reset timer
-		console.log("remaining time 1 ", getRemainingTime());
+		// console.log("remaining time 1 ", getRemainingTime());
 	}
 
 	const handleOnActive = (event) => {
-		console.log("user is active", event);
+		// console.log("user is active", event);
 		timer = 1000 * 60 * duration; // reset timer
-		console.log("remaining time 2 ", getRemainingTime());
+		// console.log("remaining time 2 ", getRemainingTime());
 	}
 
 	const handleOnIdle = (event) => {
-		console.log("user is idle", event);
-		console.log("remaining time 3 ", getRemainingTime());
+		// console.log("user is idle", event);
+		// console.log("remaining time 3 ", getRemainingTime());
 		props.history.push("/");
 	}
 
@@ -53,7 +53,7 @@ const Management = (props) => {
 		onAction: handleOnAction
 	});
 
-	return <div className="vw-100 vh-100 d-flex align-items-center background-Img">
+	return (<div className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">
 		<Container fluid>
 			<Row className="mt-1">
 				<Col lg={6}><span className="text-uppercase custom-t2">SUHU PERANGKAT - {piTemp} C</span></Col> {/* device/pi temp */}
@@ -86,7 +86,7 @@ const Management = (props) => {
 				</Col>
 			</Row>
 		</Container>
-	</div>;
+	</div>);
 }
 
 export default Management;

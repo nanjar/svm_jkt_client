@@ -9,25 +9,52 @@ import { useIdleTimer } from 'react-idle-timer';
 import LoadingOverlay from 'react-loading-overlay';
 
 const AutoTopup = (props) => {
+	var toStockData = [];
 	const isLocal = (window.location.hostname === "localhost") ? true : false;
+	const [firstLoad, setFirstLoad] = useState(true);
 	const [slotData, setSlotData] = useState([]);
-	const [isLoadingActive, setIsLoadingActive] = useState(false);
+	const [isLoadingActive, setIsLoadingActive] = useState(true);
+	const [activeSlot, setActiveSlot] = useState(0);
 	const [modifiedSlotData, setModifiedSlotData] = useState([]);
-	const [rawSlotData, setRawSlotData] = useState([]);
 	const [productURL, setProductURL] = useState(imgURL);
 	const [productName, setProductName] = useState("");
 	const [toStockQty, setToStockQty] = useState(0);
 	const [slotId, setSlotId] = useState(0);
-	const [maxQty, setMaxQty] = useState(0);
-	const [toStockData] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	// const [showAlert, setShowAlert] = useState(false);
-	const [maxNumRestock, setMaxNumRestock] = useState("");
 	const [showSpan, setShowSpan] = useState("d-none");
 
 	useEffect(() => {
+		if (firstLoad) {
+			fecthSlotData();
+			setFirstLoad(false);
+		}
+	});
+
+	const duration = 10; // 10 minutes
+	let timer = 1000 * 60 * duration; // set timer
+
+	const handleOnAction = (event) => {
+		timer = 1000 * 60 * duration; // reset timer
+	}
+
+	const handleOnActive = (event) => {
+		timer = 1000 * 60 * duration; // reset timer
+	}
+
+	const handleOnIdle = (event) => {
+		props.history.push("/");
+	}
+	
+	const { getRemainingTime } = useIdleTimer({
+		timeout: timer,
+		onIdle: handleOnIdle,
+		onActive: handleOnActive,
+		onAction: handleOnAction
+	});
+
+	const fecthSlotData = () => {
 		const url = `${FORMATTER.api_base_url()}/api/topups/layouts.json`; 
-		
 		fetch(url)
 			.then(response => {
 				if (response.ok) {
@@ -64,103 +91,116 @@ const AutoTopup = (props) => {
 				});
 
 				setSlotData(slotList);
-				setRawSlotData(rawSlots);
-				console.log(slotList);
+				setIsLoadingActive(false);
 			})
 			.catch(error => console.log(error.message));
-	}, []);
-
-	const duration = 10; // 10 minutes
-
-	let timer = 1000 * 60 * duration; // set timer
-
-	const handleOnAction = (event) => {
-		console.log("user did something", event);
-		timer = 1000 * 60 * duration; // reset timer
-		console.log("remaining time 1 ", getRemainingTime());
-	}
-
-	const handleOnActive = (event) => {
-		console.log("user is active", event);
-		timer = 1000 * 60 * duration; // reset timer
-		console.log("remaining time 2 ", getRemainingTime());
-	}
-
-	const handleOnIdle = (event) => {
-		console.log("user is idle", event);
-		console.log("remaining time 3 ", getRemainingTime());
-		props.history.push("/");
-	}
-
-	const { getRemainingTime } = useIdleTimer({
-		timeout: timer,
-		onIdle: handleOnIdle,
-		onActive: handleOnActive,
-		onAction: handleOnAction
-	});
-
-	const handlePlus = () => {
-		if (parseInt(maxNumRestock) !== parseInt(maxQty)) {
-			if (parseInt(toStockQty) < parseInt(maxNumRestock)) {
-				setToStockQty(parseInt(toStockQty) + 1);
-			} 
-		} else {
-			if (parseInt(toStockQty) <  parseInt(maxQty)) {
-				setToStockQty(parseInt(toStockQty) + 1);
-			} 
-		}
-	}
-
-	const handleMinus = () => {
-		// if (parseInt(toStockQty) > 0) {
-		// 	setToStockQty(parseInt(toStockQty) - 1);
-		// }
-		// to allow negative value 
-		setToStockQty(parseInt(toStockQty) - 1);
 	}
 
 	const handleBtnSlotOnClick = (event) => {
 		event.preventDefault();
 		let slotId = event.target.getAttribute("data-slotid");
-		rawSlotData.forEach((data, index) => {
-			console.log(parseInt(data.to_stock) === 0);
-			if (parseInt(data.slot_id) === parseInt(slotId)) {
-				if (parseInt(data.to_stock) === 0) {
-					// setShowAlert(true);
+		slotData.forEach((rowData, i) => {
+			const slot = rowData.find(x => parseInt(x.slot_id) === parseInt(slotId));
+			if (slot !== undefined) {
+				// console.log("active slot id", slot.slot_id)
+				if (parseInt(slot.max_qty) === parseInt(slot.current_stock)) {
 					setShowSpan("");
 				} else {
 					setShowSpan("d-none");
 				}
-				// setToStockQty(data.to_stock); // initialise the stocakable quantity. it'll will change on +/- button click
 				setToStockQty(0); // initialise the stocakable quantity. it'll will change on +/- button click
-				setMaxNumRestock(data.to_stock); // set maximum number of restockalble quantity 
-				setSlotId(slotId);
-				setMaxQty(data.max_qty);
-				setProductURL(data.image);
-				setProductName(data.product_name);
+				setActiveSlot(slot);
+				setSlotId(slot.slot_id);
+				setProductURL(slot.image);
+				setProductName(slot.product_name);
 				setShowModal(true);
 			}
-		});
+		});	
 	} 
+	
+	const handlePlus = () => {
+		// console.log(activeSlot.to_stock, toStockQty, activeSlot.current_stock, activeSlot.max_qty)
+		if (activeSlot.to_stock + activeSlot.current_stock === activeSlot.max_qty) {
+			if (toStockQty < (activeSlot.to_stock)) {
+				setToStockQty(toStockQty + 1);
+			}
+		} else {
+			if (toStockQty < (activeSlot.max_qty - (activeSlot.to_stock + activeSlot.current_stock))) {
+				setToStockQty(toStockQty + 1);
+			}
+		}
+	}
 
-	const handleBtnSubConfirmOnClick = (event) => {
-		console.log("modal clicked");
-		slotData.forEach((rowData, i) => {
-			rowData.forEach((slot, j) => {
-				if (parseInt(slotId) === parseInt(slot.slot_id)) {
-					slot.to_stock = toStockQty;
+	const handleMinus = () => {
+		// console.log(activeSlot.to_stock, toStockQty, activeSlot.current_stock, activeSlot.max_qty)
+		if (activeSlot.to_stock < 0) {
+			if ((toStockQty * -1) < activeSlot.current_stock) {
+				// console.log("1");
+				setToStockQty(toStockQty - 1);
+			}
+		} else {
+			if (activeSlot.to_stock + activeSlot.current_stock === activeSlot.max_qty) {
+				if ((toStockQty * -1) < activeSlot.current_stock) {
+					// console.log("2");
+					setToStockQty(toStockQty - 1);
+				}
+			} else {
+				if ((toStockQty * -1) < (activeSlot.current_stock + activeSlot.to_stock)) {
+					// console.log("3");
+					setToStockQty(toStockQty - 1);
+				}
+			}
+		}
+	}
+
+	const handleBtnSubConfirmOnClick = () => {
+		// console.log("modifiedSlotData", modifiedSlotData);
+		if (modifiedSlotData.length === 0) {
+			slotData.forEach((rowData, i) => {
+				const slotIndex = rowData.findIndex(x => parseInt(x.slot_id) === parseInt(slotId));
+				if (slotIndex !== undefined && rowData[slotIndex] !== undefined) {
+					// console.log(slotIndex)
+					// rowData[slotIndex]['to_stock'] = toStockQty;
+					if (parseInt(activeSlot.to_stock) === (parseInt(activeSlot.max_qty) - parseInt(activeSlot.current_stock))) {
+						rowData[slotIndex]['to_stock'] = toStockQty;
+					} else {
+						rowData[slotIndex]['to_stock'] = parseInt(activeSlot.to_stock) + toStockQty;
+					}
 				}
 			});
-		});
+			setModifiedSlotData(slotData);
+		} else {
+			// console.log("modified", modifiedSlotData);
+			modifiedSlotData.forEach((rowData, i) => {
+				const slotIndex = rowData.findIndex(x => parseInt(x.slot_id) === parseInt(slotId));
+				if (slotIndex !== undefined && rowData[slotIndex] !== undefined) {
+					// console.log(slotIndex)
+					// rowData[slotIndex]['to_stock'] = toStockQty;
+					if (parseInt(activeSlot.to_stock) === (parseInt(activeSlot.max_qty) - parseInt(activeSlot.current_stock))) {
+						rowData[slotIndex]['to_stock'] = toStockQty;
+					} else {
+						rowData[slotIndex]['to_stock'] = parseInt(activeSlot.to_stock) + toStockQty;
+					}
+				}
+			});
+			setModifiedSlotData(modifiedSlotData);
+		}
 		
-		setModifiedSlotData(slotData);
 		setShowModal(false);
-		toStockData.push({slot_id: slotId, tostock_qty: toStockQty});
+		if (toStockData.length > 0) {
+			const toStockSlotIndex = toStockData.findIndex(x => parseInt(x.slot_id) === parseInt(slotId));
+			if (toStockSlotIndex !== undefined && toStockData[toStockSlotIndex] !== undefined) {
+				toStockData[toStockSlotIndex]['slot_id'] = slotId;
+				toStockData[toStockSlotIndex]['tostock_qty'] = toStockQty;
+			}
+		} else {
+			toStockData.push({slot_id: slotId, tostock_qty: toStockQty});
+		}
 	}
 
 	const handleBtnMainConfirmOnClick = async(event) => {
 		setIsLoadingActive(true);
-		console.log("hello")
+		// console.log("hello")
 		let preparedData = {};
 		let preparedDataIndex =0;
 
@@ -203,11 +243,11 @@ const AutoTopup = (props) => {
 			});
 		});
 
-		console.log("auto topup post", preparedData);
+		// console.log("auto topup post", preparedData);
 		// data sample : preparedData - {[stock[0][slot_id]: 1, stock[0]['to_stock']: 2, stock[0]['product_id']: 3]}
 		const button_put = await SERVER_REQ.put(`/api/stocks/1.json`, preparedData);
 		if (button_put.status === 200) { setIsLoadingActive(false); }
-		console.log("button_put", button_put);
+		// console.log("button_put", button_put);
 		if (button_put.response.success) {
 			props.history.push("/management")
 		}
@@ -216,10 +256,6 @@ const AutoTopup = (props) => {
 	const handleModalClose = () => {
 		setShowModal(false);
 	}
-
-	// const handleButtonOk = () => {
-	// 	setShowAlert(false);
-	// }
 
 	const cancelTxt = (isLocal) ? "batal" : "cancel";
 	const confirmTxt = (isLocal) ? "lanjut" : "confirm";
@@ -240,13 +276,13 @@ const AutoTopup = (props) => {
 					slotData.map((rowData, index) => (
 						<Row key={index} className="justify-content-center background-Color">
 							{
-								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.to_stock && (data.max_qty>data.current_stock)) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
+								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
 							}
 						</Row>
 					)) : modifiedSlotData.map((rowData, index) => (
 						<Row key={index} className="justify-content-center background-Color">
 							{
-								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.to_stock && (data.max_qty>data.current_stock)) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
+								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
 							}
 						</Row>
 					))
@@ -310,19 +346,6 @@ const AutoTopup = (props) => {
 						</div>
 					</Modal.Footer>
 				</Modal>
-
-				{/* <Modal show={showAlert} size="xl" centered>
-					<Modal.Body>
-						<p className="custom-t2 text-uppercase">slotnya penuh</p> {/* slot is full */}
-					{/* </Modal.Body>
-					<Modal.Footer className="text-center">
-						<div className="text-center">
-							<button type="button" onClick={handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
-								<h2 className="text-center text-uppercase custom-t2">OK</h2>
-							</button>
-						</div>
-					</Modal.Footer>
-				</Modal> */} 
 			</Container>
 		</div>
 	</LoadingOverlay>);

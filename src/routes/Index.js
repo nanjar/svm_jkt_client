@@ -29,7 +29,7 @@ export default (
 		<Route path="/sales/success" exact component={SaleSucces} />
 
 		{/* Dispense */}
-		<Route path="/dispense/:slot_id/:sale_id" exact component={Dispensing} />
+		<Route path="/dispense/:sale_id" exact component={Dispensing} />
 		<Route path="/dispense/error" exact component={DispenseError} />
 		<Route path="/dispense/success" exact component={DispenseSuccess} />
 

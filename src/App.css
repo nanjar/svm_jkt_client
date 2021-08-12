@@ -1,12 +1,3 @@
-.background-Img {
-	background: url("./assets/static_images/background.png") no-repeat center center;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-ms-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
-}
-
 .background-ImgWithLogo {
 	background: url("./assets/static_images/dispenseBackground.png") no-repeat center center;
 	-webkit-background-size: cover;
@@ -266,4 +257,75 @@
 .carousel-button {
 	position: absolute;
 	z-index: 1001;
+}
+
+.text-transform-none{
+	text-transform: none;
+}
+/* initialization container DO NOT TOUCH */
+.initialization-container{
+	width: 100vw;
+	height: 100vh;
+	background: url("./assets/static_images/init-background.jpg") no-repeat center center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-ms-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+.initialization-container > .progress-container{
+	width: max-content;
+	float: right;
+	margin-right: 3vw;
+	margin-top: 3vh;
+}
+.initialization-container > .progress-container > div:first-child{
+	font-size: 3rem;
+	letter-spacing: 3rem;
+}
+.initialization-container > .progress-container > div:nth-child(2){
+	width: 95%;
+	border: 4px solid #000;
+	height: 5vh;
+}
+.initialization-container > .progress-container > div:nth-child(2) > div{
+	height: 100%;
+	background-color: #659B5E;
+}
+
+.initialization-container > .progress-container > div:last-child{
+	display: table;
+	font-size: 2rem;
+	width: 95%;
+}
+.initialization-container > .progress-container > div:last-child > div{
+	display: table-cell;
+	width: 50%;
+}
+.initialization-container > .progress-container > div:last-child > div:last-child{
+	text-align: right;
+}
+
+.initialization-container > .resources-container {
+	position: absolute;
+	bottom: 1vh;
+	right: 1vw;
+	width: 59vw;
+}
+
+.initialization-container > .resources-container > .machine-code,
+.initialization-container > .resources-container > .machine-ip{
+	font-size: 5rem;
+	text-align: center;
+}
+.initialization-container > .resources-container > .resources > .text-description{
+	font-size: 3rem;
+	font-weight: 500;
+}
+.initialization-container > .resources-container > .resources > div.row > div > *{
+	vertical-align: middle;
+}
+.initialization-container > .resources-container > .resources > div.row > div > span{
+	font-size: 2rem;
 }

@@ -4,15 +4,19 @@ import SERVER_REQ  from '../../helpers/Request';
 import FORMATTER  from '../../helpers/Formatter';
 import MachineShop from './MachineShop';
 import '../../App.css';
-import { Spinner, Container, Row } from 'react-bootstrap';
+import { Spinner, Container, Row, Col } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
+import image_fail from '../../assets/static_images/icon-fail.png';
+import image_success from '../../assets/static_images/icon-success.png';
 
 const Home = (props) => {
 	const [machineCode, setMachineCode] = useState("");
 	const [chkMissingConfigs, setChkMissingConfigs] = useState([]);
 	const [chkMissingResources, setChkMissingResources] = useState([]);
-	const [missingConfigs, setMissingConfigs] = useState("");
-	const [missingResources, setMissingResources] = useState("");
+	const [missingConfigs, setMissingConfigs] = useState([]);
+	const [missingResources, setMissingResources] = useState(false);
+	const [machineMessage, setMachineMessage] = useState("");
+	const [ipAddress, setIpAddress] = useState("");
  	const socket = useContext(SocketContext);
 	const history = useHistory()
 
@@ -21,24 +25,7 @@ const Home = (props) => {
 			history.push('/management/login')
 			return;
 		}
-		const url = `${FORMATTER.api_base_url()}/api/home.json`;
-		fetch(url)
-			.then(response => {
-				if (response.ok) {
-					return response.json();
-				}
-				throw new Error("Network response was not ok.");
-			})
-			.then(response => {
-				setMachineCode(response.machine_code);
-				setChkMissingConfigs((response.missing_configs.length > 0 )? response.missing_configs.map(x => x['value']) : []);
-				setMissingConfigs((response.missing_configs.length > 0) ? response.missing_configs : "");
-				setChkMissingResources((response.missing_resources.length > 0) ? response.missing_resources.map(x => x['value']) : []);
-				setMissingResources((response.missing_resources.length > 0) ? response.missing_resources : "");
-			})
-			.catch(error => console.log(error.message));
-		
-		
+		fetchHome();
 		socket.on('machine_temperature_update', (data) => {
             data = JSON.parse(data);
 			SERVER_REQ.get('/api/health.json', { vending: 2, vending_temp: data.value });
@@ -49,67 +36,68 @@ const Home = (props) => {
 		};
 	}, []);
 
-	const MachineSetup = () => {	
-		let code, configsWarn, missingConf, resourcesWarn, missingRes;
-		let confData = "";
-		let resData = "";
-
-		if (missingConfigs.length > 0) {
-			missingConfigs.forEach((element, i) => {
-				confData += element.tag + ": " + element.value;
-				if (missingConfigs.length - 1 !== i) { confData += ", " }
-			});
-		}
-
-		if (missingResources.length > 0) {
-			missingResources.forEach((element, j) => {
-				resData += element.tag + ": " + element.value;
-				if (missingResources.length - 1 !== j) { resData += ", " }
-			});
-		}
+	const fetchHome = () => {
+		const url = `${FORMATTER.api_base_url()}/api/home.json`;
+		fetch(url)
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				}
+				throw new Error("Network response was not ok.");
+			})
+			.then(response => {
+				setMissingResources(response.resources)
+				setMachineCode(response.machine_code)
+				setIpAddress(response.ip)
+				setMachineMessage(response.message)
+				setMissingConfigs(response.statuses)
+				if(response.request_after){
+					setTimeout( () => fetchHome(), response.request_after * 1000)
+				}
+			})
+			.catch(error => console.log(error.message));
 		
-		console.log("missing configs", resData);
-		// console.log("missing resources", resourceData);
-		if (machineCode) {
-			// machien code
-			code = <p className='text-center custom-t0 align-self-center'>KODE MESIN - <span className="custom-t0"><strong> {machineCode} </strong></span></p>;
+	}
 
-			if (chkMissingConfigs.includes(false)) {
-				// missing configs 
-				configsWarn = <p className='text-center text-uppercase text-warning custom-t0 align-self-center'>KONFIGURASI HILANG!</p>;
-				missingConf = <p className='text-center custom-t5 align-self-center'>{confData}</p>;
-			}
-
-			if (chkMissingResources.includes(false)) {
-				// missing resources
-				resourcesWarn = <p className='text-center text-uppercase text-warning custom-t0 align-self-center'>SUMBER DARA HILANG!</p>;
-				missingRes = <p className='text-center custom-t5 align-self-center'>{resData}</p>;
-			}
-		} else {
-			// machine setup
-			code = <p className='text-center text-uppercase custom-t0 align-self-center'>PENGATURAN MESIN</p>;
-		}
-
-		return <div className="vw-100 vh-100 d-flex align-items-center background-Img">
-			<Container fluid>
-				<Row className='justify-content-center'>
-					<Spinner animation="border" className="custom-spinner custom-t0" />
-					<br />
-				</Row>
-				<Row className='justify-content-center mt-4'>{ code }</Row>
-				<Row className='justify-content-center mt-4'>{ configsWarn }</Row>
-				<Row className='justify-content-center mt-4'>{ missingConf }</Row>
-				{/* <Row className='justify-content-center mt-4'>{ resourcesWarn }</Row> */}
-				<Row className='justify-content-center mt-4'>{ missingRes }</Row>
-			</Container>
+	const MachineSetup = () => {
+		const percent = (missingConfigs.filter(x => x.value).length / missingConfigs.length) * 100
+		return <div className="initialization-container">
+			<div className="progress-container">
+				<div>INISIALISASI</div>
+				<div>
+					<div className="progress" style={{width: `${percent}%`}}></div>
+				</div>
+				<div>
+					<div>0%</div>
+					<div>100%</div>
+				</div>
+				
+			</div>
+			<div className="clearfix"></div>
+			<div className="resources-container">
+				<div className="machine-code">{machineCode}</div>
+				<div className="machine-ip">{ipAddress}</div>
+				<div className="resources">
+					<div className="text-description">Menunggu status aktif parameter:</div>
+					<Row >
+					{ 
+						missingConfigs.map( (config, index) => {
+							return <Col index={index} className="col-md-4"><img src={config.value ? image_success : image_fail} style={{width: 50}} />&nbsp; <span>{config.text}</span></Col>
+						})
+					}
+					</Row>
+				</div>
+			</div>
 		</div>;
 	};
 
-	return <Container fluid className="overflow-hidden">
-	{
-		(machineCode === "" || chkMissingConfigs.includes(false) || chkMissingResources.includes(false)) ? <MachineShop/> : <MachineShop />
-	}
-	</Container>;
+	return (<div className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">
+		<Container fluid className="p-0">
+		{
+			(missingResources) ? <MachineSetup /> : <MachineShop />
+		}
+		</Container>
+	</div>);
 }
 
 // Home.contextType = SocketContext;

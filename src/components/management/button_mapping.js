@@ -55,7 +55,7 @@ class ButtonMapping extends React.Component {
 						this.setState({showModal: true})
 					} 
 				});
-				console.log(button_req)
+				// console.log(button_req)
 			})
 		})
 	}
@@ -111,7 +111,7 @@ class ButtonMapping extends React.Component {
 
 	handleSubmitBtn = async () => {
 		const {tappedButton, selectedProduct} = this.state;
-		console.log(tappedButton, selectedProduct);
+		// console.log(tappedButton, selectedProduct);
 		const button_post = await SERVER_REQ.put(`/api/buttons/${tappedButton}.json`, {'button[product_id]': selectedProduct});
 		if (button_post.response.success) {
 			const button_get =  await SERVER_REQ.get(`/api/buttons/${tappedButton}/detail.json`);
@@ -128,9 +128,9 @@ class ButtonMapping extends React.Component {
 					} 
 				});
 			}
-			console.log("Get " + button_get);
+			// console.log("Get " + button_get);
 		}
-		console.log("Post " + button_post);
+		// console.log("Post " + button_post);
 	}
 
 	handleConfirmButtonOnClick = () => {
@@ -148,7 +148,7 @@ class ButtonMapping extends React.Component {
 
 	render() {
 		const {tappedButton, mappedProduct={}, showModal, products, selectedProduct, modalTextPostFix, confirmButtonText, hideCancelBtn} = this.state;
-		console.log(products);
+		// console.log(products);
 
 		return (
 			<Container fluid className="vw-100 vh-100 background-Img">

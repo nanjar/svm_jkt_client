@@ -4,6 +4,7 @@ import FORMATTER from '../../helpers/Formatter';
 import '../../App.css';
 import logo from '../../assets/static_images/Logo.png';
 import loadingQr from '../../assets/static_images/loadingQr.png';
+import sampleImage from '../../assets/static_images/cola.jpg';
 import { Modal, Container, Row, Col } from 'react-bootstrap';
 
 class Sale extends React.Component {
@@ -28,8 +29,8 @@ class Sale extends React.Component {
 			showCancel: false, // modal's cancel button flag
 			loadingQR: true,
 			showModal: false,
-			imgWidth: "40vw",
-			imgHeight: "65vh",
+			imgWidth: "35vw",
+			imgHeight: "60vh",
 			intervalId: false
 		}
 
@@ -47,7 +48,7 @@ class Sale extends React.Component {
 		const {params} = this.props.match;
 		const {search} = this.props.location;
 		const urlParams = new URLSearchParams(search);
-		console.log(urlParams)
+		// console.log(urlParams)
 		this.setState({ product: {
 			name: urlParams.get('name'),
 			price: params.amount,
@@ -61,9 +62,10 @@ class Sale extends React.Component {
 
 	requestQrCode = async() => {
 		const {product, retry} = this.state;
+		console.log("PRODUCT", product)
 		const reqQrCode = await SERVER_REQ.post(`/api/sales/payment.json`, {'amount': product.price, 'product_id': product.id});
 		
-		console.log(reqQrCode);
+		// console.log(reqQrCode);
 
 		if (!reqQrCode.response) {
 			if (retry < 4) {
@@ -91,8 +93,8 @@ class Sale extends React.Component {
 				if (this._isMounted) {
 					this.setState({
 						qrCodeURL: qr.url,
-						imgWidth: "38vw",
-						imgHeight: "65vh",
+						imgWidth: "35vw",
+						imgHeight: "60vh",
 						transactionId: reqQrCode.response.transaction_id,
 						checkQrStatus: true,
 						intervalId: setInterval(() => {
@@ -103,7 +105,7 @@ class Sale extends React.Component {
 								this.warningTimeOut();
 							} else {
 								countdown -= 1;
-								console.log("countdown - " + countdown);
+								// console.log("countdown - " + countdown);
 							}
 							this.setState({ countdown: countdown });
 						}, 1000)
@@ -113,7 +115,7 @@ class Sale extends React.Component {
 				}
 			} else if (reqQrCode.response.status_code === "400" || reqQrCode.response.status_code === "401" || reqQrCode.response.status_code === "402" || reqQrCode.response.status_code === "406" || reqQrCode.response.status_code === "410") { 
 				// possible error codes for payment is 400, 401, 402, 406, and 410
-				console.log("Status code - " + reqQrCode.response.status_code);
+				// console.log("Status code - " + reqQrCode.response.status_code);
 				if (this._isMounted) {
 					this.setState({
 						titleMsg: "TIDAK DAPAT TERHUBUNG KE SERVER", // cannot connect to server
@@ -143,7 +145,7 @@ class Sale extends React.Component {
 	}
 
 	handleInitialStateChanges = () => {
-		console.log("sale starts");
+		// console.log("sale starts");
 		const {checkQrStatus, statusChanged, retry} = this.state;
 		if (checkQrStatus) {
 			if (statusChanged === "initial") {
@@ -180,17 +182,17 @@ class Sale extends React.Component {
 		} else if (statusChanged === "timeout" || statusChanged === "qrerror") {
 			this.handleTimeout();
 		} 
-		console.log("Btn Status - " + statusChanged);
+		// console.log("Btn Status - " + statusChanged);
 	}
 
 	cancelAtTimeOut = async() => {
 		const {transactionId, cancelBtnClicked} = this.state;
 		const reqCancelQrCode = await SERVER_REQ.post(`/api/sales/cancel.json`, {'transaction_id': transactionId});
-		console.log(reqCancelQrCode);
+		// console.log(reqCancelQrCode);
 
 		if (reqCancelQrCode.response) {
-			console.log("Transaction Status - " + reqCancelQrCode.response.transaction_status);
-			console.log("Transaction Status Code - " + reqCancelQrCode.response.status_code);
+			// console.log("Transaction Status - " + reqCancelQrCode.response.transaction_status);
+			// console.log("Transaction Status Code - " + reqCancelQrCode.response.status_code);
 			// cond: check payment cancellation by status or status code
 			if (reqCancelQrCode.response.transaction_status === "cancel" || reqCancelQrCode.response.status_code === "412") { 
 				if (cancelBtnClicked) {
@@ -215,16 +217,18 @@ class Sale extends React.Component {
 
 	checkPaymentStatus = async() => {
 		const {transactionId} = this.state;
-		console.log(`${FORMATTER.api_base_url()}/api/sales/status.json?transaction_id=${transactionId}`);
+		// console.log(`${FORMATTER.api_base_url()}/api/sales/status.json?transaction_id=${transactionId}`);
 		const reqPaymentStatus = await SERVER_REQ.get(`/api/sales/status.json?transaction_id=${transactionId}`);
 
-		console.log(reqPaymentStatus);
+		// console.log(reqPaymentStatus);
 		const response = reqPaymentStatus.response;
 		if (response) {
-			console.log("Transaction status - " + reqPaymentStatus.response.transaction_status);
+			// console.log("Transaction status - " + reqPaymentStatus.response.transaction_status);
 			if (reqPaymentStatus.response.transaction_status === "settlement") {
+				const {search} = this.props.location;
+				const urlParams = new URLSearchParams(search);
 				// redirect dispensing after payment success
-				this.props.history.push(`/dispense/${response.slot_id}/${response.sale_id}`); 
+				this.props.history.push(`/dispense/${response.sale_id}?slots=${urlParams.get('slots')}`); 
 			} else {
 				if (this._isMounted) {
 					this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
@@ -245,7 +249,7 @@ class Sale extends React.Component {
 
 	handleCancelPayment = () => {
 		const {transactionId} = this.state;
-		console.log(this._isMounted);
+		// console.log(this._isMounted);
 		if (transactionId) {
 			if (this._isMounted) {
 				this.setState({ 
@@ -293,7 +297,10 @@ class Sale extends React.Component {
 
 					<Col lg={5}> 
 						<p className="mb-3" style={{fontSize: "3vw"}}>ANDA TELAH MEMILIH </p> {/* you have choose */}
-						<p className="cyan-text" style={{fontSize: "6vw"}}><strong>{FORMATTER.money(product.price)}</strong></p>
+						<img src={`${FORMATTER.api_base_url()}${product.url}`} className="img-fluid" style={{width: "15vw", height: "13vw"}} alt="Product"></img>
+						{/* <img src={sampleImage} className="img-fluid" style={{width: "15vw", height: "13vw"}} alt="QR CODE"></img> */}
+						<p style={{fontSize: "2vw"}}>{product.name}</p>
+						<p className="cyan-text" style={{fontSize: "4vw"}}><strong>{FORMATTER.money(product.price)}</strong></p>
 						<p style={{fontSize: "3vw"}}>{checkQrStatus ? 'PINDAI KODE QR UNTUK PEMBAYARAN' : ''}</p> {/* cond 1: scan qr code to pay, cond 2: requesting qr code */}
 					</Col>
 				</Row>
