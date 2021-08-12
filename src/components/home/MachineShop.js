@@ -123,6 +123,8 @@ const MachineShop = () => {
 	}
 
     return <div>
+		<Button className="custom-t2 carousel-button" style={{top: "0", left: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
+		<Button className="custom-t2 carousel-button" style={{top: "0", right: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
 			{
 				(carouselItems.length > 0) ?
 					<Row>
@@ -131,8 +133,6 @@ const MachineShop = () => {
 							carouselItems.map((element, index) => (
 								<Carousel.Item interval={carouselInterval} key={index} className='carousel-container justify-content-center'  style={{width: "100%", objectFit: "contain"}}> 
 									{/* <Row className='justify-content-center mb-3'> */}
-									<Button className="custom-t2 carousel-button" style={{position: "absolute", top: "0", left: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
-									<Button className="custom-t2 carousel-button" style={{position: "absolute", top: "0", right: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
 									{/* </Row> */}
 									{/* <Row className='justify-content-center'> */}
 										<img src={`${FORMATTER.api_base_url()}${element}`} alt='Carousel Item' className='carousel-image'/>
@@ -145,11 +145,9 @@ const MachineShop = () => {
 				:
 				<Row>
 					<Row className='justify-content-center mb-3'>
-						<Button className="custom-t2" style={{position: "absolute", top: "0", left: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
 						<div className='p-2 align-self-center text-center'>
 								<img src={logo} className='mini-logo2' alt='Logo' />
 						</div>
-						<Button className="custom-t2" style={{position: "absolute", top: "0", right: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
 					</Row>
 
 					<Row className='justify-content-center mt-3'>

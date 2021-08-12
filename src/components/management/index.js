@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-// import SERVER_REQ from '../../helpers/Request';
-import { Row, Col, Container } from 'react-bootstrap';
+import SERVER_REQ from '../../helpers/Request';
+import { Row, Col, Container, Modal } from 'react-bootstrap';
 import { useIdleTimer } from 'react-idle-timer';
 
 const Management = (props) => {
 	const [piTemp] = useState(0);
 	const [machineTemp] = useState(0);
+	const [showConfirm, setShowConfirm] = useState(false);
+	const [showAck, setShowAck] = useState(false);
+	const [checkTemplateResponse, setCheckTemplateResponse] = useState("");
+	const [changeTemplateResponse, setChangeTamplateResponse] = useState("");
 	
 	const location = useLocation();
 	const history = useHistory();
@@ -21,8 +25,16 @@ const Management = (props) => {
 			history.push('/management/login')
 			return;
 		}
+		(async function(){
+			const check_template_req = await SERVER_REQ.get('/api/topups.json')
+			const check_template_response = check_template_req.response;
+			if (check_template_response.has_template_change) {
+				setShowConfirm(true);
+				setCheckTemplateResponse(check_template_response.has_template_change);
+			}
+		})();
 		return () => {}
-	});
+	},[]);
 
 	const duration = 10; // 10 minutes
 
@@ -52,6 +64,23 @@ const Management = (props) => {
 		onActive: handleOnActive,
 		onAction: handleOnAction
 	});
+
+	const handleButtonConfirm = () => {
+		setShowConfirm(false);
+		(async function(){
+			const change_template = await SERVER_REQ.get('/api/topups/change.json',{template: checkTemplateResponse});
+			setChangeTamplateResponse(change_template.response.message);
+			setShowAck(true);
+		})();
+	}
+
+	const handleButtonOk = () => {
+		setShowAck(false);
+	}
+
+	const handleButtonCacnel = () => {
+		setShowConfirm(false);
+	}
 
 	return (<div className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">
 		<Container fluid>
@@ -85,6 +114,37 @@ const Management = (props) => {
 					</Link>
 				</Col>
 			</Row>
+
+			<Modal show={showConfirm} size="xl" centered className="rounded-3">
+				<Modal.Header className="modal-background">
+					<Modal.Title>
+						<p className="custom-t2 text-uppercase">Confirm Template Change</p> {/* Confirm Template Change */}
+					</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<p className="custom-t2 text-uppercase">Do you want to change the template?</p> {/* Do you want to change the template? */}
+				</Modal.Body>
+				<Modal.Footer className="text-center">
+					<div className="text-center">
+						<button type="button" onClick={handleButtonConfirm} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
+							<h2 className="text-center text-uppercase custom-t2 p-3">CONFIRM</h2> {/* confirm */}
+						</button>
+					</div>
+				</Modal.Footer>
+			</Modal>
+
+			<Modal show={showAck} size="xl" centered className="rounded-3">
+				<Modal.Body>
+					<p className="custom-t2 text-uppercase">{changeTemplateResponse}</p> {/* template changed successfully */}
+				</Modal.Body>
+				<Modal.Footer className="text-center">
+					<div className="text-center">
+						<button type="button" onClick={handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
+							<h2 className="text-center text-uppercase custom-t2 p-3">OK</h2> {/* ok */}
+						</button>
+					</div>
+				</Modal.Footer>
+			</Modal>
 		</Container>
 	</div>);
 }

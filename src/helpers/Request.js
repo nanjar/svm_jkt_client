@@ -1,9 +1,9 @@
 export default class Request{
     static config(){
         return {
-            // headers: {
-            //     'Content-Type': 'application/json'
-            // }
+            headers: {
+                'Content-Type': 'application/json'
+            }
         }
     }
     
