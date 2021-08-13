@@ -224,8 +224,10 @@ class Sale extends React.Component {
 
 	checkPaymentStatus = async() => {
 		const {transactionId} = this.state;
+		const slots = urlParams.get('slots')
+		const firstSlot = slots.split(',')[0]
 		// console.log(`${FORMATTER.api_base_url()}/api/sales/status.json?transaction_id=${transactionId}`);
-		const reqPaymentStatus = await SERVER_REQ.get(`/api/sales/status.json?transaction_id=${transactionId}`);
+		const reqPaymentStatus = await SERVER_REQ.get(`/api/sales/status.json?transaction_id=${transactionId}&slot=${firstSlot}`);
 
 		// console.log(reqPaymentStatus);
 		const response = reqPaymentStatus.response;
@@ -235,7 +237,7 @@ class Sale extends React.Component {
 				const {search} = this.props.location;
 				const urlParams = new URLSearchParams(search);
 				// redirect dispensing after payment success
-				this.props.history.push(`/dispense/${response.sale_id}?slots=${urlParams.get('slots')}`); 
+				this.props.history.push(`/dispense/${response.sale_id}?slots=${slots}`); 
 			} else {
 				if (this._isMounted) {
 					this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, this.state.requestStatatusAfter * 1000);

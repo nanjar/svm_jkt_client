@@ -71,7 +71,7 @@ const ManualTopup = (props) => {
 					const {slot_id} = slot;
 					return {slot_id, to_stock: 0}
 				}));
-				setSlotID(data[0].slot_id)
+				if(!slotID) setSlotID(data[0].slot_id)
 				setIsLoadingActive(false);
 			})
 			.catch(error => console.log(error.message));

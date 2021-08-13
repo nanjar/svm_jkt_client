@@ -22,11 +22,11 @@ class ButtonMapping extends React.Component {
 			showAckModal: false,
 			showConfirmModal: false,
 			selectedProduct: false,
-			// timeout: 1000 * 60 * 1,
-            // isTimedOut: false
+			timeout: 1000 * 60 * 10,
+            isTimedOut: false
 		}
 		
-		// this.idleTimer = React.createRef();
+		this.idleTimer = null;
 		this.handleCancelBtn = this.handleCancelBtn.bind(this);
 		this.handleModalCancelBtn = this.handleModalCancelBtn.bind(this);
 		this.handleOnRadioChange = this.handleOnRadioChange.bind(this);
@@ -145,42 +145,37 @@ class ButtonMapping extends React.Component {
 		this.stopSocket();
 	}
 
-	// _onAction = (e) => {
-	// 	this.setState({ isTimedOut: false});
-	// 	this.idleTimer.reset();
-	// }
+	handleOnAction = (e) => {
+		// console.log('time remaining action', this.idleTimer.getRemainingTime())
+		this.setState({ timeout: 1000 * 60 * 10 });
+	}
 	 
-	// _onActive = (e) => {
-	// 	this.setState({ isTimedOut: false});
-	// 	this.idleTimer.reset();
-	// }
+	handleOnActive = (e) => {
+		// console.log('time remaining active', this.idleTimer.getRemainingTime())
+		this.setState({ itimeout: 1000 * 60 * 10 });
+	}
 	
-	// _onIdle = (e) => {
-	// 	const isTimedOut = this.state.isTimedOut
-	// 	if (isTimedOut) {
-	// 		this.props.history.push('/')
-	// 	} else {
-	// 		this.idleTimer.reset();
-	// 		this.setState({isTimedOut: true})
-	// 	}
-	// }
+	handleOnIdle = (e) => {
+		if (this.idleTimer.getRemainingTime() == 0) {
+			this.props.history.push('/');
+		}
+	}
 
 	render() {
 		const {tappedButton, mappedProduct={}, showConfirmModal, showAckModal, products, selectedProduct, timeout} = this.state;
 		// console.log(products);
 
-		return (
-			<Container fluid className="overflow-hidden">
-				{/* <IdleTimer>
-					key='idleTimer'
-					startOnMount={ true }
-					ref={ this.idleTimer }
-					element={ document }
-					onActive={ this._onActive }
-					onIdle={ this._onIdle }
-					timeout={ timeout }
-				</IdleTimer> */}
+		return ( <div>
+			<IdleTimer
+				ref={ref => { this.idleTimer = ref }}
+				timeout={ timeout }
+				onActive={this.handleOnActive}
+				onIdle={this.handleOnIdle}
+				onAction={this.handleOnAction}
+				debounce={250}
+			/>
 
+			<Container fluid className="overflow-hidden">
 				{tappedButton ? <Product products={products} selectedProduct={selectedProduct} handleCancelBtn={this.handleModalCancelBtn} handleOnRadioChange={this.handleOnRadioChange} handleSubmitBtn={this.handleSubmitBtn} /> : <LandingPage handleCancelBtn={this.handleCancelBtn} />}
 
 				<Modal show={showConfirmModal} size="lg" centered>
@@ -216,7 +211,7 @@ class ButtonMapping extends React.Component {
 					</Modal.Footer>
 				</Modal>
 			</Container>
-		);
+		</div>);
 	}
 }
 
