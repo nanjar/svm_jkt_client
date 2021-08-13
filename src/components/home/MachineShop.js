@@ -27,10 +27,11 @@ const MachineShop = () => {
         socket.on('connect', function(){
             // console.log('connected')
         })
-				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
-				socket.on('error', function(){
-						console.log('error')
-				});
+
+		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
+		socket.on('error', function(){
+				console.log('error')
+		});
         
         socket.on(BUTTON_E, async (data) => {
             data = JSON.parse(data);
@@ -79,7 +80,7 @@ const MachineShop = () => {
 
         return () => {
             // console.log('Log out')
-            socket.off(BUTTON_E)
+            socket.offAny(BUTTON_E)
             socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
         }
     },[]);

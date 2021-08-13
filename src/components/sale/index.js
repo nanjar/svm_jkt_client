@@ -24,6 +24,8 @@ class Sale extends React.Component {
 			checkQrStatus: false,
 			retry: 0,
 			countdown: 121,
+			afterCountdown: 60,
+			requestStatatusAfter: 2,
 			cancelBtnClicked: false,
 			product:{id: '', name: '', url: '', price: 1},
 			showCancel: false, // modal's cancel button flag
@@ -97,10 +99,13 @@ class Sale extends React.Component {
 						imgHeight: "60vh",
 						transactionId: reqQrCode.response.transaction_id,
 						checkQrStatus: true,
+						countdown: reqQrCode.response.payment_timeout,
+						afterCountdown: reqQrCode.response.payment_wait_after_timeout,
+						requestStatatusAfter: reqQrCode.response.payment_status_request_after,
 						intervalId: setInterval(() => {
 							let countdown = this.state.countdown;
 							if(this.state.countdown === 0){
-								countdown = 121
+								countdown = reqQrCode.response.payment_timeout
 								clearInterval(this.state.intervalId)
 								this.warningTimeOut();
 							} else {
@@ -110,10 +115,12 @@ class Sale extends React.Component {
 							this.setState({ countdown: countdown });
 						}, 1000)
 					}, () => {
-						this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
+						console.log(`request after => ${this.state.requestStatatusAfter }`)
+						this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, this.state.requestStatatusAfter * 1000);
 					});
 				}
-			} else if (reqQrCode.response.status_code === "400" || reqQrCode.response.status_code === "401" || reqQrCode.response.status_code === "402" || reqQrCode.response.status_code === "406" || reqQrCode.response.status_code === "410") { 
+			// } else if (reqQrCode.response.status_code === "400" || reqQrCode.response.status_code === "401" || reqQrCode.response.status_code === "402" || reqQrCode.response.status_code === "406" || reqQrCode.response.status_code === "410") { 
+			} else if (["400","401","402","406","410"].includes(reqQrCode.response.status_code)) { 
 				// possible error codes for payment is 400, 401, 402, 406, and 410
 				// console.log("Status code - " + reqQrCode.response.status_code);
 				if (this._isMounted) {
@@ -231,12 +238,12 @@ class Sale extends React.Component {
 				this.props.history.push(`/dispense/${response.sale_id}?slots=${urlParams.get('slots')}`); 
 			} else {
 				if (this._isMounted) {
-					this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
+					this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, this.state.requestStatatusAfter * 1000);
 				}
 			}
 		} else {
 			if (this._isMounted) {
-				this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, 1000);
+				this._timerId = setTimeout(() => { this.checkPaymentStatus(); this._timerId = 0; }, this.state.requestStatatusAfter * 1000);
 			}
 		}
 	}
@@ -263,15 +270,15 @@ class Sale extends React.Component {
 			this.props.history.push("/");
 		}
 	}
-
+	
 	componentWillUnmount() {
-    this._isMounted = false;
+    	this._isMounted = false;
 		if (this._timerId) { clearTimeout(this._timerId); this._timerId = 0; }
 		clearInterval(this.state.intervalId);
-		this.setState = (state, callback) => {
-			return;
-		};
-  }
+		// this.setState = (state, callback) => {
+		// 	return;
+		// };
+  	}
 
 	render() {
 		const {product, qrCodeURL, checkQrStatus, countdown = 121, showModal, showCancel, titleMsg, contentMsg, imgWidth, imgHeight} = this.state;

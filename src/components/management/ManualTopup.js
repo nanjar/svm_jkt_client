@@ -95,7 +95,7 @@ const ManualTopup = (props) => {
 		if (slot && slotStock) {
 			setSlotStocks(slotStocks.map(stock => {
 				if (parseInt(stock.slot_id) === parseInt(slotID)) {
-					if ((parseInt(stock.to_stock) * -1) < slot.current_stock) {
+					if ((parseInt(stock.to_stock) * -1) < (slot.current_stock + stock.to_stock)) {
 						stock.to_stock -= 1;
 					}
 				} else {

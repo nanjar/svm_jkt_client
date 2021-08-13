@@ -1,9 +1,10 @@
 export default class Request{
     static config(){
         return {
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            mode: 'cors'
+            // headers: {
+            //     'Content-Type': 'application/json'
+            // }
         }
     }
     

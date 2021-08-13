@@ -70,7 +70,7 @@ class ButtonMapping extends React.Component {
 	componentDidMount() {
 		this.startSocket();
 		// const self=this;
-		// const button = 6;
+		// const button = 7;
 		// self.setState({ tappedButton: button }, async () => {
 		// 	const url = `http://vending.smartvending.com/api/buttons/${button}/detail.json`;
 		// 	const button_req = await SERVER_REQ.get(url);
@@ -135,7 +135,9 @@ class ButtonMapping extends React.Component {
 
 	handleConfirmButtonOnClick = () => {
 		const btnText = this.state.confirmButtonText;
-		this.setState({ showModal: false }, () => {
+		this.setState({ 
+			showModal: false
+		}, () => {
 			if (btnText === "OK") {
 				this.handleModalCancelBtn();
 			} 
@@ -151,7 +153,7 @@ class ButtonMapping extends React.Component {
 		// console.log(products);
 
 		return (
-			<Container fluid className="vw-100 vh-100 background-Img">
+			<Container fluid className="background-Img">
 				{tappedButton ? <Product products={products} selectedProduct={selectedProduct} handleCancelBtn={this.handleModalCancelBtn} handleOnRadioChange={this.handleOnRadioChange} handleSubmitBtn={this.handleSubmitBtn} /> : <LandingPage handleCancelBtn={this.handleCancelBtn} />}
 
 				<Modal show={showModal} size="lg" centered>
