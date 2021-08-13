@@ -329,3 +329,13 @@
 .initialization-container > .resources-container > .resources > div.row > div > span{
 	font-size: 2rem;
 }
+
+.scroll-div {
+	height: 80vh; 
+	width: 98.5vw;
+	margin: none;
+	padding: none;
+	background: white; 
+	overflow-y: auto;
+	overflow-x: hidden;
+}

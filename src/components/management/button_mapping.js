@@ -6,6 +6,8 @@ import LandingPage from "./buttons/LandingPage";
 import Product from './buttons/Product';
 import '../../App.css';
 import { Button, Container, Image, Modal, Row } from 'react-bootstrap';
+import IdleTimer from 'react-idle-timer';
+
  
 class ButtonMapping extends React.Component {
 	constructor(props) {
@@ -20,8 +22,11 @@ class ButtonMapping extends React.Component {
 			showAckModal: false,
 			showConfirmModal: false,
 			selectedProduct: false,
-			hideCancelBtn: "",
+			// timeout: 1000 * 60 * 1,
+            // isTimedOut: false
 		}
+		
+		// this.idleTimer = React.createRef();
 		this.handleCancelBtn = this.handleCancelBtn.bind(this);
 		this.handleModalCancelBtn = this.handleModalCancelBtn.bind(this);
 		this.handleOnRadioChange = this.handleOnRadioChange.bind(this);
@@ -136,16 +141,46 @@ class ButtonMapping extends React.Component {
 		});
 	}
 
-	componentWillUnmount(){
+	componentWillUnmount() {
 		this.stopSocket();
 	}
 
+	// _onAction = (e) => {
+	// 	this.setState({ isTimedOut: false});
+	// 	this.idleTimer.reset();
+	// }
+	 
+	// _onActive = (e) => {
+	// 	this.setState({ isTimedOut: false});
+	// 	this.idleTimer.reset();
+	// }
+	
+	// _onIdle = (e) => {
+	// 	const isTimedOut = this.state.isTimedOut
+	// 	if (isTimedOut) {
+	// 		this.props.history.push('/')
+	// 	} else {
+	// 		this.idleTimer.reset();
+	// 		this.setState({isTimedOut: true})
+	// 	}
+	// }
+
 	render() {
-		const {tappedButton, mappedProduct={}, showConfirmModal, showAckModal, products, selectedProduct, confirmButtonText, hideCancelBtn} = this.state;
+		const {tappedButton, mappedProduct={}, showConfirmModal, showAckModal, products, selectedProduct, timeout} = this.state;
 		// console.log(products);
 
 		return (
-			<Container fluid>
+			<Container fluid className="overflow-hidden">
+				{/* <IdleTimer>
+					key='idleTimer'
+					startOnMount={ true }
+					ref={ this.idleTimer }
+					element={ document }
+					onActive={ this._onActive }
+					onIdle={ this._onIdle }
+					timeout={ timeout }
+				</IdleTimer> */}
+
 				{tappedButton ? <Product products={products} selectedProduct={selectedProduct} handleCancelBtn={this.handleModalCancelBtn} handleOnRadioChange={this.handleOnRadioChange} handleSubmitBtn={this.handleSubmitBtn} /> : <LandingPage handleCancelBtn={this.handleCancelBtn} />}
 
 				<Modal show={showConfirmModal} size="lg" centered>
@@ -157,10 +192,10 @@ class ButtonMapping extends React.Component {
 
 					</Modal.Body>
 					<Modal.Footer className="text-center">
-						<Button variant="warning" onClick={this.handleModalCancelBtn} className={"text-uppercase custom-t2 " + hideCancelBtn}>
+						<Button variant="warning" onClick={this.handleModalCancelBtn} className="text-uppercase custom-t2 p-3">
 							BATAL {/* cancel */}
 						</Button>
-						<Button variant="info" onClick={this.handleConfirmButtonOnClick} className="text-uppercase custom-t2">
+						<Button variant="info" onClick={this.handleConfirmButtonOnClick} className="text-uppercase custom-t2 p-3">
 							LANJUT {/* confirm */}
 						</Button> 
 					</Modal.Footer>
@@ -175,7 +210,7 @@ class ButtonMapping extends React.Component {
 
 					</Modal.Body>
 					<Modal.Footer className="text-center">
-						<Button variant="info" onClick={this.handleAckModalButton} className="text-uppercase custom-t2">
+						<Button variant="info" onClick={this.handleAckModalButton} className="text-uppercase custom-t2 p-3">
 							OK
 						</Button>
 					</Modal.Footer>

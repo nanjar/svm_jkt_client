@@ -32,6 +32,28 @@ const ManualTopup = (props) => {
 		// console.log('updatiog');
 	});
 
+	const duration = 10; // 10 minutes
+	let timer = 1000 * 60 * duration; // set timer
+
+	const handleOnAction = (event) => {
+		timer = 1000 * 60 * duration; // reset timer
+	}
+
+	const handleOnActive = (event) => {
+		timer = 1000 * 60 * duration; // reset timer
+	}
+
+	const handleOnIdle = (event) => {
+		props.history.push("/");
+	}
+	
+	const { getRemainingTime } = useIdleTimer({
+		timeout: timer,
+		onIdle: handleOnIdle,
+		onActive: handleOnActive,
+		onAction: handleOnAction
+	});
+
 	const fetchLayouts = () => {
 		const url = `${FORMATTER.api_base_url()}/api/topups/layouts.json`; 
 		fetch(url)
@@ -95,7 +117,8 @@ const ManualTopup = (props) => {
 		if (slot && slotStock) {
 			setSlotStocks(slotStocks.map(stock => {
 				if (parseInt(stock.slot_id) === parseInt(slotID)) {
-					if ((parseInt(stock.to_stock) * -1) < (slot.current_stock + stock.to_stock)) {
+					const maxNum = (slot.current_stock > stock.to_stock) ? slot.current_stock  : stock.to_stock;
+					if ((parseInt(stock.to_stock) * -1) < maxNum) {
 						stock.to_stock -= 1;
 					}
 				} else {
