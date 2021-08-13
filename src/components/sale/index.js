@@ -224,6 +224,8 @@ class Sale extends React.Component {
 
 	checkPaymentStatus = async() => {
 		const {transactionId} = this.state;
+		const {search} = this.props.location;
+		const urlParams = new URLSearchParams(search);
 		const slots = urlParams.get('slots')
 		const firstSlot = slots.split(',')[0]
 		// console.log(`${FORMATTER.api_base_url()}/api/sales/status.json?transaction_id=${transactionId}`);
@@ -234,8 +236,6 @@ class Sale extends React.Component {
 		if (response) {
 			// console.log("Transaction status - " + reqPaymentStatus.response.transaction_status);
 			if (reqPaymentStatus.response.transaction_status === "settlement") {
-				const {search} = this.props.location;
-				const urlParams = new URLSearchParams(search);
 				// redirect dispensing after payment success
 				this.props.history.push(`/dispense/${response.sale_id}?slots=${slots}`); 
 			} else {
