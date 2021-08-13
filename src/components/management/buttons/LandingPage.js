@@ -17,7 +17,7 @@ const LandingPage = (props) => {
 
 	// console.log("LP", products);
 
-	return <Container fluid className="p-3 background-Img">
+	return <div>
 			<Row className="justify-content-center text-center">
 				<p className="text-center text-uppercase custom-t1">TEKAN TOMBOL UNTUK PRODUK</p> {/* press button to map */}
 				<br/>
@@ -39,14 +39,14 @@ const LandingPage = (props) => {
 				}
 			</Row>
 			<br/>
-			<Row className="justify-content-center text-center mt-2">
-				<Col lg={2}> 
+			<Row className="justify-content-center text-center mt-2 pull-right">
+				<Col lg={{ span: 2, offset: 10 }}> 
 					<Button variant="warning" className="text-uppercase custom-t1" onClick={props.handleCancelBtn}>
 						BATAL 
 					</Button> {/* cancel */}
 				</Col>
 			</Row>
-	</Container>
+	</div>
 }
 
 export default LandingPage;

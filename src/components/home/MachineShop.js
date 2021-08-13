@@ -24,16 +24,9 @@ const MachineShop = () => {
 
     useEffect(() => {
         let button_pressed = false;
-        socket.on('connect', function(){
-            // console.log('connected')
-        })
 
 		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
-		socket.on('error', function(){
-				console.log('error')
-		});
-        
-        socket.on(BUTTON_E, async (data) => {
+        const button_event = async (data) => {
             data = JSON.parse(data);
             // console.log(data);
             if(button_pressed)
@@ -47,40 +40,41 @@ const MachineShop = () => {
             // console.log('pressed')
             const button_req = await SERVER_REQ.get(`/api/buttons/${button}.json`);
 						// console.log(button_req);
-						const button_response = button_req.response
-						if(!button_response.success){
-							button_pressed=false;
-							setShowAlert(false);
-							setTimeout( () => socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 200, reply_to: BUTTON_E }), 500);
-							return;
-						}
+			const button_response = button_req.response
+			if(!button_response.success){
+				button_pressed=false;
+				setShowAlert(false);
+				setTimeout( () => socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 200, reply_to: BUTTON_E }), 500);
+				return;
+			}
             const button_detail = button_req.response.data;
 			
             const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available}
             const url_params = new URLSearchParams(product_detail);
             // console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
             history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
-        });
+		}
+        socket.off(BUTTON_E, button_event).on(BUTTON_E, button_event);
 
 				// Get Carousel Items
-				const url = `${FORMATTER.api_base_url()}/api/banners.json`;
-				fetch(url)
-					.then(response => {
-						if (response.ok) {
-							return response.json();
-						}
-						throw new Error("Network response was not ok.");
-					})
-					.then(response => {
-						// console.log("Carousels", response.data.image_urls);
-						setCarouselItems(response.data.image_urls);
-						// response.data.image_urls.forEach((element, index) => { console.log(index) });
-					})
-					.catch(error => console.log(error.message));
+		const url = `${FORMATTER.api_base_url()}/api/banners.json`;
+		fetch(url)
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				}
+				throw new Error("Network response was not ok.");
+			})
+			.then(response => {
+				// console.log("Carousels", response.data.image_urls);
+				setCarouselItems(response.data.image_urls);
+				// response.data.image_urls.forEach((element, index) => { console.log(index) });
+			})
+			.catch(error => console.log(error.message));
 
         return () => {
             // console.log('Log out')
-            socket.offAny(BUTTON_E)
+            socket.off(BUTTON_E)
             socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
         }
     },[]);

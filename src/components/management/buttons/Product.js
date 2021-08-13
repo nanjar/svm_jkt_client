@@ -7,7 +7,7 @@ const Product = (props) => {
 	// function handleConfirmBtn(){
 	//     setConfirmBtn(true);
 	// }
-	return <Container fluid className="p-3 background-Img">
+	return <div>
 		<Row className="justify-content-center">
 			<h1 className="text-center text-uppercase display-4 mb-4">PILIH PRODUK</h1> {/* Choose the product to map */}
 		</Row>
@@ -32,15 +32,17 @@ const Product = (props) => {
 				))
 			}
 		</Row>
-		<div className="text-center mt-4">
+		<Row className="text-center mt-4">
+			<Col lg={{ span: 4, offset: 8 }}> 
 				<Button type="button" className="btn btn-lg btn-warning text-uppercase custom-t2 m-2" onClick={handleCancelBtn}>
 					BATAL {/* cancel */}
 				</Button>
 				<Button type="button" className="btn btn-lg btn-info text-uppercase custom-t2 m-2" onClick={handleSubmitBtn}>
 					KIRIM {/* submit */}
 				</Button>
-		</div>
-	</Container>;
+			</Col>
+		</Row>
+	</div>;
 }
 
 export default Product;

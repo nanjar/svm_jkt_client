@@ -17,11 +17,10 @@ class ButtonMapping extends React.Component {
 				image_url: ''
 			},
 			tappedButton: false,
-			showModal: false,
+			showAckModal: false,
+			showConfirmModal: false,
 			selectedProduct: false,
 			hideCancelBtn: "",
-			modalTextPostFix: "APAKAH INGIN DISUNTING?", // do you want to edit?
-			confirmButtonText: "LANJUT" // confirm 
 		}
 		this.handleCancelBtn = this.handleCancelBtn.bind(this);
 		this.handleModalCancelBtn = this.handleModalCancelBtn.bind(this);
@@ -30,6 +29,7 @@ class ButtonMapping extends React.Component {
 		this.handleConfirmButtonOnClick  = this.handleConfirmButtonOnClick.bind(this);
 		this.startSocket = this.startSocket.bind(this);
 		this.stopSocket = this.stopSocket.bind(this);
+		this.handleAckModalButton = this.handleAckModalButton.bind(this);
 	}
 
 	startSocket = () => {
@@ -52,7 +52,7 @@ class ButtonMapping extends React.Component {
 				const unassigned_products = button_response.unassign_products;
 				this.setState({mappedProduct: button_product, products: unassigned_products}, () =>{
 					if( button_product ) {
-						this.setState({showModal: true})
+						this.setState({showConfirmModal: true});
 					} 
 				});
 				// console.log(button_req)
@@ -69,21 +69,6 @@ class ButtonMapping extends React.Component {
 
 	componentDidMount() {
 		this.startSocket();
-		// const self=this;
-		// const button = 7;
-		// self.setState({ tappedButton: button }, async () => {
-		// 	const url = `http://vending.smartvending.com/api/buttons/${button}/detail.json`;
-		// 	const button_req = await SERVER_REQ.get(url);
-		// 	const button_response = button_req.response
-		// 	const button_product = button_response.detail.product
-		// 	const unassigned_products = button_response.unassign_products;
-		// 	this.setState({mappedProduct: button_product, products: unassigned_products}, () =>{
-		// 		if( button_product ) {
-		// 			this.setState({showModal: true})
-		// 		} 
-		// 	});
-		// 	console.log(button_req)
-		// })
 	}
 
 	handleCancelBtn = () => {
@@ -92,7 +77,7 @@ class ButtonMapping extends React.Component {
 
 	handleModalCancelBtn = () => {
 		this.setState({
-			showModal: false, 
+			showConfirmModal: false, 
 			tappedButton: false,
 			selectedProduct: false,
 			mappedProduct: {
@@ -120,10 +105,7 @@ class ButtonMapping extends React.Component {
 				this.setState({ mappedProduct: button_product}, () => {
 					if( button_product ) {
 						this.setState({
-							showModal: true,
-							modalTextPostFix: "",
-							confirmButtonText: "OK",
-							hideCancelBtn: "d-none"
+							showAckModal: true
 						})
 					} 
 				});
@@ -136,11 +118,21 @@ class ButtonMapping extends React.Component {
 	handleConfirmButtonOnClick = () => {
 		const btnText = this.state.confirmButtonText;
 		this.setState({ 
-			showModal: false
+			showConfirmModal: false
+		});
+	}
+
+	handleAckModalButton = () => {
+		this.setState({
+			showAckModal: false, 
+			tappedButton: false,
+			selectedProduct: false,
+			mappedProduct: {
+				name: '',
+				image_url: ''
+			}
 		}, () => {
-			if (btnText === "OK") {
-				this.handleModalCancelBtn();
-			} 
+			this.startSocket();
 		});
 	}
 
@@ -149,18 +141,18 @@ class ButtonMapping extends React.Component {
 	}
 
 	render() {
-		const {tappedButton, mappedProduct={}, showModal, products, selectedProduct, modalTextPostFix, confirmButtonText, hideCancelBtn} = this.state;
+		const {tappedButton, mappedProduct={}, showConfirmModal, showAckModal, products, selectedProduct, confirmButtonText, hideCancelBtn} = this.state;
 		// console.log(products);
 
 		return (
-			<Container fluid className="background-Img">
+			<Container fluid>
 				{tappedButton ? <Product products={products} selectedProduct={selectedProduct} handleCancelBtn={this.handleModalCancelBtn} handleOnRadioChange={this.handleOnRadioChange} handleSubmitBtn={this.handleSubmitBtn} /> : <LandingPage handleCancelBtn={this.handleCancelBtn} />}
 
-				<Modal show={showModal} size="lg" centered>
+				<Modal show={showConfirmModal} size="lg" centered>
 					<Modal.Body>
 						<Row className="w-100 justify-content-center text-center">
 							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_base_url()}${mappedProduct.image_url}`} />
-							<p className="text-uppsercase custom-t22">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> <br/>{modalTextPostFix}</p>
+							<p className="text-uppsercase custom-t22">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> <br/>APAKAH INGIN DISUNTING?</p>
 						</Row> {/* button 5 is mapped to */}
 
 					</Modal.Body>
@@ -169,7 +161,22 @@ class ButtonMapping extends React.Component {
 							BATAL {/* cancel */}
 						</Button>
 						<Button variant="info" onClick={this.handleConfirmButtonOnClick} className="text-uppercase custom-t2">
-							{confirmButtonText}
+							LANJUT {/* confirm */}
+						</Button> 
+					</Modal.Footer>
+				</Modal>
+
+				<Modal show={showAckModal} size="lg" centered>
+					<Modal.Body>
+						<Row className="w-100 justify-content-center text-center">
+							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_base_url()}${mappedProduct.image_url}`} />
+							<p className="text-uppsercase custom-t22">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> </p>
+						</Row> {/* button 5 is mapped to */}
+
+					</Modal.Body>
+					<Modal.Footer className="text-center">
+						<Button variant="info" onClick={this.handleAckModalButton} className="text-uppercase custom-t2">
+							OK
 						</Button>
 					</Modal.Footer>
 				</Modal>

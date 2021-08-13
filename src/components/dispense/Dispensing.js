@@ -38,8 +38,7 @@ const Dispensing = () => {
 		let isDispensing = true
 		console.log(slots);
 		socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
-
-		socket.on(DISPENSE_E, (data) => {
+		const dispense_event = (data) => {
 			const {type, slot=false, status=false} = JSON.parse(data);
 			if ( !(["single_dispense_response", "multiple_dispense_response"].includes(type)) )
 				return;
@@ -63,9 +62,11 @@ const Dispensing = () => {
 			SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot})
 			if(!isDispensing)
 				setTimeout(() => history.push("/"), 10000);
-		})
+		}
+		socket.off(DISPENSE_E, dispense_event).on(DISPENSE_E, dispense_event);
+		
 		return () => {
-			socket.offAny(DISPENSE_E)
+			socket.off(DISPENSE_E, dispense_event)
 		}
 	}, [])
 	return (
