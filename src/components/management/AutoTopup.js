@@ -23,13 +23,14 @@ const AutoTopup = (props) => {
 	const [showModal, setShowModal] = useState(false);
 	// const [showAlert, setShowAlert] = useState(false);
 	const [showSpan, setShowSpan] = useState("d-none");
+	const [isUnlock, setIsUnlock] = useState(false);
 
 	useEffect(() => {
 		if (firstLoad) {
 			fecthSlotData();
 			setFirstLoad(false);
 		}
-	});
+	}, [isUnlock]);
 
 	const duration = 10; // 10 minutes
 	let timer = 1000 * 60 * duration; // set timer
@@ -54,7 +55,7 @@ const AutoTopup = (props) => {
 	});
 
 	const fecthSlotData = () => {
-		const url = `${FORMATTER.api_base_url()}/api/topups/layouts.json`; 
+		const url = `${FORMATTER.api_base_url()}/api/topups/layouts.json`; // https://localhost/api/slots/unlock.json
 		fetch(url)
 			.then(response => {
 				if (response.ok) {
@@ -257,6 +258,15 @@ const AutoTopup = (props) => {
 		setShowModal(false);
 	}
 
+	const handleBthUnlockOnClick = async(event) => {
+		const unlock_req = await SERVER_REQ.get(`/api/slots/unlock.json`);
+		// console.log("unlock_req", unlock_req);
+		if (unlock_req.response.success) {
+			setIsUnlock(true);
+			// console.log("isUnlock", isUnlock);
+		}
+	}
+
 	const cancelTxt = (isLocal) ? "batal" : "cancel";
 	const confirmTxt = (isLocal) ? "lanjut" : "confirm";
 	const titleTxt = (isLocal) ? "KONFIRMASI UNTUK JUMLAH STOK" : "restock quantity for slots";
@@ -267,22 +277,29 @@ const AutoTopup = (props) => {
 	return (  <LoadingOverlay active={isLoadingActive} spinner text='Loading ...'>
 		<div className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">
 			<Container fluid className="text-uppercase">
-				<Row className="justify-content-center">
-					<p className="text-center custom-t2">{titleTxt}</p> {/* confirm the restocked quantity for slots  */}
-					{!isLocal ? <span>1/2/3/ - (1: to stock item count, 2: current item count, 3: max item count)</span> : ""}
+				<Row className="justify-content-center mb-3">
+					<Col lg={10}>
+						<p className="custom-t2" style={{ paddingLeft: "4vw" }}>{titleTxt}</p> {/* confirm the restocked quantity for slots  */}
+						{!isLocal ? <span>1/2/3/ - (1: to stock item count, 2: current item count, 3: max item count)</span> : ""}
+					</Col>
+					<Col lg={2}>
+						<Button variant="warning" type="button" className="text-uppercase p-3" onClick={handleBthUnlockOnClick}>
+							<h2 className="text-center text-uppercase custom-t3">unlock</h2> {/* unlock */}
+						</Button>
+					</Col>
 				</Row>
 				{
 					(modifiedSlotData.length === 0) ? 
 					slotData.map((rowData, index) => (
 						<Row key={index} className="justify-content-center background-Color">
 							{
-								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
+								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={((data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div") + ((parseInt(data.slot_status) === 1) ? " bg-secondary" : " ")} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
 							}
 						</Row>
 					)) : modifiedSlotData.map((rowData, index) => (
 						<Row key={index} className="justify-content-center background-Color">
 							{
-								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
+								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={((data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div") + ((parseInt(data.slot_status) === 1) ? " bg-secondary" : " ")} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
 							}
 						</Row>
 					))

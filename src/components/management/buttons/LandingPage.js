@@ -18,9 +18,9 @@ const LandingPage = (props) => {
 	// console.log("LP", products);
 
 	return <div>
-			<Row className="justify-content-center text-center mt-3 mb-3">
+			<Row className="justify-content-center mt-3 mb-3">
 				<Col lg={10}> 
-					<p className="text-uppercase custom-t1">TEKAN TOMBOL UNTUK PRODUK</p> {/* press button to map */}
+					<p className="text-uppercase custom-t1" style={{ paddingLeft: "4vw" }}>TEKAN TOMBOL UNTUK PRODUK</p> {/* press button to map */}
 				</Col>
 				<Col lg={2}> 
 					<Button variant="warning" className="text-uppercase custom-t1 p-3" onClick={props.handleCancelBtn}>
