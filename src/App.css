@@ -339,3 +339,23 @@
 	overflow-y: auto;
 	overflow-x: hidden;
 }
+
+.slot-color {
+	background-color: #3399FF;
+	border: 1px solid;
+	font-size: 21px;
+	color: #fff;
+}
+
+.current-max-color {
+	background-color: #cccccc;
+	border-left: 1px solid;
+}
+
+.topup-color {
+	background-color: #5aad5a;
+}
+
+.locked-color {
+	background-color: #E50000;
+}

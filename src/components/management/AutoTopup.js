@@ -275,36 +275,62 @@ const AutoTopup = (props) => {
 	const modalTitleTxt = (isLocal) ? "KONFIRMASI JUMLAH STOK" : "confirm restock quantity";
 		
 	return (  <LoadingOverlay active={isLoadingActive} spinner text='Loading ...'>
-		<div className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">
-			<Container fluid className="text-uppercase">
-				<Row className="justify-content-center mb-3">
-					<Col lg={10}>
+		<div className="vw-100 vh-100 background-Img align-items-center overflow-hidden">
+			<div className="p-2 text-uppercase">
+				<div className="row mb-3">
+					<div className="col-10">
 						<p className="custom-t2" style={{ paddingLeft: "4vw" }}>{titleTxt}</p> {/* confirm the restocked quantity for slots  */}
 						{!isLocal ? <span>1/2/3/ - (1: to stock item count, 2: current item count, 3: max item count)</span> : ""}
-					</Col>
-					<Col lg={2}>
+					</div>
+					<div className="col-2">
 						<Button variant="warning" type="button" className="text-uppercase p-3" onClick={handleBthUnlockOnClick}>
 							<h2 className="text-center text-uppercase custom-t3">unlock</h2> {/* unlock */}
 						</Button>
-					</Col>
-				</Row>
+					</div>
+				</div>
 				{
 					(modifiedSlotData.length === 0) ? 
 					slotData.map((rowData, index) => (
-						<Row key={index} className="justify-content-center background-Color">
+						<div key={index} className="row background-Color">
 							{
-								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={((data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div") + ((parseInt(data.slot_status) === 1) ? " bg-secondary" : " ")} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
+								rowData.map(data => (<div key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={((data.tied && data.max_qty !== 0) ? "col border p-0" : "col p-0 border") + ((parseInt(data.slot_status) === 1) ? " locked-color" : " ")} data-slotid={data.slot_id}>
+									<div className={"row m-0 " + ((parseInt(data.slot_status) === 1) ? " locked-color" : " slot-color")}>
+										<span className="text-center mt-1 mb-1">{(typeof(data.slot_id) !== "string") ? data.slot_id : "-"}</span>
+									</div>
+									<div className="row m-0">
+										<div className={"text-center " + ((parseInt(data.slot_status) === 1) ? " locked-color" : " current-max-color") + " col-8 p-0"}>
+											{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t5" + ((isLocal) ? " mt-4 mb-4" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0)) : "-")}</p>
+										</div>
+										<div className={"text-center col-4 p-0 " + ((parseInt(data.slot_status) === 1) ? " locked-color" : " topup-color")}>
+											<p className={"custom-t5" + ((isLocal) ? " mt-4 mb-4" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? ("+" + data.to_stock) : 0) : "-") : "-")}</p>
+										</div>
+										
+									</div>
+								</div>))
 							}
-						</Row>
+						</div>
 					)) : modifiedSlotData.map((rowData, index) => (
-						<Row key={index} className="justify-content-center background-Color">
+						<div key={index} className="row background-Color">
 							{
-								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={((data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div") + ((parseInt(data.slot_status) === 1) ? " bg-secondary" : " ")} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
+								rowData.map(data => (<div key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={((data.tied && data.max_qty !== 0) ? "col border p-0" : "col p-0 border") + ((parseInt(data.slot_status) === 1) ? " locked-color" : " ")} data-slotid={data.slot_id}>
+								<div className={"row m-0 " + ((parseInt(data.slot_status) === 1) ? " locked-color" : " slot-color")}>
+									<span className="text-center mt-1 mb-1">{(typeof(data.slot_id) !== "string") ? data.slot_id : "-"}</span>
+								</div>
+								<div className="row m-0">
+									<div className={"text-center " + ((parseInt(data.slot_status) === 1) ? " locked-color" : " current-max-color") + " col-8 p-0"}>
+										{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t5" + ((isLocal) ? " mt-4 mb-4" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0)) : "-")}</p>
+									</div>
+									<div className={"text-center col-4 p-0 " + ((parseInt(data.slot_status) === 1) ? " locked-color" : " topup-color")}>
+										<p className={"custom-t5" + ((isLocal) ? " mt-4 mb-4" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? ("+" + data.to_stock) : 0) : "-") : "-")}</p>
+									</div>
+									
+								</div>
+							</div>))
 							}
-						</Row>
+						</div>
 					))
 				}
-				<Row className={"justify-content-center" + ((isLocal) ? " mt-5" : " mt-1")}>
+				<Row className={"" + ((isLocal) ? " mt-3" : " mt-1")}>
 					<div className="text-center col p-2 align-self-center">
 						<Link to="/management" className="btn btn-lg btn-warning p-3">
 							<h2 className="text-center text-uppercase display-4">{cancelTxt}</h2> {/* cancel */}
@@ -363,7 +389,7 @@ const AutoTopup = (props) => {
 						</div>
 					</Modal.Footer>
 				</Modal>
-			</Container>
+			</div>
 		</div>
 	</LoadingOverlay>);
 }
