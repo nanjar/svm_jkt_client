@@ -12,12 +12,8 @@ export default class Request{
         const params = new URLSearchParams(data)
         let params_delimeter = '?';
         if(!url.includes('http')){
-            if ( process.env.NODE_ENV !== "production"){
-                url = `${process.env.REACT_APP_API}${url}`;
-            }else{
-                const {hostname, protocol} = window.location
-                url = `${protocol}//${hostname}${url}`
-            }
+            const {hostname, protocol, port} = window.location;
+            url = `${protocol}//${hostname}:${port}${url}`;
         }
 
         if(url.includes('?'))

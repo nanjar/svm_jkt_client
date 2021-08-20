@@ -175,7 +175,7 @@ const ManualTopup = (props) => {
 			setContentMsg(msg);
 		} else {
 			// console.log("click confirm", slotID, slotStock.to_stock, slot.product_id);
-			if (slotStock.to_stock < slot.to_stock) {
+			if (slotStock.to_stock <= slot.to_stock) {
 				setIsLoadingActive(true);
 				let preparedData = {};
 				preparedData[`stock[slot_id]`] = parseInt(slotID);
