@@ -149,7 +149,7 @@ const ManualTopup = (props) => {
 				// setToStockQty(slot.to_stock);
 				setToStockQty(0);
 				setProductId(product.product_id);
-				setProductURL(`${FORMATTER.api_base_url()}${product.image}`);
+				setProductURL(`${FORMATTER.api_images()}${product.image}`);
 				setProductName(product.product_name);
 				setMaxNumRestock(product.to_stock);
 				setCurrentStock(product.current_stock);
@@ -306,7 +306,7 @@ const ManualTopup = (props) => {
 				<Row className="justify-content-center pt-5 pb-5 background-Color">
 					<Col lg={5} className="text-center">
 						<div className="p-2 align-self-center">
-							<img src={product ? `${FORMATTER.api_base_url()}${product.image}` : imgURL} className="img-thumbnail border-0" alt={product ? product.product_name : ""} />
+							<img src={product ? `${FORMATTER.api_images()}${product.image}` : imgURL} className="img-thumbnail border-0" alt={product ? product.product_name : ""} />
 							<h1 className="text-center text-uppercase custom-t2">{product ? product.product_name : ""}</h1>
 						</div>
 					</Col>

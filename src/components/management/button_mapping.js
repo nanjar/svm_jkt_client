@@ -152,7 +152,7 @@ class ButtonMapping extends React.Component {
 	 
 	handleOnActive = (e) => {
 		// console.log('time remaining active', this.idleTimer.getRemainingTime())
-		this.setState({ itimeout: 1000 * 60 * 10 });
+		this.setState({ timeout: 1000 * 60 * 10 });
 	}
 	
 	handleOnIdle = (e) => {
@@ -181,7 +181,7 @@ class ButtonMapping extends React.Component {
 				<Modal show={showConfirmModal} size="lg" centered>
 					<Modal.Body>
 						<Row className="w-100 justify-content-center text-center">
-							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_base_url()}${mappedProduct.image_url}`} />
+							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_images()}${mappedProduct.image_url}`} />
 							<p className="text-uppsercase custom-t22">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> <br/>APAKAH INGIN DISUNTING?</p>
 						</Row> {/* button 5 is mapped to */}
 
@@ -199,7 +199,7 @@ class ButtonMapping extends React.Component {
 				<Modal show={showAckModal} size="lg" centered>
 					<Modal.Body>
 						<Row className="w-100 justify-content-center text-center">
-							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_base_url()}${mappedProduct.image_url}`} />
+							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_images()}${mappedProduct.image_url}`} />
 							<p className="text-uppsercase custom-t22">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> </p>
 						</Row> {/* button 5 is mapped to */}
 

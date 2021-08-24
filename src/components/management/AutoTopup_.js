@@ -276,7 +276,7 @@ const AutoTopup = (props) => {
 						<Row className="justify-content-center">
 							<Col lg={5} className="text-center">
 								<div className="p-1 align-self-center">
-									<img src={`${FORMATTER.api_base_url()}${productURL}`} className="img-thumbnail border-0" alt={productName} />
+									<img src={`${FORMATTER.api_images()}${productURL}`} className="img-thumbnail border-0" alt={productName} />
 									<h1 className="text-center text-uppercase custom-t3">{productName}</h1>
 								</div>
 							</Col>

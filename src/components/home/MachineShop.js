@@ -39,17 +39,20 @@ const MachineShop = () => {
             socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 1000, reply_to: BUTTON_E });
             // console.log('pressed')
             const button_req = await SERVER_REQ.get(`/api/buttons/${button}.json`);
-						// console.log(button_req);
+			// console.log(button_req);
 			const button_response = button_req.response
+			// console.log("button response", button_response);
 			if(!button_response.success){
 				button_pressed=false;
-				setShowAlert(false);
+				setShowAlert(true); // out of stock alert
+				setTimeout(function(){ setShowAlert(false); console.log("inTimeout") }, 5000);
 				setTimeout( () => socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 200, reply_to: BUTTON_E }), 500);
 				return;
 			}
             const button_detail = button_req.response.data;
 			
             const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available}
+			console.log("Product Details", product_detail);
             const url_params = new URLSearchParams(product_detail);
             // console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
             history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
@@ -78,22 +81,6 @@ const MachineShop = () => {
             socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
         }
     },[]);
-
-	// const handleButtonOk = () => {
-	// 		setShowAlert(false);
-	// 		activate_button(socket);
-	// }
-
-	let timer = 10000; // set timer as 10 seconds
-
-	const handleOnIdle = (event) => {
-		setShowAlert(false); // close EmptyStockModal after 10 seconds
-	}
-
-	const { getRemainingTime } = useIdleTimer({
-		timeout: timer,
-		onIdle: handleOnIdle
-	});
 
 	const handleMouseDown = () => {
 			setStart(new Date());
@@ -130,7 +117,7 @@ const MachineShop = () => {
 									{/* <Row className='justify-content-center mb-3'> */}
 									{/* </Row> */}
 									{/* <Row className='justify-content-center'> */}
-										<img src={`${FORMATTER.api_base_url()}${element}`} alt='Carousel Item' className='carousel-image'/>
+										<img src={`${FORMATTER.api_images()}${element}`} alt='Carousel Item' className='carousel-image'/>
 									{/* </Row> */}
 								</Carousel.Item>	
 							))
