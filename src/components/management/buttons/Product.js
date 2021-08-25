@@ -2,7 +2,7 @@ import { Button, Container, Image, Row, Col } from 'react-bootstrap';
 import FORMATTER from '../../../helpers/Formatter';
 
 const Product = (props) => {
-	const {products, handleCancelBtn, selectedProduct, handleOnRadioChange = () => {}, handleSubmitBtn = () => {}} = props;
+	const {products, tappedButton, handleCancelBtn, selectedProduct, handleOnRadioChange = () => {}, handleSubmitBtn = () => {}} = props;
 	// const [confirmBtn, setConfirmBtn] = useState(false);
 	// function handleConfirmBtn(){
 	//     setConfirmBtn(true);
@@ -10,7 +10,7 @@ const Product = (props) => {
 	return <div>
 		<Row className="justify-content-center mt-3 mb-3">
 			<Col lg={8}> 
-				<h1 className="text-center text-uppercase display-4 mb-4">COMBOL {} - PILIH PRODUK</h1> {/* Button 6 - Choose the product to map */}
+				<h1 className="text-center text-uppercase display-4 mb-4">TOMBOL {tappedButton} - PILIH PRODUK</h1> {/* Button 6 - Choose the product to map */}
 			</Col>
 			<Col lg={4}> 
 				<Button type="button" className="btn btn-lg btn-warning text-uppercase custom-t2 m-2 p-3" onClick={handleCancelBtn}>

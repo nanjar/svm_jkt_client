@@ -176,7 +176,7 @@ class ButtonMapping extends React.Component {
 			/>
 
 			<Container fluid className="overflow-hidden">
-				{tappedButton ? <Product products={products} selectedProduct={selectedProduct} handleCancelBtn={this.handleModalCancelBtn} handleOnRadioChange={this.handleOnRadioChange} handleSubmitBtn={this.handleSubmitBtn} /> : <LandingPage handleCancelBtn={this.handleCancelBtn} />}
+				{tappedButton ? <Product tappedButton={tappedButton} products={products} selectedProduct={selectedProduct} handleCancelBtn={this.handleModalCancelBtn} handleOnRadioChange={this.handleOnRadioChange} handleSubmitBtn={this.handleSubmitBtn} /> : <LandingPage handleCancelBtn={this.handleCancelBtn} />}
 
 				<Modal show={showConfirmModal} size="lg" centered>
 					<Modal.Body>
