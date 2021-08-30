@@ -250,7 +250,7 @@ const AutoTopup = (props) => {
 		if (button_put.status === 200) { setIsLoadingActive(false); }
 		// console.log("button_put", button_put);
 		if (button_put.response.success) {
-			props.history.push("/management")
+			props.history.push("/management/auto_topup");
 		}
 	}
 
@@ -263,7 +263,7 @@ const AutoTopup = (props) => {
 		// console.log("unlock_req", unlock_req);
 		if (unlock_req.response.success) {
 			setIsUnlock(true);
-			// console.log("isUnlock", isUnlock);
+			props.history.push("/management/auto_topup");
 		}
 	}
 
@@ -354,7 +354,7 @@ const AutoTopup = (props) => {
 						<Row className="justify-content-center">
 							<Col lg={5} className="text-center">
 								<div className="p-1 align-self-center">
-									<img src={`${FORMATTER.api_base_url()}${productURL}`} className="img-thumbnail border-0" alt={productName} />
+									<img src={`${FORMATTER.api_images()}${productURL}`} className="img-thumbnail border-0" alt={productName} />
 									<h1 className="text-center text-uppercase custom-t3">{productName}</h1>
 								</div>
 							</Col>

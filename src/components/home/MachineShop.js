@@ -130,7 +130,7 @@ const MachineShop = () => {
 									{/* <Row className='justify-content-center mb-3'> */}
 									{/* </Row> */}
 									{/* <Row className='justify-content-center'> */}
-										<img src={`${FORMATTER.api_base_url()}${element}`} alt='Carousel Item' className='carousel-image'/>
+										<img src={`${FORMATTER.api_images()}${element}`} alt='Carousel Item' className='carousel-image'/>
 									{/* </Row> */}
 								</Carousel.Item>	
 							))

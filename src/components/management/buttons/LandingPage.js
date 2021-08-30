@@ -36,7 +36,7 @@ const LandingPage = (props) => {
 								<Col key={index} lg={3} className="text-uppercase border">
 									<p className="custom-t2">TOMBOL {data.uuid}</p>
 									<Image
-										src={`${FORMATTER.api_base_url()}${data.product.image_url}`}
+										src={`${FORMATTER.api_images()}${data.product.image_url}`}
 										className="product-thumbnail"
 										alt={data.name}
 									/>

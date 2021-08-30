@@ -308,7 +308,7 @@ class Sale extends React.Component {
 						</Row>
 						<Row className="align-items-center">
 							<Col>
-								<img src={`${FORMATTER.api_base_url()}${product.url}`} className="img-fluid" style={{width: "22vw", height: "20vw"}} alt="Product"></img>
+								<img src={`${FORMATTER.api_images()}${product.url}`} className="img-fluid" style={{width: "22vw", height: "20vw"}} alt="Product"></img>
 								{/* <img src={sampleImage} className="img-fluid" style={{width: "18vw", height: "16vw"}} alt="QR CODE"></img> */}
 							</Col>
 							<Col className>

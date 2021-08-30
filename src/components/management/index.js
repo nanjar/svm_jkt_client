@@ -1,16 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import SERVER_REQ from '../../helpers/Request';
 import { Row, Col, Container, Modal } from 'react-bootstrap';
 import { useIdleTimer } from 'react-idle-timer';
+import { SocketContext } from '../../services/socket';
+
+const TEMPERATURE_EVENT = 'machine_temperature_update';
 
 const Management = (props) => {
-	const [piTemp] = useState(0);
-	const [machineTemp] = useState(0);
+	const [piTemp, setPITemp] = useState(0);
+	const [machineTemp, setMachineTemp] = useState(0);
 	const [showConfirm, setShowConfirm] = useState(false);
 	const [showAck, setShowAck] = useState(false);
 	const [checkTemplateResponse, setCheckTemplateResponse] = useState("");
 	const [changeTemplateResponse, setChangeTamplateResponse] = useState("");
+	const socket = useContext(SocketContext);
 	
 	const location = useLocation();
 	const history = useHistory();
@@ -28,11 +32,18 @@ const Management = (props) => {
 		(async function(){
 			const check_template_req = await SERVER_REQ.get('/api/topups.json')
 			const check_template_response = check_template_req.response;
+			setPITemp(check_template_response.pi_temp)
 			if (check_template_response.has_template_change) {
 				setShowConfirm(true);
 				setCheckTemplateResponse(check_template_response.has_template_change);
 			}
 		})();
+		
+        const temperature_event = async (data) => {
+            data = JSON.parse(data);
+			setMachineTemp(data.value);
+		}
+        socket.off(TEMPERATURE_EVENT, temperature_event).on(TEMPERATURE_EVENT, temperature_event);
 		return () => {}
 	},[]);
 
@@ -85,8 +96,8 @@ const Management = (props) => {
 	return (<div className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">
 		<Container fluid>
 			<Row className="mt-1">
-				<Col lg={6}><span className="text-uppercase custom-t2">SUHU PERANGKAT - {piTemp} C</span></Col> {/* device/pi temp */}
-				<Col lg={6}><span className="text-uppercase float-end custom-t2">SUHU MESIN - {machineTemp} C</span></Col> {/* machine temp */}
+				<Col lg={6}><span className="text-uppercase custom-t2">SUHU PERANGKAT - {piTemp} &deg;C</span></Col> {/* device/pi temp */}
+				<Col lg={6}><span className="text-uppercase float-end custom-t2">SUHU MESIN - {machineTemp} &deg;C</span></Col> {/* machine temp */}
 			</Row> 
 			<Row>
 				<Col lg={6} className="bg-smvprimary">

@@ -26,12 +26,12 @@ const Product = (props) => {
 				{
 					products.map((product, index) => (
 						<Col key={index} lg={3} className="radio-product m-2">
-							<input type="radio" id={product.id} data-name={product.name} data-url={`${FORMATTER.api_base_url()}${product.image_url}`} name="radioProduct" onChange={handleOnRadioChange}/>
+							<input type="radio" id={product.id} data-name={product.name} data-url={`${FORMATTER.api_images()}${product.image_url}`} name="radioProduct" onChange={handleOnRadioChange}/>
 							<label id={"lbl-" + product.id} className={`radio-img mb-4 ${selectedProduct === product.id ? 'card-checked' : ''}`} htmlFor={product.id}> 
 								<div id={"card_" + index} className="card">
 									<div className="card-body text-center">
 										<Image
-												src={`${FORMATTER.api_base_url()}${product.image_url}`}
+												src={`${FORMATTER.api_images()}${product.image_url}`}
 												className="btn-thumbnail mt-3"
 												alt={product.name}
 										/>

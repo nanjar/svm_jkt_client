@@ -181,7 +181,7 @@ class ButtonMapping extends React.Component {
 				<Modal show={showConfirmModal} size="lg" centered>
 					<Modal.Body>
 						<Row className="w-100 justify-content-center text-center">
-							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_base_url()}${mappedProduct.image_url}`} />
+							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_images()}${mappedProduct.image_url}`} />
 							<p className="text-uppsercase custom-t22">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> <br/>APAKAH INGIN DISUNTING?</p>
 						</Row> {/* button 5 is mapped to */}
 
@@ -199,7 +199,7 @@ class ButtonMapping extends React.Component {
 				<Modal show={showAckModal} size="lg" centered>
 					<Modal.Body>
 						<Row className="w-100 justify-content-center text-center">
-							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_base_url()}${mappedProduct.image_url}`} />
+							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_images()}${mappedProduct.image_url}`} />
 							<p className="text-uppsercase custom-t22">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> </p>
 						</Row> {/* button 5 is mapped to */}
 

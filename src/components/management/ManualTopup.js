@@ -205,7 +205,7 @@ const ManualTopup = (props) => {
 				<Row className="justify-content-center pt-5 pb-5 background-Color">
 					<Col lg={5} className="text-center">
 						<div className="p-2 align-self-center">
-							<img src={slot ? `${FORMATTER.api_base_url()}${slot.image}` : imgURL} className="img-thumbnail border-0" alt={slot ? slot.product_name : ""} />
+							<img src={slot ? `${FORMATTER.api_images()}${slot.image}` : imgURL} className="img-thumbnail border-0" alt={slot ? slot.product_name : ""} />
 							<h1 className="text-center text-uppercase custom-t2">{slot ? slot.product_name : ""}</h1>
 						</div>
 					</Col>

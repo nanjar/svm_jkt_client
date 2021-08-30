@@ -13,7 +13,7 @@ export default class Request{
         let params_delimeter = '?';
         if(!url.includes('http')){
             const {hostname, protocol, port} = window.location;
-            url = `${protocol}//${hostname}:${port}${url}`;
+            url = `${protocol}//${hostname}:${port}/api${url}`;
         }
 
         if(url.includes('?'))
