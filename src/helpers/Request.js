@@ -12,8 +12,12 @@ export default class Request{
         const params = new URLSearchParams(data)
         let params_delimeter = '?';
         if(!url.includes('http')){
-            const {hostname, protocol, port} = window.location;
-            url = `${protocol}//${hostname}:${port}/api${url}`;
+            if(process.env.REACT_APP_API){
+                url = `http://localhost${url}`;
+            }else{
+                const {hostname, protocol, port} = window.location;
+                url = `${protocol}//${hostname}:${port}/api${url}`;
+            }
         }
 
         if(url.includes('?'))

@@ -91,7 +91,7 @@ const Home = (props) => {
 		</div>;
 	};
 
-	return (<div className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">
+	return (<div onContextMenu={(e)=> e.preventDefault()} className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">
 		<Container fluid className="p-0">
 		{
 			(missingResources) ? <MachineSetup /> : <MachineShop />

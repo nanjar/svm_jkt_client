@@ -302,7 +302,7 @@ const AutoTopup = (props) => {
 											{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t5" + ((isLocal) ? " mt-4 mb-4" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0)) : "-")}</p>
 										</div>
 										<div className={"text-center col-4 p-0 " + ((parseInt(data.slot_status) === 1) ? " locked-color" : " topup-color")}>
-											<p className={"custom-t5" + ((isLocal) ? " mt-4 mb-4" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? ("+" + data.to_stock) : 0) : "-") : "-")}</p>
+											<p className={"custom-t5" + ((isLocal) ? " mt-4 mb-4" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? ((data.to_stock > 0) ? ("+" + data.to_stock) : (data.to_stock)) : 0) : "-") : "-")}</p>
 										</div>
 										
 									</div>
@@ -321,7 +321,7 @@ const AutoTopup = (props) => {
 										{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t5" + ((isLocal) ? " mt-4 mb-4" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0)) : "-")}</p>
 									</div>
 									<div className={"text-center col-4 p-0 " + ((parseInt(data.slot_status) === 1) ? " locked-color" : " topup-color")}>
-										<p className={"custom-t5" + ((isLocal) ? " mt-4 mb-4" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? ("+" + data.to_stock) : 0) : "-") : "-")}</p>
+										<p className={"custom-t5" + ((isLocal) ? " mt-4 mb-4" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? ((data.to_stock > 0) ? ("+" + data.to_stock) : (data.to_stock)) : 0) : "-") : "-")}</p>
 									</div>
 									
 								</div>

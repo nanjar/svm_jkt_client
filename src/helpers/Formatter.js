@@ -30,8 +30,11 @@ export default class Formatter{
         // return moment(date);
     }
     static api_base_url(){
-        const {hostname, protocol, port} = window.location;
-        const base_url = `${protocol}//${hostname}:${port}/api`;
+        let base_url = process.env.REACT_APP_API
+        if(!base_url){
+            const {hostname, protocol, port} = window.location;
+            base_url = `${protocol}//${hostname}:${port}/api`;
+        }
         return base_url;
     }
     static api_images(){

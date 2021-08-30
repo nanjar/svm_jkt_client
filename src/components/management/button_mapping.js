@@ -152,7 +152,7 @@ class ButtonMapping extends React.Component {
 	 
 	handleOnActive = (e) => {
 		// console.log('time remaining active', this.idleTimer.getRemainingTime())
-		this.setState({ itimeout: 1000 * 60 * 10 });
+		this.setState({ timeout: 1000 * 60 * 10 });
 	}
 	
 	handleOnIdle = (e) => {
@@ -176,7 +176,7 @@ class ButtonMapping extends React.Component {
 			/>
 
 			<Container fluid className="overflow-hidden">
-				{tappedButton ? <Product products={products} selectedProduct={selectedProduct} handleCancelBtn={this.handleModalCancelBtn} handleOnRadioChange={this.handleOnRadioChange} handleSubmitBtn={this.handleSubmitBtn} /> : <LandingPage handleCancelBtn={this.handleCancelBtn} />}
+				{tappedButton ? <Product tappedButton={tappedButton} products={products} selectedProduct={selectedProduct} handleCancelBtn={this.handleModalCancelBtn} handleOnRadioChange={this.handleOnRadioChange} handleSubmitBtn={this.handleSubmitBtn} /> : <LandingPage handleCancelBtn={this.handleCancelBtn} />}
 
 				<Modal show={showConfirmModal} size="lg" centered>
 					<Modal.Body>
