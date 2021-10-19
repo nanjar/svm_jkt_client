@@ -21,6 +21,7 @@ const MachineShop = () => {
 		const [start, setStart] = useState(0);
 		const [clickBtn1, setClickBtn1] = useState(false);
 		const [carouselItems, setCarouselItems] = useState([]);
+		const [reloadPageInterval, setReloadPageInterval] = useState(null);
 
     useEffect(() => {
         let button_pressed = false;
@@ -74,11 +75,21 @@ const MachineShop = () => {
 				// response.data.image_urls.forEach((element, index) => { console.log(index) });
 			})
 			.catch(error => console.log(error.message));
+		
+			setReloadPageInterval(prev => {
+				return setInterval(()=>{
+					window.location = "/";
+				}, 300000)
+			})
 
         return () => {
             // console.log('Log out')
             socket.off(BUTTON_E)
             socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
+			setReloadPageInterval(prev => {
+				clearInterval(prev);
+				return null;
+			})
         }
     },[]);
 
