@@ -38,6 +38,7 @@ export default class Formatter{
         return base_url;
     }
     static api_images(){
+		// eslint-disable-next-line
         const {hostname, protocol, port} = window.location
         const base_url = `${protocol}//${hostname}`;
         return base_url;

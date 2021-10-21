@@ -49,7 +49,7 @@ const Login = (props) => {
 		// console.log("remaining time 3 ", getRemainingTime());
 		props.history.push("/");
 	}
-
+	// eslint-disable-next-line
 	const { getRemainingTime } = useIdleTimer({
 		timeout: timer,
 		onIdle: handleOnIdle,

@@ -16,6 +16,7 @@ const ManualTopup = (props) => {
 	const [slotStocks, setSlotStocks] = useState([]);
 	const [isLoadingActive, setIsLoadingActive] = useState(false);
 	const [btnDisable, setBtndisable] = useState("");
+	// eslint-disable-next-line
 	const [showSpan, setShowSpan] = useState("d-none");
 	const [showNumpad, setShowNumpad] = useState(false);
 	const [numInput, setNumInput] = useState("");
@@ -23,6 +24,7 @@ const ManualTopup = (props) => {
 	const [showModal, setShowModal] = useState(false);
 	const [firstLoad, setFirstLoad] = useState(true);
 
+	// eslint-disable-next-line
 	useEffect(() => {
 		if(firstLoad){
 			setIsLoadingActive(true); 
@@ -46,7 +48,7 @@ const ManualTopup = (props) => {
 	const handleOnIdle = (event) => {
 		props.history.push("/");
 	}
-	
+	// eslint-disable-next-line
 	const { getRemainingTime } = useIdleTimer({
 		timeout: timer,
 		onIdle: handleOnIdle,
@@ -91,7 +93,8 @@ const ManualTopup = (props) => {
 
 
 	const handlePlus = () => {
-		const slot = slots.find(x => parseInt(x.slot_id) === parseInt(slotID) )
+		const slot = slots.find(x => parseInt(x.slot_id) === parseInt(slotID))
+		// eslint-disable-next-line
 		const slotIndex = slotStocks.findIndex(x => x.slot_id === parseInt(slotID))
 		if(slot && slotStock){
 			// console.log("insert")
@@ -182,6 +185,7 @@ const ManualTopup = (props) => {
 				preparedData[`stock[to_stock]`] = slotStock.to_stock;
 				preparedData[`stock[product_id]`] = slot.product_id;
 				const button_post = await SERVER_REQ.post(`/api/stocks.json`, preparedData);
+				// eslint-disable-next-line
 				const resp_current_stock = button_post.response.current_stock;
 				fetchLayouts();
 			} else {

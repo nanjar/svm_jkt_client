@@ -4,7 +4,6 @@ import FORMATTER from '../../helpers/Formatter';
 import '../../App.css';
 import logo from '../../assets/static_images/Logo.png';
 import loadingQr from '../../assets/static_images/loadingQr.png';
-import sampleImage from '../../assets/static_images/cola.jpg';
 import { Modal, Container, Row, Col } from 'react-bootstrap';
 
 class Sale extends React.Component {

@@ -1,4 +1,4 @@
-import { Button, Container, Image, Row, Col } from 'react-bootstrap';
+import { Button, Image, Row, Col } from 'react-bootstrap';
 import FORMATTER from '../../../helpers/Formatter';
 
 const Product = (props) => {

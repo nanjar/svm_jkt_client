@@ -4,17 +4,16 @@ import SERVER_REQ  from '../../helpers/Request';
 import FORMATTER  from '../../helpers/Formatter';
 import MachineShop from './MachineShop';
 import '../../App.css';
-import { Spinner, Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import image_fail from '../../assets/static_images/icon-fail.png';
 import image_success from '../../assets/static_images/icon-success.png';
 
 const Home = (props) => {
 	const [machineCode, setMachineCode] = useState("");
-	const [chkMissingConfigs, setChkMissingConfigs] = useState([]);
-	const [chkMissingResources, setChkMissingResources] = useState([]);
 	const [missingConfigs, setMissingConfigs] = useState([]);
 	const [missingResources, setMissingResources] = useState(false);
+	// eslint-disable-next-line
 	const [machineMessage, setMachineMessage] = useState("");
 	const [ipAddress, setIpAddress] = useState("");
  	const socket = useContext(SocketContext);
@@ -34,6 +33,7 @@ const Home = (props) => {
 		return function cleanup() {
 			socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });
 		};
+		// eslint-disable-next-line
 	}, []);
 
 	const fetchHome = () => {
@@ -82,7 +82,7 @@ const Home = (props) => {
 					<Row >
 					{ 
 						missingConfigs.map( (config, index) => {
-							return <Col index={index} className="col-md-4"><img src={config.value ? image_success : image_fail} style={{width: 50}} />&nbsp; <span>{config.text}</span></Col>
+							return <Col index={index} className="col-md-4"><img src={config.value ? image_success : image_fail} style={{width: 50}} alt="missing"/>&nbsp; <span>{config.text}</span></Col>
 						})
 					}
 					</Row>

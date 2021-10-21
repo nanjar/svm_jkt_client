@@ -4,7 +4,7 @@ import FORMATTER from '../../helpers/Formatter';
 import { Link } from 'react-router-dom';
 import '../../App.css';
 import imgURL from '../../assets/static_images/no_image.png';
-import { Container, Row, Col, Modal, Button } from 'react-bootstrap';
+import { Row, Col, Modal, Button } from 'react-bootstrap';
 import { useIdleTimer } from 'react-idle-timer';
 import LoadingOverlay from 'react-loading-overlay';
 
@@ -30,6 +30,7 @@ const AutoTopup = (props) => {
 			fecthSlotData();
 			setFirstLoad(false);
 		}
+		// eslint-disable-next-line
 	}, [isUnlock]);
 
 	const duration = 10; // 10 minutes
@@ -47,6 +48,7 @@ const AutoTopup = (props) => {
 		props.history.push("/");
 	}
 	
+	// eslint-disable-next-line
 	const { getRemainingTime } = useIdleTimer({
 		timeout: timer,
 		onIdle: handleOnIdle,
