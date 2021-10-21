@@ -4,11 +4,12 @@ import SERVER_REQ  from '../../helpers/Request';
 import FORMATTER  from '../../helpers/Formatter';
 import {useHistory} from 'react-router-dom';
 import logo from '../../assets/static_images/Logo.png';
-import { Container, Row, Button, Modal, Carousel, CarouselItem } from 'react-bootstrap';
-import { useIdleTimer } from 'react-idle-timer';
+import { Row, Button, Modal } from 'react-bootstrap';
+import { Slide } from 'react-slideshow-image';
+import 'react-slideshow-image/dist/styles.css';
 
 const BUTTON_E = "button_pressed";
-
+// eslint-disable-next-line
 const activate_button = (socket) => {
 	socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: BUTTON_E })
 }
@@ -17,10 +18,10 @@ const MachineShop = () => {
 		const [showAlert, setShowAlert] = useState(false);
 		const socket = useContext(SocketContext);
 		const history = useHistory();
-		const carouselInterval = 10 * 1000; // 10 seconds, can set by backend, may be more than one interval
 		const [start, setStart] = useState(0);
 		const [clickBtn1, setClickBtn1] = useState(false);
 		const [carouselItems, setCarouselItems] = useState([]);
+		// eslint-disable-next-line
 		const [reloadPageInterval, setReloadPageInterval] = useState(null);
 
     useEffect(() => {
@@ -91,6 +92,7 @@ const MachineShop = () => {
 				return null;
 			})
         }
+		// eslint-disable-next-line
     },[]);
 
 	const handleMouseDown = () => {
@@ -120,20 +122,17 @@ const MachineShop = () => {
 		<Button className="custom-t2 carousel-button" style={{top: "0", right: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
 			{
 				(carouselItems.length > 0) ?
-					<Row>
-						<Carousel style={{height: "100%"}}>  
-						{
-							carouselItems.map((element, index) => (
-								<Carousel.Item interval={carouselInterval} key={index} className='carousel-container justify-content-center'  style={{width: "100%", objectFit: "contain"}}> 
-									{/* <Row className='justify-content-center mb-3'> */}
-									{/* </Row> */}
-									{/* <Row className='justify-content-center'> */}
-										<img src={`${FORMATTER.api_images()}${element}`} alt='Carousel Item' className='carousel-image'/>
-									{/* </Row> */}
-								</Carousel.Item>	
-							))
-						}
-						</Carousel> 
+					<Row className="slide-container">
+						<Slide arrows={false} duration={10000} autoplay={true}>
+							{
+								carouselItems.map((slideImage, index)=> (
+									<div className="each-slide" key={index}>
+										<div style={{'backgroundImage': `url(${FORMATTER.api_images()}${slideImage})`, height: '100vh', backgroundRepeat: 'no-repeat, repeat', backgroundSize: '100% 100%'}}></div>
+										{/* <div style={{'backgroundImage': `url(http://vending.smartvending.com${slideImage})`, height: '100vh', backgroundRepeat: 'no-repeat, repeat', backgroundSize: '100% 100%'}}></div> */}
+									</div>
+								))
+							} 
+						</Slide>
 					</Row>	
 				:
 				<Row>

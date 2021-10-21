@@ -68,6 +68,7 @@ const Dispensing = () => {
 		return () => {
 			socket.off(DISPENSE_E, dispense_event)
 		}
+		// eslint-disable-next-line
 	}, [])
 	return (
 		<div className="vw-100 vh-100 d-flex align-items-center background-ImgWithLogo overflow-hidden">

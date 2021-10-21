@@ -15,7 +15,7 @@ const Management = (props) => {
 	const [checkTemplateResponse, setCheckTemplateResponse] = useState("");
 	const [changeTemplateResponse, setChangeTamplateResponse] = useState("");
 	const socket = useContext(SocketContext);
-	
+	// eslint-disable-next-line
 	const location = useLocation();
 	const history = useHistory();
 	useEffect(()=>{
@@ -45,6 +45,7 @@ const Management = (props) => {
 		}
         socket.off(TEMPERATURE_EVENT, temperature_event).on(TEMPERATURE_EVENT, temperature_event);
 		return () => {}
+		// eslint-disable-next-line
 	},[]);
 
 	const duration = 10; // 10 minutes
@@ -68,7 +69,7 @@ const Management = (props) => {
 		// console.log("remaining time 3 ", getRemainingTime());
 		props.history.push("/");
 	}
-
+	// eslint-disable-next-line
 	const { getRemainingTime } = useIdleTimer({
 		timeout: timer,
 		onIdle: handleOnIdle,
@@ -87,10 +88,6 @@ const Management = (props) => {
 
 	const handleButtonOk = () => {
 		setShowAck(false);
-	}
-
-	const handleButtonCacnel = () => {
-		setShowConfirm(false);
 	}
 
 	return (<div className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">

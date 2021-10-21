@@ -121,7 +121,6 @@ class ButtonMapping extends React.Component {
 	}
 
 	handleConfirmButtonOnClick = () => {
-		const btnText = this.state.confirmButtonText;
 		this.setState({ 
 			showConfirmModal: false
 		});
@@ -156,7 +155,7 @@ class ButtonMapping extends React.Component {
 	}
 	
 	handleOnIdle = (e) => {
-		if (this.idleTimer.getRemainingTime() == 0) {
+		if (this.idleTimer.getRemainingTime() === 0) {
 			this.props.history.push('/');
 		}
 	}
