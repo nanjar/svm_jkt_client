@@ -7,12 +7,10 @@ import logo from '../../assets/static_images/Logo.png';
 import { Row, Button, Modal } from 'react-bootstrap';
 import { Slide } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css';
-
+import Slider from 'react-slick';
+import '../../assets/css/slick-carousel.css';
 const BUTTON_E = "button_pressed";
 // eslint-disable-next-line
-const activate_button = (socket) => {
-	socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: BUTTON_E })
-}
 
 const MachineShop = () => {
 		const [showAlert, setShowAlert] = useState(false);
@@ -24,42 +22,53 @@ const MachineShop = () => {
 		// eslint-disable-next-line
 		const [reloadPageInterval, setReloadPageInterval] = useState(null);
 
+	const activate_button = () => {
+		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 1000, reply_to: BUTTON_E });
+		setTimeout(() => socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E }), 2000);
+	}
+
     useEffect(() => {
         let button_pressed = false;
-
-		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
-        const button_event = async (data) => {
-            data = JSON.parse(data);
-            // console.log(data);
-            if(button_pressed)
-                return;
-            button_pressed = true;
-			if (button_pressed) { setShowAlert(false); } // close EmptyStockModal at the button pressed
-            const button = data.button_no
-            if(button === 0 )
-                return;
-            socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 1000, reply_to: BUTTON_E });
-            // console.log('pressed')
-            const button_req = await SERVER_REQ.get(`/api/buttons/${button}.json`);
-			// console.log(button_req);
-			const button_response = button_req.response
-			// console.log("button response", button_response);
-			if(!button_response.success){
-				button_pressed=false;
-				setShowAlert(true); // out of stock alert
-				setTimeout(function(){ setShowAlert(false); console.log("inTimeout") }, 5000);
-				setTimeout( () => socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 200, reply_to: BUTTON_E }), 500);
-				return;
+		// window.addEventListener('beforeunload', () => {
+		// 	socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });
+		// 	alert('send command')
+		// })
+		if(socket){
+			// socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
+			activate_button();
+			const button_event = async (data) => {
+				data = JSON.parse(data);
+				// console.log(data);
+				if(button_pressed)
+					return;
+				button_pressed = true;
+				if (button_pressed) { setShowAlert(false); } // close EmptyStockModal at the button pressed
+				const button = data.button_no
+				if(button === 0 )
+					return;
+				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 1000, reply_to: BUTTON_E });
+				// console.log('pressed')
+				const button_req = await SERVER_REQ.get(`/api/buttons/${button}.json`);
+				// console.log(button_req);
+				const button_response = button_req.response
+				// console.log("button response", button_response);
+				if(!button_response.success){
+					button_pressed=false;
+					setShowAlert(true); // out of stock alert
+					setTimeout(function(){ setShowAlert(false); console.log("inTimeout") }, 5000);
+					setTimeout( () => activate_button(), 500);
+					return;
+				}
+				const button_detail = button_req.response.data;
+				
+				const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available}
+				console.log("Product Details", product_detail);
+				const url_params = new URLSearchParams(product_detail);
+				// console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
+				history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
 			}
-            const button_detail = button_req.response.data;
-			
-            const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available}
-			console.log("Product Details", product_detail);
-            const url_params = new URLSearchParams(product_detail);
-            // console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
-            history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
+			socket.off(BUTTON_E, button_event).on(BUTTON_E, button_event);
 		}
-        socket.off(BUTTON_E, button_event).on(BUTTON_E, button_event);
 
 				// Get Carousel Items
 		const url = `${FORMATTER.api_base_url()}/api/banners.json`;
@@ -117,22 +126,40 @@ const MachineShop = () => {
 		}
 	}
 
+	const sliderSettings = {
+		dots: false,
+		infinite: true,
+		autoplaySpeed: 10000,
+		autoplay: true,
+		slidesToShow: 1,
+		slidesToScroll: 1,
+		arrows: false
+	}
+
     return <div>
 		<Button className="custom-t2 carousel-button" style={{top: "0", left: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="1">Hidden Button</Button>
 		<Button className="custom-t2 carousel-button" style={{top: "0", right: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
 			{
 				(carouselItems.length > 0) ?
 					<Row className="slide-container">
-						<Slide arrows={false} duration={10000} autoplay={true}>
+						<Slider {...sliderSettings} >
 							{
 								carouselItems.map((slideImage, index)=> (
 									<div className="each-slide" key={index}>
 										<div style={{'backgroundImage': `url(${FORMATTER.api_images()}${slideImage})`, height: '100vh', backgroundRepeat: 'no-repeat, repeat', backgroundSize: '100% 100%'}}></div>
-										{/* <div style={{'backgroundImage': `url(http://vending.smartvending.com${slideImage})`, height: '100vh', backgroundRepeat: 'no-repeat, repeat', backgroundSize: '100% 100%'}}></div> */}
+									</div>
+								))
+							}
+						</Slider>
+						{/* <Slide arrows={false} duration={10000} autoplay={true}>
+							{
+								carouselItems.map((slideImage, index)=> (
+									<div className="each-slide" key={index}>
+										<div style={{'backgroundImage': `url(${FORMATTER.api_images()}${slideImage})`, height: '100vh', backgroundRepeat: 'no-repeat, repeat', backgroundSize: '100% 100%'}}></div>
 									</div>
 								))
 							} 
-						</Slide>
+						</Slide> */}
 					</Row>	
 				:
 				<Row>

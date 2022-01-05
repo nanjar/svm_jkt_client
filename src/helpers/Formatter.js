@@ -39,6 +39,9 @@ export default class Formatter{
     }
     static api_images(){
 		// eslint-disable-next-line
+        if(process.env.NODE_ENV === "development"){
+            return `${process.env.REACT_APP_FILE_SERVER}`;
+        }
         const {hostname, protocol, port} = window.location
         const base_url = `${protocol}//${hostname}`;
         return base_url;

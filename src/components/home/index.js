@@ -24,10 +24,18 @@ const Home = (props) => {
 			history.push('/management/login')
 			return;
 		}
+		window.addEventListener('beforeunload', () => {
+			socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });
+			// alert('send command')
+		})
 		fetchHome();
-		socket.on('machine_temperature_update', (data) => {
+		socket.off('machine_temperature_update').on('machine_temperature_update', (data) => {
             data = JSON.parse(data);
 			SERVER_REQ.get('/api/health.json', { vending: 2, vending_temp: data.value });
+		})
+		// listen to button polling status
+		socket.off('button_polling_status').on('button_polling_status', (data) => {
+			console.log(data);
 		})
 		
 		return function cleanup() {
