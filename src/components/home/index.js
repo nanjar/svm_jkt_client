@@ -13,30 +13,38 @@ const Home = (props) => {
 	const [machineCode, setMachineCode] = useState("");
 	const [missingConfigs, setMissingConfigs] = useState([]);
 	const [missingResources, setMissingResources] = useState(false);
+	
 	// eslint-disable-next-line
 	const [machineMessage, setMachineMessage] = useState("");
 	const [ipAddress, setIpAddress] = useState("");
  	const socket = useContext(SocketContext);
 	const history = useHistory()
+	const [buttonResponse, setButtonResponse] = useState(true);
 
 	useEffect(() => {
 		if(window.location.hostname !== "localhost") {
 			history.push('/management/login')
 			return;
 		}
-		window.addEventListener('beforeunload', () => {
-			socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });
-			// alert('send command')
-		})
+
 		fetchHome();
 		socket.off('machine_temperature_update').on('machine_temperature_update', (data) => {
             data = JSON.parse(data);
-			SERVER_REQ.get('/api/health.json', { vending: 2, vending_temp: data.value });
+			SERVER_REQ.get('/api/health.json', { vending: buttonResponse ? 2 : 1, vending_temp: data.value });
 		})
-		// listen to button polling status
-		socket.off('button_polling_status').on('button_polling_status', (data) => {
-			console.log(data);
+
+		socket.off('button_status').on('button_status', (data) => {
+			const response = JSON.parse(data);
+			const isButtonActive = parseInt(response.status) !== 1;
+			setButtonResponse(isButtonActive);
+			if(!isButtonActive){
+				SERVER_REQ.get('/api/health.json', { vending: 1, status: 1 });
+			}
 		})
+		// // listen to button polling status
+		// socket.off('button_polling_status').on('button_polling_status', (data) => {
+		// 	console.log(data);
+		// })
 		
 		return function cleanup() {
 			socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });

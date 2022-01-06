@@ -13,7 +13,7 @@ export default class Request{
         let params_delimeter = '?';
         if(!url.includes('http')){
             if(process.env.REACT_APP_API){
-                url = `http://localhost${url}`;
+                url = `${process.env.REACT_APP_API}${url}`;
             }else{
                 const {hostname, protocol, port} = window.location;
                 url = `${protocol}//${hostname}:${port}/api${url}`;

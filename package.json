@@ -19,7 +19,6 @@
     "popper.js": "^1.16.1",
     "react": "^16.14.0",
     "react-actioncable-provider": "^1.0.3",
-    "react-beforeunload": "^2.5.2",
     "react-bootstrap": "^1.6.1",
     "react-dom": "^16.14.0",
     "react-idle-timer": "^4.6.4",

@@ -23,10 +23,8 @@ const MachineShop = () => {
 		const [reloadPageInterval, setReloadPageInterval] = useState(null);
 
 	const activate_button = () => {
-		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 1000, reply_to: BUTTON_E });
 		setTimeout(() => socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E }), 2000);
 	}
-
     useEffect(() => {
         let button_pressed = false;
 		// window.addEventListener('beforeunload', () => {
@@ -68,6 +66,8 @@ const MachineShop = () => {
 				history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
 			}
 			socket.off(BUTTON_E, button_event).on(BUTTON_E, button_event);
+
+			// button status
 		}
 
 				// Get Carousel Items
