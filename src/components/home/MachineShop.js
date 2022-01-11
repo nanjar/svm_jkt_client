@@ -179,7 +179,7 @@ const MachineShop = () => {
 			<Modal show={showAlert} size="lg" centered>
 				<Modal.Body>
 					<Row className="w-100 justify-content-center text-center">
-						<p className="text-uppsercase custom-t2">KEHABISAN STOK</p>
+						<p className="text-uppsercase custom-t2">MAAF STOK TIDAK TERSEDIA</p>
 					</Row>
 				</Modal.Body>
 				{/* <Modal.Footer className="justify-content-center text-center">

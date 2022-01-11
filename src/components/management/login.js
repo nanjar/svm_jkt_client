@@ -128,7 +128,7 @@ const Login = (props) => {
 			<Container fluid>
 				<Row className="justify-content-center">
 					<Col lg={5}>
-						<input type="text" onClick={handleShowNumpad} value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="KODE SANDI" /> {/* type passcode */}
+						<input type="password" onClick={handleShowNumpad} value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="KODE SANDI" /> {/* type passcode */}
 					</Col>
 				</Row>
 
@@ -154,7 +154,7 @@ const Login = (props) => {
 					<label className="custom-t2" style={{paddingLeft: "90%", cursor: "pointer"}} onClick={handleHideNumpad}>&times;</label>
 					<Modal.Body className="m-3 mt-0">
 						<Row>
-							<input type="text" value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} />
+							<input type="password" value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} />
 						</Row>
 						{
 							numData.map((rowData, rowIndex) => (

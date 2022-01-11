@@ -8,6 +8,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import image_fail from '../../assets/static_images/icon-fail.png';
 import image_success from '../../assets/static_images/icon-success.png';
+import Maintenance from "../Maintenance";
 
 const Home = (props) => {
 	const [machineCode, setMachineCode] = useState("");
@@ -37,9 +38,10 @@ const Home = (props) => {
 			const response = JSON.parse(data);
 			const isButtonActive = parseInt(response.status) !== 1;
 			setButtonResponse(isButtonActive);
-			if(!isButtonActive){
-				SERVER_REQ.get('/api/health.json', { vending: 1, status: 1 });
-			}
+			SERVER_REQ.get('/api/health.json', { vending: isButtonActive ? 2 : 1, status: 1 });
+			// if(!isButtonActive){
+			// 	SERVER_REQ.get('/api/health.json', { vending: 1, status: 1 });
+			// }
 		})
 		// // listen to button polling status
 		// socket.off('button_polling_status').on('button_polling_status', (data) => {
@@ -106,7 +108,6 @@ const Home = (props) => {
 			</div>
 		</div>;
 	};
-
 	return (<div onContextMenu={(e)=> e.preventDefault()} className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">
 		<Container fluid className="p-0">
 		{
