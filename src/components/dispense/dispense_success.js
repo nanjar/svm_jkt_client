@@ -20,6 +20,7 @@ const DispenseSuccess = () => {
 			// socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
 			activate_button();
 			const button_event = async (data) => {
+				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
 				data = JSON.parse(data);
 				// console.log(data);
 				if(button_pressed)

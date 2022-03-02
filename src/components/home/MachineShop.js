@@ -36,6 +36,7 @@ const MachineShop = () => {
 			activate_button();
 			const button_event = async (data) => {
 				data = JSON.parse(data);
+					socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });
 				// console.log(data);
 				if(button_pressed)
 					return;
