@@ -201,9 +201,8 @@ class Sale extends React.Component {
 			// console.log("Transaction Status Code - " + reqCancelQrCode.response.status_code);
 			// cond: check payment cancellation by status or status code
 			if (reqCancelQrCode.response.transaction_status === "cancel" || reqCancelQrCode.response.status_code === "412") { 
-				if (cancelBtnClicked) {
-					this.handleTimeout();
-				} else {
+				// edited on 2 Mar 2022
+				if (!cancelBtnClicked) { 
 					if (this._isMounted) {
 						this.setState({
 							titleMsg: "PEMBAYARAN TIDAK BERHASIL", // payment expired
@@ -255,6 +254,8 @@ class Sale extends React.Component {
 		this.props.history.push(this.state.redirectURL);
 	}
 
+
+	// edited on 2 Mar 2022
 	handleCancelPayment = () => {
 		const {transactionId} = this.state;
 		// console.log(this._isMounted);
@@ -262,18 +263,15 @@ class Sale extends React.Component {
 			if (this._isMounted) {
 				this.setState({ 
 					cancelBtnClicked: true, 
-					showCancel: false 
-				}, () => {
-					this.cancelAtTimeOut();
+					showCancel: false ,
+					showModal: false
 				});
-			} 
-		} 
 
-		// edited on 2 Mar 2022
-		this.props.history.push("/");
-		// else {
-		// 	this.props.history.push("/");
-		// }
+				this.props.history.push("/");
+			} 
+		} else {
+			this.props.history.push("/");
+		}
 	}
 	
 	componentWillUnmount() {
