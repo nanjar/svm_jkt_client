@@ -15,6 +15,7 @@ const DispenseSuccess = () => {
 		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
 	}
 	useEffect(() => {
+		var button_pressed = false;
 		if(socket){
 			// socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
 			activate_button();
