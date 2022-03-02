@@ -266,10 +266,14 @@ class Sale extends React.Component {
 				}, () => {
 					this.cancelAtTimeOut();
 				});
-			}
-		} else {
-			this.props.history.push("/");
-		}
+			} 
+		} 
+
+		// edited on 2 Mar 2022
+		this.props.history.push("/");
+		// else {
+		// 	this.props.history.push("/");
+		// }
 	}
 	
 	componentWillUnmount() {
