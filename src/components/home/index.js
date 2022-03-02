@@ -8,7 +8,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import image_fail from '../../assets/static_images/icon-fail.png';
 import image_success from '../../assets/static_images/icon-success.png';
-import Maintenance from "../Maintenance";
+// import Maintenance from "../Maintenance";
 
 const Home = (props) => {
 	const [machineCode, setMachineCode] = useState("");

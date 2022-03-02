@@ -5,7 +5,7 @@ import FORMATTER  from '../../helpers/Formatter';
 import {useHistory} from 'react-router-dom';
 import logo from '../../assets/static_images/Logo.png';
 import { Row, Button, Modal } from 'react-bootstrap';
-import { Slide } from 'react-slideshow-image';
+// import { Slide } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css';
 import Slider from 'react-slick';
 import '../../assets/css/slick-carousel.css';

@@ -42,7 +42,7 @@ export default class Formatter{
         if(process.env.NODE_ENV === "development"){
             return `${process.env.REACT_APP_FILE_SERVER}`;
         }
-        const {hostname, protocol, port} = window.location
+        const {hostname, protocol} = window.location
         const base_url = `${protocol}//${hostname}`;
         return base_url;
     }

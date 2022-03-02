@@ -10,6 +10,7 @@ const Maintenance = () => {
                 width: '100vw',
                 height: '100vh'
             }} 
+			alt = "Maintenance"
         />
         <div
             style={{
@@ -21,7 +22,7 @@ const Maintenance = () => {
                 transform: 'translate(-50%, -50%)'
             }}
         >
-            <img src={MaintenanceError} />
+            <img src={MaintenanceError} alt="Maintenance Error" />
         </div>
     </>
 }
