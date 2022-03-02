@@ -44,7 +44,6 @@ const MachineShop = () => {
 				const button = data.button_no
 				if(button === 0 )
 					return;
-				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 1000, reply_to: BUTTON_E });
 				// console.log('pressed')
 				const button_req = await SERVER_REQ.get(`/api/buttons/${button}.json`);
 				// console.log(button_req);
@@ -94,8 +93,9 @@ const MachineShop = () => {
 
         return () => {
             // console.log('Log out')
-            socket.off(BUTTON_E)
-            socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
+            socket.off(BUTTON_E);
+				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
+            // socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
 			setReloadPageInterval(prev => {
 				clearInterval(prev);
 				return null;

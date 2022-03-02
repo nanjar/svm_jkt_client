@@ -49,7 +49,7 @@ const Home = (props) => {
 		// })
 		
 		return function cleanup() {
-			socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });
+			// socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });
 		};
 		// eslint-disable-next-line
 	}, []);
