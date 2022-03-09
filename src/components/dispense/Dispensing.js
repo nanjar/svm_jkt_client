@@ -27,6 +27,7 @@ const Dispensing = () => {
 	const {search} = useLocation();
 	const [dispenseResult, setDispenseResult] = useState(4); // change to 0 to check the dispense success, change to other number to check dispense success
 	const [isDispensing, setDespensing] = useState(true); // change to false to see the dispense error or success
+	const [dispensingTimeout, setDispensingTimeout] = useState(false);
 	const socket = useContext(SocketContext);
 	const history = useHistory()
 	useEffect(()=>{
@@ -61,7 +62,7 @@ const Dispensing = () => {
 			// :dispense_code, :dispense_status
 			SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot})
 			if(!isDispensing)
-				setTimeout(() => history.push("/"), 10000);
+				setDispensingTimeout(setTimeout(() => history.push("/"), 10000));
 		}
 		socket.off(DISPENSE_E, dispense_event).on(DISPENSE_E, dispense_event);
 		
@@ -87,7 +88,7 @@ const Dispensing = () => {
 							</div>
 						</Row>
 					:
-						dispenseResult !== 0  ? <DispenseError /> : <DispenseSuccess />
+						dispenseResult !== 0  ? <DispenseError /> : <DispenseSuccess dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout} />
 				}
 			</Container>
 		</div>);

@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 import SERVER_REQ  from '../../helpers/Request';
 const BUTTON_E = "button_pressed";
 
-const DispenseSuccess = () => {
+const DispenseSuccess = ({dispensingTimeout, setDispensingTimeout = (dispensing) => {}}) => {
 	const socket = useContext(SocketContext);
 	const history = useHistory();
 	const [showAlert, setShowAlert] = useState(false);
@@ -42,6 +42,8 @@ const DispenseSuccess = () => {
 					setTimeout( () => activate_button(), 500);
 					return;
 				}
+				clearTimeout(dispensingTimeout);
+				setDispensingTimeout(false);
 				const button_detail = button_req.response.data;
 				
 				const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available}
