@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useHistory, useParams, useLocation } from "react-router-dom";
-import { Container, Row } from 'react-bootstrap';
+import { Container, Row, Modal } from 'react-bootstrap';
 import SERVER_REQ from '../../helpers/Request';
 import { SocketContext } from "../../services/socket";
 import DispenseSuccess from "./dispense_success";
