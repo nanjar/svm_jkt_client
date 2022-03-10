@@ -5,7 +5,6 @@ import { Row, Modal } from 'react-bootstrap';
 import { SocketContext } from "../../services/socket";
 import { useHistory } from "react-router-dom";
 import SERVER_REQ  from '../../helpers/Request';
-const BUTTON_E = "button_pressed";
 
 const DispenseSuccess = ({dispensingTimeout, setDispensingTimeout = (dispensing) => {}}) => {
 	const socket = useContext(SocketContext);

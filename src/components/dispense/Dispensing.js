@@ -7,6 +7,7 @@ import DispenseSuccess from "./dispense_success";
 import DispenseError from "./dispense_error";
 
 const DISPENSE_E = "dispense";
+const BUTTON_E = "button_pressed";
 
 const DISPENSE_CODE_TEXT = {
     0: "Success",
@@ -116,6 +117,8 @@ const Dispensing = () => {
 			socket.off(BUTTON_E, button_event).on(BUTTON_E, button_event);
 		}
 		return () => {
+			clearTimeout(dispensingTimeout);
+			setDispensingTimeout(false);
 			socket.off(BUTTON_E);
 			socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
 		}
@@ -147,9 +150,6 @@ const Dispensing = () => {
 						<p className="text-uppsercase custom-t2">MAAF STOK TIDAK TERSEDIA</p>
 					</Row>
 				</Modal.Body>
-				{/* <Modal.Footer className="justify-content-center text-center">
-					<Button variant="info" onClick={handleButtonOk} className="text-uppercase custom-t2">OK</Button>
-				</Modal.Footer> */}
 			</Modal>
 		</div>);
 }
