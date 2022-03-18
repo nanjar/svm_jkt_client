@@ -29,6 +29,8 @@ const Dispensing = () => {
 	const [dispenseResult, setDispenseResult] = useState(4); // change to 0 to check the dispense success, change to other number to check dispense success
 	const [isDispensing, setDespensing] = useState(true); // change to false to see the dispense error or success
 	const [dispensingTimeout, setDispensingTimeout] = useState(false);
+	const [showAlertTimeout, setShowAlertTimeout] = useState(false);
+	const [buttonTimeout, setButtonTimeout] = useState(false);
 	const [showAlert, setShowAlert] = useState(false);
 	const socket = useContext(SocketContext);
 	const history = useHistory()
@@ -66,23 +68,31 @@ const Dispensing = () => {
 			}
 			// :dispense_code, :dispense_status
 			SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot})
-			if(!isDispensing)
-				setDispensingTimeout(setTimeout(() => history.push("/"), 10000));
+			if(!isDispensing) {
+				setDispensingTimeout(setTimeout(() => function(){ console.log("inTimeout REDIRECT"); history.push("/"); }, 10000));
+			}
 		}
 		socket.off(DISPENSE_E, dispense_event).on(DISPENSE_E, dispense_event);
 		
 		return () => {
-			socket.off(DISPENSE_E, dispense_event)
+			clearTimeout(dispensingTimeout);
+			clearTimeout(showAlertTimeout);
+			clearTimeout(buttonTimeout);
+			setDispensingTimeout(false);
+			setShowAlertTimeout(false);
+			setButtonTimeout(false);
+			socket.off(DISPENSE_E, dispense_event);	
 		}
 		// eslint-disable-next-line
-	}, [])
+	}, []);
+
 	useEffect(() => {
 		var button_pressed = false;
 		if(socket && parseInt(dispenseResult) === 0){
 			// socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
 			activate_button();
 			const button_event = async (data) => {
-				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
+				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: BUTTON_E });
 				data = JSON.parse(data);
 				// console.log(data);
 				if(button_pressed)
@@ -100,12 +110,12 @@ const Dispensing = () => {
 				if(!button_response.success){
 					button_pressed=false;
 					setShowAlert(true); // out of stock alert
-					setTimeout(function(){ setShowAlert(false); console.log("inTimeout") }, 5000);
-					setTimeout( () => activate_button(), 500);
+					setShowAlertTimeout(setTimeout(function(){ setShowAlert(false); console.log("inTimeout") }, 5000));
+					setButtonTimeout(setTimeout( () => activate_button(), 500));
 					return;
 				}
-				clearTimeout(dispensingTimeout);
-				setDispensingTimeout(false);
+				// clearTimeout(dispensingTimeout);
+				// setDispensingTimeout(false);
 				const button_detail = button_req.response.data;
 				
 				const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available}
@@ -118,11 +128,17 @@ const Dispensing = () => {
 		}
 		return () => {
 			clearTimeout(dispensingTimeout);
+			clearTimeout(showAlertTimeout);
+			clearTimeout(buttonTimeout);
 			setDispensingTimeout(false);
+			setShowAlertTimeout(false);
+			setButtonTimeout(false);
 			socket.off(BUTTON_E);
 			socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
 		}
-	},[dispenseResult])
+		// eslint-disable-next-line
+	},[dispenseResult]);
+
 	return (
 		<div className="vw-100 vh-100 d-flex align-items-center background-ImgWithLogo overflow-hidden">
 			<Container fluid>
