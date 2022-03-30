@@ -1,6 +1,6 @@
-// import React, { useEffect } from "react";
-import '../../App.css';
+import React from "react";
 import { Row } from 'react-bootstrap';
+import '../../App.css';
 
 const DispenseError = () => {
 	return (

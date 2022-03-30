@@ -25,6 +25,6 @@ const Maintenance = () => {
             <img src={MaintenanceError} alt="Maintenance Error" />
         </div>
     </>
-}
+}	
 
 export default Maintenance;
