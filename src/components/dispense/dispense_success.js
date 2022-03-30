@@ -10,13 +10,13 @@ const DispenseSuccess = () => {
 
 	useEffect(() => {
 		console.log("dispense success");
-		setDispensingTimeout(setTimeout(function() { history.push("/");  console.log("inTimeout") }, 10000));
+		setDispensingTimeout(setTimeout(function() { history.push("/");  console.log("inTimeout"); }, 10000));
 
 		return () => {
 			clearTimeout(dispensingTimeout);
 			setDispensingTimeout(false);
 		}
-	});
+	}, []);
 
 	return (
 		<Row className="justify-content-center text-uppercase mt-5 mb-3">

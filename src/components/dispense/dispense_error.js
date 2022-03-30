@@ -6,8 +6,6 @@ import '../../App.css';
 const DispenseError = () => {
 	const [dispensingTimeout, setDispensingTimeout] = useState(false);
 	const history = useHistory();
-	setTimeout(function() { history.push("/");  console.log("inTimeout") }, 10000);
-	console.log("dispense error 1");
 	useEffect(() => {
 		console.log("dispense error");
 		setDispensingTimeout(setTimeout(function() { history.push("/");  console.log("inTimeout") }, 10000));
@@ -16,7 +14,7 @@ const DispenseError = () => {
 			clearTimeout(dispensingTimeout);
 			setDispensingTimeout(false);
 		}
-	});
+	},[]);
 
 	return (
 		<Row className="justify-content-center m-3 text-uppercase">

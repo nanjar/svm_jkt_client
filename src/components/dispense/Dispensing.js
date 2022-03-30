@@ -84,7 +84,7 @@ const Dispensing = () => {
 			socket.off(DISPENSE_E, dispense_event);	
 		}
 		// eslint-disable-next-line
-	}, [isDispensing]);
+	}, []);
 
 	useEffect(() => {
 		var button_pressed = false;
@@ -156,7 +156,7 @@ const Dispensing = () => {
 							</div>
 						</Row>
 					:
-						dispenseResult !== 0  ? <DispenseError /> : <DispenseSuccess dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout} />
+						dispenseResult !== 0  ? <DispenseError dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout}  /> : <DispenseSuccess dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout} />
 				}
 			</Container>
 			
