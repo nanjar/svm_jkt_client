@@ -7,8 +7,7 @@ const DispenseError = () => {
 	const [dispensingTimeout, setDispensingTimeout] = useState(false);
 	const history = useHistory();
 	useEffect(() => {
-		console.log("dispense error");
-		setDispensingTimeout(setTimeout(function() { history.push("/");  console.log("inTimeout") }, 10000));
+		setDispensingTimeout(setTimeout(function() { window.location.href="/";  console.log("inTimeout") }, 5000));
 
 		return () => {
 			clearTimeout(dispensingTimeout);
