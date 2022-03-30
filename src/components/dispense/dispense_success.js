@@ -1,9 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import '../../App.css';
 import img_down from '../../assets/static_images/down.gif';
 import { Row } from 'react-bootstrap';
+import { useHistory } from "react-router-dom";
 
 const DispenseSuccess = () => {
+	const history = useHistory();
+	const [dispensingTimeout, setDispensingTimeout] = useState(false);
+
+	useEffect(() => {
+		console.log("dispense success");
+		setDispensingTimeout(setTimeout(function() { history.push("/");  console.log("inTimeout") }, 10000));
+
+		return () => {
+			clearTimeout(dispensingTimeout);
+			setDispensingTimeout(false);
+		}
+	});
+
 	return (
 		<Row className="justify-content-center text-uppercase mt-5 mb-3">
 			<br/><br/><br/>

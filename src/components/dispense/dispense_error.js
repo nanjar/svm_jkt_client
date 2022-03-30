@@ -1,8 +1,23 @@
-import React from "react";
+import React, { useEffect, useState }  from "react";
+import { useHistory } from "react-router-dom";
 import { Row } from 'react-bootstrap';
 import '../../App.css';
 
 const DispenseError = () => {
+	const [dispensingTimeout, setDispensingTimeout] = useState(false);
+	const history = useHistory();
+	setTimeout(function() { history.push("/");  console.log("inTimeout") }, 10000);
+	console.log("dispense error 1");
+	useEffect(() => {
+		console.log("dispense error");
+		setDispensingTimeout(setTimeout(function() { history.push("/");  console.log("inTimeout") }, 10000));
+
+		return () => {
+			clearTimeout(dispensingTimeout);
+			setDispensingTimeout(false);
+		}
+	});
+
 	return (
 		<Row className="justify-content-center m-3 text-uppercase">
 			<div className="p-3 align-self-center">
