@@ -1,14 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import '../../App.css';
 import img_down from '../../assets/static_images/down.gif';
-import { Row, Modal } from 'react-bootstrap';
-import { SocketContext } from "../../services/socket";
-import { useHistory } from "react-router-dom";
-import SERVER_REQ  from '../../helpers/Request';
+import { Row } from 'react-bootstrap';
 
-const DispenseSuccess = ({dispensingTimeout, setDispensingTimeout = (dispensing) => {}}) => {
-	const socket = useContext(SocketContext);
-	const history = useHistory();
+const DispenseSuccess = () => {
 	return (
 		<Row className="justify-content-center text-uppercase mt-5 mb-3">
 			<br/><br/><br/>

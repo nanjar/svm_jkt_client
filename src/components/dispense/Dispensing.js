@@ -69,11 +69,11 @@ const Dispensing = () => {
 			// :dispense_code, :dispense_status
 			SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot})
 			if(!isDispensing) {
-				setDispensingTimeout(setTimeout(() => function(){ console.log("inTimeout REDIRECT"); history.push("/"); }, 10000));
+				setDispensingTimeout(setTimeout(function() { history.push("/");  console.log("inTimeout") }, 10000));
 			}
 		}
 		socket.off(DISPENSE_E, dispense_event).on(DISPENSE_E, dispense_event);
-		
+
 		return () => {
 			clearTimeout(dispensingTimeout);
 			clearTimeout(showAlertTimeout);
@@ -84,11 +84,11 @@ const Dispensing = () => {
 			socket.off(DISPENSE_E, dispense_event);	
 		}
 		// eslint-disable-next-line
-	}, []);
+	}, [isDispensing]);
 
 	useEffect(() => {
 		var button_pressed = false;
-		if(socket && parseInt(dispenseResult) === 0){
+		if(socket && parseInt(dispenseResult) === 0) {
 			// socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
 			activate_button();
 			const button_event = async (data) => {
@@ -122,10 +122,10 @@ const Dispensing = () => {
 				console.log("Product Details", product_detail);
 				const url_params = new URLSearchParams(product_detail);
 				// console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
-				history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
+				history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
 			}
 			socket.off(BUTTON_E, button_event).on(BUTTON_E, button_event);
-		}
+		} 
 		return () => {
 			clearTimeout(dispensingTimeout);
 			clearTimeout(showAlertTimeout);
