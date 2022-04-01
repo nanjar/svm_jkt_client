@@ -27,6 +27,7 @@ const MachineShop = () => {
 	}
     useEffect(() => {
         let button_pressed = false;
+		console.log("debugging");
 		// window.addEventListener('beforeunload', () => {
 		// 	socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });
 		// 	alert('send command')
@@ -70,7 +71,7 @@ const MachineShop = () => {
 			// button status
 		}
 
-				// Get Carousel Items
+		// Get Carousel Items
 		const url = `${FORMATTER.api_base_url()}/api/banners.json`;
 		fetch(url)
 			.then(response => {
@@ -106,7 +107,7 @@ const MachineShop = () => {
     },[]);
 
 	const handleMouseDown = () => {
-			setStart(new Date());
+		setStart(new Date());
 	}
 
 	const handleMouseUp = (event) => {
