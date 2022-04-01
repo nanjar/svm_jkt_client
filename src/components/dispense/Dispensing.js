@@ -44,6 +44,7 @@ const Dispensing = () => {
 		let slots = urlParams.get('slots').split(",");
 		let slotDispenseIndex = 0
 		let isDispensing = true
+		console.log("debugging", isDispensing);
 		console.log(slots);
 		socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
 		const dispense_event = (data) => {
@@ -67,7 +68,8 @@ const Dispensing = () => {
 				setDispenseResult(status);
 			}
 			// :dispense_code, :dispense_status
-			SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot})
+			SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot});
+			console.log("debugging", isDispensing);
 			if(!isDispensing) {
 				setDispensingTimeout(setTimeout(function() { window.location.href = "/";  console.log("inTimeout") }, 10000));
 			}
@@ -126,6 +128,7 @@ const Dispensing = () => {
 			}
 			socket.off(BUTTON_E, button_event).on(BUTTON_E, button_event);
 		} 
+		
 		return () => {
 			clearTimeout(dispensingTimeout);
 			clearTimeout(showAlertTimeout);
@@ -156,7 +159,7 @@ const Dispensing = () => {
 							</div>
 						</Row>
 					:
-						dispenseResult !== 0  ? <DispenseError dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout}  /> : <DispenseSuccess dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout} />
+						dispenseResult !== 0  ? <DispenseError dispenseResult={dispenseResult} dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout}  /> : <DispenseSuccess dispenseResult={dispenseResult} dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout} />
 				}
 			</Container>
 			
