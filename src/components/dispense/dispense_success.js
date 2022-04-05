@@ -1,20 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import '../../App.css';
 import img_down from '../../assets/static_images/down.gif';
 import { Row } from 'react-bootstrap';
 
 const DispenseSuccess = (props) => {
-	// const { setDispensingTimeout, dispenseResult, dispensingTimeout } = props;
-	// console.log("dispense success");
-	// useEffect(() => {
-	// 	setDispensingTimeout(setTimeout(function() { window.location.href="/"; console.log("inTimeout"); }, 10000));
-
-	// 	return () => {
-	// 		clearTimeout(dispensingTimeout);
-	// 		setDispensingTimeout(false);
-	// 	}
-	// }, [dispensingTimeout]);
-
 	return <Row className="justify-content-center text-uppercase mt-5 mb-3">
 		<br/><br/><br/>
 		<div className="align-self-center">

@@ -27,7 +27,7 @@ const Dispensing = () => {
 	const {sale_id} = useParams();
 	const {search} = useLocation();
 	const [dispenseResult, setDispenseResult] = useState(4); // change to 0 to check the dispense success, change to other number to check dispense success
-	const [isDispensing, setDespensing] = useState(false); // change to false to see the dispense error or success
+	const [isDispensing, setDespensing] = useState(true); // change to false to see the dispense error or success
 	const [dispensingTimeout, setDispensingTimeout] = useState(false);
 	const [showAlertTimeout, setShowAlertTimeout] = useState(false);
 	const [buttonTimeout, setButtonTimeout] = useState(false);
@@ -43,8 +43,8 @@ const Dispensing = () => {
 		const urlParams = new URLSearchParams(search);
 		let slots = urlParams.get('slots').split(",");
 		let slotDispenseIndex = 0
-		let isDispensing = true
-		console.log("debugging", isDispensing);
+		let is_Dispensing = true;
+		// console.log("debugging");
 		console.log(slots);
 		socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
 		const dispense_event = (data) => {
@@ -55,26 +55,26 @@ const Dispensing = () => {
 			if( parseInt(status) !== 0){
 				slotDispenseIndex += 1
 				if(slotDispenseIndex < slots.length){
-					isDispensing = true
+					is_Dispensing = true;
 					socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
 				}else{
-					isDispensing = false
+					is_Dispensing = false;
 					setDespensing(false);
 					setDispenseResult(status);
 				}
 			}else{
-				isDispensing = false
+				is_Dispensing = false
 				setDespensing(false);
 				setDispenseResult(status);
 			}
 			// :dispense_code, :dispense_status
 			SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot});
-			console.log("debugging", isDispensing);
-			if(!isDispensing) {
-				setDispensingTimeout(setTimeout(function() { window.location.href = "/";  console.log("inTimeout") }, 10000));
-			}
 		}
 		socket.off(DISPENSE_E, dispense_event).on(DISPENSE_E, dispense_event);
+
+		if(!isDispensing) {
+			setDispensingTimeout(setTimeout(function() { window.location.href="/";  console.log("inTimeout") }, 12000));
+		}
 
 		return () => {
 			clearTimeout(dispensingTimeout);
@@ -86,11 +86,11 @@ const Dispensing = () => {
 			socket.off(DISPENSE_E, dispense_event);	
 		}
 		// eslint-disable-next-line
-	}, []);
+	}, [isDispensing]);
 
 	useEffect(() => {
 		var button_pressed = false;
-		if(socket && parseInt(dispenseResult) === 0) {
+		if(socket && parseInt(dispenseResult) === 0){
 			// socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
 			activate_button();
 			const button_event = async (data) => {
@@ -115,7 +115,7 @@ const Dispensing = () => {
 					setShowAlertTimeout(setTimeout(function(){ setShowAlert(false); console.log("inTimeout") }, 5000));
 					setButtonTimeout(setTimeout( () => activate_button(), 500));
 					return;
-				}
+				} 
 				// clearTimeout(dispensingTimeout);
 				// setDispensingTimeout(false);
 				const button_detail = button_req.response.data;
@@ -124,11 +124,10 @@ const Dispensing = () => {
 				console.log("Product Details", product_detail);
 				const url_params = new URLSearchParams(product_detail);
 				// console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
-				history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
+				history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
 			}
 			socket.off(BUTTON_E, button_event).on(BUTTON_E, button_event);
-		} 
-		
+		}
 		return () => {
 			clearTimeout(dispensingTimeout);
 			clearTimeout(showAlertTimeout);
@@ -159,7 +158,7 @@ const Dispensing = () => {
 							</div>
 						</Row>
 					:
-						dispenseResult !== 0  ? <DispenseError dispenseResult={dispenseResult} dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout}  /> : <DispenseSuccess dispenseResult={dispenseResult} dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout} />
+						dispenseResult !== 0  ? <DispenseError dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout} /> : <DispenseSuccess dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout} />
 				}
 			</Container>
 			

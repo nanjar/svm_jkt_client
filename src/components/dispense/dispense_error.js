@@ -1,19 +1,8 @@
-import React, { useEffect }  from "react";
+import React from "react";
 import { Row } from 'react-bootstrap';
 import '../../App.css';
 
 const DispenseError = (props) => {
-	// const { setDispensingTimeout, dispenseResult, dispensingTimeout } = props;
-	// console.log("dispense error");
-	// useEffect(() => {
-	// 	setDispensingTimeout(setTimeout(function() { window.location.href="/";  console.log("inTimeout") }, 10000));
-
-	// 	return () => {
-	// 		clearTimeout(dispensingTimeout);
-	// 		setDispensingTimeout(false);
-	// 	}
-	// }, [dispensingTimeout]);
-
 	return <Row className="justify-content-center m-3 text-uppercase">
 		<div className="p-3 align-self-center">
 			{/* an error occurred during purchase, please try again!  */}
