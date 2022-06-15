@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button, Image, Row, Col } from 'react-bootstrap';
 import FORMATTER from '../../../helpers/Formatter';
 
