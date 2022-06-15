@@ -70,7 +70,7 @@ const Dispensing = () => {
 			// :dispense_code, :dispense_status
 			SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot});
 		}
-		socket.off(DISPENSE_E, dispense_event).on(DISPENSE_E, dispense_event);
+		socket.off(DISPENSE_E).on(DISPENSE_E, dispense_event);
 
 		if(!isDispensing) {
 			setDispensingTimeout(setTimeout(function() { window.location.href="/";  console.log("inTimeout") }, 12000));
@@ -83,7 +83,7 @@ const Dispensing = () => {
 			setDispensingTimeout(false);
 			setShowAlertTimeout(false);
 			setButtonTimeout(false);
-			socket.off(DISPENSE_E, dispense_event);	
+			socket.off(DISPENSE_E);	
 		}
 		// eslint-disable-next-line
 	}, [isDispensing]);
@@ -123,10 +123,11 @@ const Dispensing = () => {
 				const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available}
 				console.log("Product Details", product_detail);
 				const url_params = new URLSearchParams(product_detail);
+				socket.off(BUTTON_E)
 				// console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
 				history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
 			}
-			socket.off(BUTTON_E, button_event).on(BUTTON_E, button_event);
+			socket.off(BUTTON_E).on(BUTTON_E, button_event);
 		}
 		return () => {
 			clearTimeout(dispensingTimeout);

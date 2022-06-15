@@ -63,10 +63,11 @@ const MachineShop = () => {
 				const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available}
 				console.log("Product Details", product_detail);
 				const url_params = new URLSearchParams(product_detail);
+				socket.off(BUTTON_E)
 				// console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
 				history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
 			}
-			socket.off(BUTTON_E, button_event).on(BUTTON_E, button_event);
+			socket.off(BUTTON_E).on(BUTTON_E, button_event);
 
 			// button status
 		}

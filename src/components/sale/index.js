@@ -261,6 +261,7 @@ class Sale extends React.Component {
 		// console.log(this._isMounted);
 		if (transactionId) {
 			if (this._isMounted) {
+				const reqCancelQrCode = SERVER_REQ.post(`/api/sales/cancel.json`, {'transaction_id': transactionId});
 				this.setState({ 
 					cancelBtnClicked: true, 
 					showCancel: false ,

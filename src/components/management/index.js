@@ -43,7 +43,7 @@ const Management = (props) => {
             data = JSON.parse(data);
 			setMachineTemp(data.value);
 		}
-        socket.off(TEMPERATURE_EVENT, temperature_event).on(TEMPERATURE_EVENT, temperature_event);
+        socket.off(TEMPERATURE_EVENT).on(TEMPERATURE_EVENT, temperature_event);
 		return () => {}
 		// eslint-disable-next-line
 	},[]);
