@@ -38,7 +38,10 @@ const Dispensing = () => {
 		console.log("command-sent", JSON.stringify({ command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E }))
 		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
 	}
+	let is_dispensing = false;
 	useEffect(()=>{
+		if(is_dispensing) return;
+		is_dispensing = true;
 		// change slot to numeric
 		// const slot = parseInt(slot_id);
 		const urlParams = new URLSearchParams(search);
@@ -89,7 +92,7 @@ const Dispensing = () => {
 			socket.off(DISPENSE_E);	
 		}
 		// eslint-disable-next-line
-	}, [isDispensing]);
+	}, []);
 
 	useEffect(() => {
 		var button_pressed = false;
