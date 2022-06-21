@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SERVER_REQ from '../../../helpers/Request';
 import FORMATTER from '../../../helpers/Formatter';
 import { Button, Row, Col, Image } from 'react-bootstrap';
