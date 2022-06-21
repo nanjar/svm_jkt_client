@@ -50,7 +50,7 @@ const Dispensing = () => {
 		let is_Dispensing = true;
 		// console.log("debugging");
 		
-		console.log("command-sent", JSON.stringify({"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E}))
+		socket.emit("ui-logs", {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E})
 		socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
 		const dispense_event = (data) => {
 			const {type, slot=false, status=false} = JSON.parse(data);
@@ -61,7 +61,7 @@ const Dispensing = () => {
 				slotDispenseIndex += 1
 				if(slotDispenseIndex < slots.length){
 					is_Dispensing = true;
-					console.log("command-sent", JSON.stringify({"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E}))
+					socket.emit("ui-logs",{"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E})
 					socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
 				}else{
 					is_Dispensing = false;
@@ -100,7 +100,7 @@ const Dispensing = () => {
 			// socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
 			activate_button();
 			const button_event = async (data) => {
-				console.log("sending_command", JSON.stringify({ command: 'button_poll', action: 'stop', interval: 300, reply_to: BUTTON_E }))
+				socket.emit("ui-logs",{ command: 'button_poll', action: 'stop', interval: 300, reply_to: BUTTON_E })
 				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: BUTTON_E });
 				data = JSON.parse(data);
 				// console.log(data);
