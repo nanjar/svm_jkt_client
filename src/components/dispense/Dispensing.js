@@ -77,11 +77,6 @@ const Dispensing = () => {
 			SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot});
 		}
 		socket.off(DISPENSE_E).on(DISPENSE_E, dispense_event);
-
-		if(!isDispensing) {
-			setDispensingTimeout(setTimeout(function() { window.location.href="/";  console.log("inTimeout") }, 12000));
-		}
-
 		return () => {
 			clearTimeout(dispensingTimeout);
 			clearTimeout(showAlertTimeout);
@@ -93,6 +88,11 @@ const Dispensing = () => {
 		}
 		// eslint-disable-next-line
 	}, []);
+	useEffect(() => {
+		if(!isDispensing) {
+			setDispensingTimeout(setTimeout(function() { window.location.href="/";  console.log("inTimeout") }, 12000));
+		}
+	},[isDispensing])
 
 	useEffect(() => {
 		var button_pressed = false;
