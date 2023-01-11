@@ -25,6 +25,20 @@ const MachineShop = () => {
 	const activate_button = () => {
 		setTimeout(() => socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E }), 2000);
 	}
+	const LED_COLOR_E = 'set-led-color-event';
+	const LED_COLOR_E_1 = 'set-led-color-1-event';
+	const ledColorResponse = (event, button, led) => {
+		socket.off(event).on(event, (data) => {
+			data = JSON.parse(data);
+			if(data?.status === 0)
+				ledColorSaveStatus(button, led)
+		});
+	}
+	
+	const ledColorSaveStatus = (button, led) => {
+		const url = `/api/buttons/${button}/led.json?status=${led}`;
+		SERVER_REQ.get(url);
+	}
     useEffect(() => {
         let button_pressed = false;
 		console.log("debugging");
@@ -37,10 +51,11 @@ const MachineShop = () => {
 			activate_button();
 			const button_event = async (data) => {
 				data = JSON.parse(data);
-					socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: 'button_pressed' });
 				// console.log(data);
 				if(button_pressed)
 					return;
+				
+				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: 'button_pressed' });
 				button_pressed = true;
 				if (button_pressed) { setShowAlert(false); } // close EmptyStockModal at the button pressed
 				const button = data.button_no
@@ -53,14 +68,27 @@ const MachineShop = () => {
 				// console.log("button response", button_response);
 				if(!button_response.success){
 					button_pressed=false;
+					if(button_response?.available === false ){
+						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour: [{[button]:2}], reply_to: LED_COLOR_E});
+						ledColorResponse(LED_COLOR_E,button, 2);
+					}
 					setShowAlert(true); // out of stock alert
 					setTimeout(function(){ setShowAlert(false); console.log("inTimeout") }, 5000);
 					setTimeout( () => activate_button(), 500);
 					return;
 				}
+				if(button_response.success){
+					if(button_response?.slot_available > 0){
+						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour: [{[button]:2}], reply_to: LED_COLOR_E})
+						ledColorResponse(LED_COLOR_E,button, 2);
+					}else{
+						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour: [{[button]:1}], reply_to: LED_COLOR_E})
+						ledColorResponse(LED_COLOR_E,button, 1);
+					}
+				}
 				const button_detail = button_req.response.data;
 				
-				const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available}
+				const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available, button}
 				console.log("Product Details", product_detail);
 				const url_params = new URLSearchParams(product_detail);
 				socket.off(BUTTON_E)

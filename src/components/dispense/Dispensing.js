@@ -7,6 +7,7 @@ import DispenseSuccess from "./dispense_success";
 import DispenseError from "./dispense_error";
 
 const DISPENSE_E = "dispense";
+const DISPENSE_E_LOGS = "dispense-logs"
 const BUTTON_E = "button_pressed";
 
 const DISPENSE_CODE_TEXT = {
@@ -50,7 +51,7 @@ const Dispensing = () => {
 		let is_Dispensing = true;
 		// console.log("debugging");
 		
-		socket.emit("ui-logs", {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E})
+		socket.emit("ui-logs", {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E_LOGS})
 		socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
 		const dispense_event = (data) => {
 			const {type, slot=false, status=false} = JSON.parse(data);
@@ -61,7 +62,7 @@ const Dispensing = () => {
 				slotDispenseIndex += 1
 				if(slotDispenseIndex < slots.length){
 					is_Dispensing = true;
-					socket.emit("ui-logs",{"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E})
+					socket.emit("ui-logs",{"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E_LOGS})
 					socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
 				}else{
 					is_Dispensing = false;
