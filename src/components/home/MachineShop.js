@@ -127,8 +127,10 @@ const MachineShop = () => {
 
         return () => {
             // console.log('Log out')
-            socket.off(BUTTON_E);
+			if(socket){
+				socket.off(BUTTON_E);
 				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
+			}
             // socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
 			setReloadPageInterval(prev => {
 				clearInterval(prev);
