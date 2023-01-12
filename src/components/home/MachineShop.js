@@ -71,7 +71,7 @@ const MachineShop = () => {
 				// console.log("button response", button_response);
 				if(!button_response.success){
 					button_pressed=false;
-					if(button_response?.available === false ){
+					if(button_response.available === false ){
 						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour: [{[button]:2}], reply_to: LED_COLOR_E});
 						ledColorResponse(LED_COLOR_E,button, 2);
 					}
@@ -81,7 +81,7 @@ const MachineShop = () => {
 					return;
 				}
 				if(button_response.success){
-					if(button_response?.slot_available > 0){
+					if(button_response.slot_available > 0){
 						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour: [{[button]:2}], reply_to: LED_COLOR_E})
 						ledColorResponse(LED_COLOR_E,button, 2);
 					}else{
