@@ -13,14 +13,14 @@ const BUTTON_E = "button_pressed";
 // eslint-disable-next-line
 
 const MachineShop = () => {
-		const [showAlert, setShowAlert] = useState(false);
-		const socket = useContext(SocketContext);
-		const history = useHistory();
-		const [start, setStart] = useState(0);
-		const [clickBtn1, setClickBtn1] = useState(false);
-		const [carouselItems, setCarouselItems] = useState([]);
-		// eslint-disable-next-line
-		const [reloadPageInterval, setReloadPageInterval] = useState(null);
+	const [showAlert, setShowAlert] = useState(false);
+	const socket = useContext(SocketContext);
+	const history = useHistory();
+	const [start, setStart] = useState(0);
+	const [clickBtn1, setClickBtn1] = useState(false);
+	const [carouselItems, setCarouselItems] = useState([]);
+	// eslint-disable-next-line
+	const [reloadPageInterval, setReloadPageInterval] = useState(null);
 
 	const activate_button = () => {
 		setTimeout(() => socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E }), 2000);
@@ -28,12 +28,14 @@ const MachineShop = () => {
 	const LED_COLOR_E = 'set-led-color-event';
 	const LED_COLOR_E_1 = 'set-led-color-1-event';
 	const ledColorResponse = (event, button, led) => {
-		socket.off(event).on(event, (data) => {
-			data = JSON.parse(data);
-			if(data?.status === 0){
-				ledColorSaveStatus(button, led);
-			}
-		});
+		if(socket){
+			socket.off(event).on(event, (data) => {
+				const response = JSON.parse(data);
+				if(response?.status === 0){
+					ledColorSaveStatus(button, led);
+				}
+			});
+		}
 	}
 	
 	const ledColorSaveStatus = (button, led) => {
