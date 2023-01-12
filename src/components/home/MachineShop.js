@@ -31,7 +31,7 @@ const MachineShop = () => {
 		if(socket){
 			socket.off(event).on(event, (data) => {
 				const response = JSON.parse(data);
-				if(response?.status === 0){
+				if(parseInt(response.status) === 0){
 					ledColorSaveStatus(button, led);
 				}
 			});

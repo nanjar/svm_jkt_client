@@ -53,7 +53,7 @@ const Dispensing = () => {
 		
 		socket.emit("ui-logs", {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E_LOGS})
 		socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
-		const dispense_event = (data) => {
+		const dispense_event = async (data) => {
 			const {type, slot=false, status=false} = JSON.parse(data);
 			if ( !(["single_dispense_response", "multiple_dispense_response"].includes(type)) )
 				return;
@@ -75,7 +75,8 @@ const Dispensing = () => {
 				setDispenseResult(status);
 			}
 			// :dispense_code, :dispense_status
-			SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot});
+			const updateSaleResponse = await SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot});
+			console.log(updateSaleResponse);
 		}
 		socket.off(DISPENSE_E).on(DISPENSE_E, dispense_event);
 		return () => {
