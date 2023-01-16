@@ -26,7 +26,6 @@ const MachineShop = () => {
 		setTimeout(() => socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E }), 2000);
 	}
 	const LED_COLOR_E = 'set-led-color-event';
-	const LED_COLOR_E_1 = 'set-led-color-1-event';
 	const ledColorResponse = (event, button, led) => {
 		if(socket){
 			socket.off(event).on(event, (data) => {
@@ -81,7 +80,7 @@ const MachineShop = () => {
 					return;
 				}
 				if(button_response.success){
-					if(button_response.slot_available > 0){
+					if(button_respons.data.slot_available > 0){
 						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour: [{[button]:2}], reply_to: LED_COLOR_E})
 						ledColorResponse(LED_COLOR_E,button, 2);
 					}else{
