@@ -37,8 +37,8 @@ const MachineShop = () => {
 		}
 	}
 	
-	const ledColorSaveStatus = (button, led) => {
-		const url = `/api/buttons/${button}/led.json?status=${led}`;
+	const ledColorSaveStatus = (buttons, led) => {
+		const url = `/api/buttons/led.json?status=${led}&buttons=&{buttons}`;
 		SERVER_REQ.get(url);
 	}
     useEffect(() => {
@@ -68,26 +68,25 @@ const MachineShop = () => {
 				// console.log(button_req);
 				const button_response = button_req.response
 				// console.log("button response", button_response);
+				
+				
+				if(button_response.button_status && parseInt(response.button_status.led) > 0){
+					const led_colour = [];
+					response.button_status.buttons.map(button => {
+						led_colour.push({[parseInt(button)]: parseInt(response.button_status.led)})
+					})
+					socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E})
+					ledColorResponse(LED_COLOR_E, response.button_status.buttons, parseInt(response.button_status.led));
+				}
+				
 				if(!button_response.success){
 					button_pressed=false;
-					if(button_response.available === false ){
-						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour: [{[button]:2}], reply_to: LED_COLOR_E});
-						ledColorResponse(LED_COLOR_E,button, 2);
-					}
 					setShowAlert(true); // out of stock alert
 					setTimeout(function(){ setShowAlert(false); console.log("inTimeout") }, 5000);
 					setTimeout( () => activate_button(), 500);
 					return;
 				}
-				if(button_response.success){
-					if(button_respons.data.slot_available > 0){
-						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour: [{[button]:2}], reply_to: LED_COLOR_E})
-						ledColorResponse(LED_COLOR_E,button, 2);
-					}else{
-						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour: [{[button]:1}], reply_to: LED_COLOR_E})
-						ledColorResponse(LED_COLOR_E,button, 1);
-					}
-				}
+				
 				const button_detail = button_req.response.data;
 				
 				const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available, button}
