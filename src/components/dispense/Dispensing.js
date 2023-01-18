@@ -41,8 +41,8 @@ const Dispensing = () => {
 	}
 	let is_dispensing = false;
 	const LED_COLOR_E =  "set-led-color-dispense";
-	const ledColorSaveStatus = (button, led) => {
-		const url = `/api/buttons/${button}/led.json?status=${led}`;
+	const ledColorSaveStatus = (buttons, led) => {
+		const url = `/api/buttons/led.json?status=${led}&buttons=${buttons}`;
 		SERVER_REQ.get(url);
 	}
 	useEffect(()=>{
@@ -85,12 +85,16 @@ const Dispensing = () => {
 				const response = updateSaleResponse.response;
 				if(response){
 					if(parseInt(response.button_status.led) > 0){
-						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour: [{[parseInt(response.button_status.button)]: parseInt(response.button_status.led)}], reply_to: LED_COLOR_E});
+						const led_colour = [];
+						response.button_status.buttons.map(button => {
+							led_colour.push({[parseInt(button)]: parseInt(response.button_status.led)})
+						})
+						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E});
 						
 						socket.off(LED_COLOR_E).on(LED_COLOR_E, (data) => {
 							const response = JSON.parse(data);
 							if(parseInt(response.status) === 0){
-								ledColorSaveStatus(response.button_status.button, response.button_status.led);
+								ledColorSaveStatus(response.button_status.buttons, response.button_status.led);
 							}
 						});
 					}
