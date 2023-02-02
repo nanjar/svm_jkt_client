@@ -38,7 +38,7 @@ const MachineShop = () => {
 	}
 	
 	const ledColorSaveStatus = (buttons, led) => {
-		const url = `/api/buttons/led.json?status=${led}&buttons=&{buttons}`;
+		const url = `/api/buttons/led.json?status=${led}&buttons=${buttons}`;
 		SERVER_REQ.get(url);
 	}
     useEffect(() => {
