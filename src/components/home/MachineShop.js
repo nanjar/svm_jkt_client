@@ -123,6 +123,7 @@ const MachineShop = () => {
 				}, 300000)
 			});
 		(async function(){
+			if(!socket) return;
 			const buttonStatus = await SERVER_REQ.get('/api/buttons/status.json');
 			const button_response = buttonStatus.response;
 			if(button_response.button_status){

@@ -7,6 +7,7 @@ import imgURL from '../../assets/static_images/no_image.png';
 import { Row, Col, Modal, Button } from 'react-bootstrap';
 import { useIdleTimer } from 'react-idle-timer';
 import LoadingOverlay from 'react-loading-overlay';
+import { SocketContext } from "../../services/socket";
 
 const AutoTopup = (props) => {
 	var toStockData = [];
@@ -24,6 +25,8 @@ const AutoTopup = (props) => {
 	// const [showAlert, setShowAlert] = useState(false);
 	const [showSpan, setShowSpan] = useState("d-none");
 	const [isUnlock, setIsUnlock] = useState(false);
+	const socket = useContext(SocketContext);
+	const LED_COLOR_E = 'set-led-color-event';
 
 	useEffect(() => {
 		if (firstLoad) {

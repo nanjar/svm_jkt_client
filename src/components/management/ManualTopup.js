@@ -7,10 +7,12 @@ import imgURL from '../../assets/static_images/no_image.png';
 import { Container, Row, Col, Modal } from 'react-bootstrap';
 import { useIdleTimer } from 'react-idle-timer';
 import LoadingOverlay from 'react-loading-overlay';
+import { SocketContext } from "../../services/socket";
 
 const ManualTopup = (props) => {
 	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']]; // data for numpad, cannot be changed
 	
+	const socket = useContext(SocketContext);
 	const [slotID, setSlotID] = useState(false);
 	const [slots, setSlots] = useState([]);
 	const [slotStocks, setSlotStocks] = useState([]);
@@ -23,7 +25,8 @@ const ManualTopup = (props) => {
 	const [contentMsg, setContentMsg] = useState("");
 	const [showModal, setShowModal] = useState(false);
 	const [firstLoad, setFirstLoad] = useState(true);
-
+	
+	const LED_COLOR_E = 'set-led-color-event';
 	// eslint-disable-next-line
 	useEffect(() => {
 		if(firstLoad){
