@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import SERVER_REQ from '../../helpers/Request';
 import FORMATTER from '../../helpers/Formatter';
 import { Link } from 'react-router-dom';
@@ -7,10 +7,12 @@ import imgURL from '../../assets/static_images/no_image.png';
 import { Container, Row, Col, Modal } from 'react-bootstrap';
 import { useIdleTimer } from 'react-idle-timer';
 import LoadingOverlay from 'react-loading-overlay';
+import { SocketContext } from "../../services/socket";
 
 const ManualTopup = (props) => {
 	const numData = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['Del', '0', 'Set']]; // data for numpad, cannot be changed
 	
+	const socket = useContext(SocketContext);
 	const [slotID, setSlotID] = useState(false);
 	const [slots, setSlots] = useState([]);
 	const [slotStocks, setSlotStocks] = useState([]);
@@ -23,7 +25,8 @@ const ManualTopup = (props) => {
 	const [contentMsg, setContentMsg] = useState("");
 	const [showModal, setShowModal] = useState(false);
 	const [firstLoad, setFirstLoad] = useState(true);
-
+	
+	const LED_COLOR_E = 'set-led-color-event';
 	// eslint-disable-next-line
 	useEffect(() => {
 		if(firstLoad){
@@ -185,6 +188,15 @@ const ManualTopup = (props) => {
 				preparedData[`stock[to_stock]`] = slotStock.to_stock;
 				preparedData[`stock[product_id]`] = slot.product_id;
 				const button_post = await SERVER_REQ.post(`/api/stocks.json`, preparedData);
+				const button_response = button_post.response;
+				if(button_response.button_status){
+					const led_colour = [];
+					button_response.button_status.map(button => {
+						led_colour.push({[parseInt(button.button)]: parseInt(button.led)})
+					})
+					socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E})
+					// ledColorResponse(LED_COLOR_E, button_response.button_status.buttons, parseInt(button_response.button_status.led));
+				}
 				// eslint-disable-next-line
 				const resp_current_stock = button_post.response.current_stock;
 				fetchLayouts();

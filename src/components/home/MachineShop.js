@@ -13,17 +13,33 @@ const BUTTON_E = "button_pressed";
 // eslint-disable-next-line
 
 const MachineShop = () => {
-		const [showAlert, setShowAlert] = useState(false);
-		const socket = useContext(SocketContext);
-		const history = useHistory();
-		const [start, setStart] = useState(0);
-		const [clickBtn1, setClickBtn1] = useState(false);
-		const [carouselItems, setCarouselItems] = useState([]);
-		// eslint-disable-next-line
-		const [reloadPageInterval, setReloadPageInterval] = useState(null);
+	const [showAlert, setShowAlert] = useState(false);
+	const socket = useContext(SocketContext);
+	const history = useHistory();
+	const [start, setStart] = useState(0);
+	const [clickBtn1, setClickBtn1] = useState(false);
+	const [carouselItems, setCarouselItems] = useState([]);
+	// eslint-disable-next-line
+	const [reloadPageInterval, setReloadPageInterval] = useState(null);
 
 	const activate_button = () => {
 		setTimeout(() => socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E }), 2000);
+	}
+	const LED_COLOR_E = 'set-led-color-event';
+	const ledColorResponse = (event, button, led) => {
+		if(socket){
+			socket.off(event).on(event, (data) => {
+				const response = JSON.parse(data);
+				if(parseInt(response.status) === 0){
+					ledColorSaveStatus(button, led);
+				}
+			});
+		}
+	}
+	
+	const ledColorSaveStatus = (buttons, led) => {
+		const url = `/api/buttons/led.json?status=${led}&buttons=${buttons}`;
+		SERVER_REQ.get(url);
 	}
     useEffect(() => {
         let button_pressed = false;
@@ -37,10 +53,11 @@ const MachineShop = () => {
 			activate_button();
 			const button_event = async (data) => {
 				data = JSON.parse(data);
-					socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: 'button_pressed' });
 				// console.log(data);
 				if(button_pressed)
 					return;
+				
+				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: 'button_pressed' });
 				button_pressed = true;
 				if (button_pressed) { setShowAlert(false); } // close EmptyStockModal at the button pressed
 				const button = data.button_no
@@ -51,6 +68,17 @@ const MachineShop = () => {
 				// console.log(button_req);
 				const button_response = button_req.response
 				// console.log("button response", button_response);
+				
+				
+				if(button_response.button_status){
+					const led_colour = [];
+					button_response.button_status.map(button => {
+						led_colour.push({[parseInt(button.button)]: parseInt(button.led)})
+					})
+					socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E})
+					// ledColorResponse(LED_COLOR_E, button_response.button_status.buttons, parseInt(button_response.button_status.led));
+				}
+				
 				if(!button_response.success){
 					button_pressed=false;
 					setShowAlert(true); // out of stock alert
@@ -58,9 +86,10 @@ const MachineShop = () => {
 					setTimeout( () => activate_button(), 500);
 					return;
 				}
+				
 				const button_detail = button_req.response.data;
 				
-				const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available}
+				const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available, button}
 				console.log("Product Details", product_detail);
 				const url_params = new URLSearchParams(product_detail);
 				socket.off(BUTTON_E)
@@ -92,12 +121,26 @@ const MachineShop = () => {
 				return setInterval(()=>{
 					window.location = "/";
 				}, 300000)
-			})
-
+			});
+		(async function(){
+			if(!socket) return;
+			const buttonStatus = await SERVER_REQ.get('/api/buttons/status.json');
+			const button_response = buttonStatus.response;
+			if(button_response.button_status){
+				const led_colour = [];
+				button_response.button_status.map(button => {
+					led_colour.push({[parseInt(button.button)]: parseInt(button.led)})
+				})
+				socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E})
+				// ledColorResponse(LED_COLOR_E, button_response.button_status.buttons, parseInt(button_response.button_status.led));
+			}
+		})();
         return () => {
             // console.log('Log out')
-            socket.off(BUTTON_E);
+			if(socket){
+				socket.off(BUTTON_E);
 				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
+			}
             // socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
 			setReloadPageInterval(prev => {
 				clearInterval(prev);

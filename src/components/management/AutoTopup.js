@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import SERVER_REQ from '../../helpers/Request';
 import FORMATTER from '../../helpers/Formatter';
 import { Link } from 'react-router-dom';
@@ -7,6 +7,7 @@ import imgURL from '../../assets/static_images/no_image.png';
 import { Row, Col, Modal, Button } from 'react-bootstrap';
 import { useIdleTimer } from 'react-idle-timer';
 import LoadingOverlay from 'react-loading-overlay';
+import { SocketContext } from "../../services/socket";
 
 const AutoTopup = (props) => {
 	var toStockData = [];
@@ -24,6 +25,8 @@ const AutoTopup = (props) => {
 	// const [showAlert, setShowAlert] = useState(false);
 	const [showSpan, setShowSpan] = useState("d-none");
 	const [isUnlock, setIsUnlock] = useState(false);
+	const socket = useContext(SocketContext);
+	const LED_COLOR_E = 'set-led-color-event';
 
 	useEffect(() => {
 		if (firstLoad) {
@@ -249,6 +252,15 @@ const AutoTopup = (props) => {
 		// console.log("auto topup post", preparedData);
 		// data sample : preparedData - {[stock[0][slot_id]: 1, stock[0]['to_stock']: 2, stock[0]['product_id']: 3]}
 		const button_put = await SERVER_REQ.put(`/api/stocks/1.json`, preparedData);
+		const button_response = button_put.response;
+		if(button_response.button_status){
+			const led_colour = [];
+			button_response.button_status.map(button => {
+				led_colour.push({[parseInt(button.button)]: parseInt(button.led)})
+			})
+			socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E})
+			// ledColorResponse(LED_COLOR_E, button_response.button_status.buttons, parseInt(button_response.button_status.led));
+		}
 		if (button_put.status === 200) { setIsLoadingActive(false); }
 		// console.log("button_put", button_put);
 		if (button_put.response.success) {

@@ -54,7 +54,8 @@ class Sale extends React.Component {
 			name: urlParams.get('name'),
 			price: params.amount,
 			id: params.product_id,
-			url: urlParams.get('url')
+			url: urlParams.get('url'),
+			button: urlParams.get('button')
 		} }, () => {
 			this._isMounted = true;
 			this.handleInitialStateChanges();
@@ -64,7 +65,7 @@ class Sale extends React.Component {
 	requestQrCode = async() => {
 		const {product, retry} = this.state;
 		console.log("PRODUCT", product)
-		const reqQrCode = await SERVER_REQ.post(`/api/sales/payment.json`, {'amount': product.price, 'product_id': product.id});
+		const reqQrCode = await SERVER_REQ.post(`/api/sales/payment.json`, {'amount': product.price, 'product_id': product.id, button_pressed: product.button});
 		
 		// console.log(reqQrCode);
 
@@ -221,13 +222,13 @@ class Sale extends React.Component {
 	} 
 
 	checkPaymentStatus = async() => {
-		const {transactionId} = this.state;
+		const {transactionId, product} = this.state;
 		const {search} = this.props.location;
 		const urlParams = new URLSearchParams(search);
 		const slots = urlParams.get('slots')
 		const firstSlot = slots.split(',')[0]
 		// console.log(`${FORMATTER.api_base_url()}/api/sales/status.json?transaction_id=${transactionId}`);
-		const reqPaymentStatus = await SERVER_REQ.get(`/api/sales/status.json?transaction_id=${transactionId}&slot=${firstSlot}`);
+		const reqPaymentStatus = await SERVER_REQ.get(`/api/sales/status.json?transaction_id=${transactionId}&slot=${firstSlot}&button_pressed=${product.button}`);
 
 		// console.log(reqPaymentStatus);
 		const response = reqPaymentStatus.response;

@@ -7,6 +7,7 @@ import DispenseSuccess from "./dispense_success";
 import DispenseError from "./dispense_error";
 
 const DISPENSE_E = "dispense";
+const DISPENSE_E_LOGS = "dispense-logs"
 const BUTTON_E = "button_pressed";
 
 const DISPENSE_CODE_TEXT = {
@@ -39,6 +40,11 @@ const Dispensing = () => {
 		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
 	}
 	let is_dispensing = false;
+	const LED_COLOR_E =  "set-led-color-dispense";
+	const ledColorSaveStatus = (buttons, led) => {
+		const url = `/api/buttons/led.json?status=${led}&buttons=${buttons}`;
+		SERVER_REQ.get(url);
+	}
 	useEffect(()=>{
 		if(is_dispensing) return;
 		is_dispensing = true;
@@ -50,9 +56,9 @@ const Dispensing = () => {
 		let is_Dispensing = true;
 		// console.log("debugging");
 		
-		socket.emit("ui-logs", {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E})
+		socket.emit("ui-logs", {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E_LOGS})
 		socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
-		const dispense_event = (data) => {
+		const dispense_event = async (data) => {
 			const {type, slot=false, status=false} = JSON.parse(data);
 			if ( !(["single_dispense_response", "multiple_dispense_response"].includes(type)) )
 				return;
@@ -61,7 +67,7 @@ const Dispensing = () => {
 				slotDispenseIndex += 1
 				if(slotDispenseIndex < slots.length){
 					is_Dispensing = true;
-					socket.emit("ui-logs",{"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E})
+					socket.emit("ui-logs",{"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E_LOGS})
 					socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
 				}else{
 					is_Dispensing = false;
@@ -74,7 +80,20 @@ const Dispensing = () => {
 				setDispenseResult(status);
 			}
 			// :dispense_code, :dispense_status
-			SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot});
+			const updateSaleResponse = await SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot});
+			if(!is_Dispensing){
+				const response = updateSaleResponse.response;
+				if(response){
+					if(response.button_status){
+						const led_colour = [];
+						response.button_status.map(button => {
+							led_colour.push({[parseInt(button.button)]: parseInt(button.led)})
+						})
+						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E})
+						// ledColorResponse(LED_COLOR_E, button_response.button_status.buttons, parseInt(button_response.button_status.led));
+					}
+				}
+			}
 		}
 		socket.off(DISPENSE_E).on(DISPENSE_E, dispense_event);
 		return () => {
