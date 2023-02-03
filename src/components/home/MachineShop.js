@@ -121,8 +121,19 @@ const MachineShop = () => {
 				return setInterval(()=>{
 					window.location = "/";
 				}, 300000)
-			})
-
+			});
+		(async function(){
+			const buttonStatus = await SERVER_REQ.get('/api/buttons/status.json');
+			const button_response = buttonStatus.response;
+			if(button_response.button_status){
+				const led_colour = [];
+				button_response.button_status.map(button => {
+					led_colour.push({[parseInt(button.button)]: parseInt(button.led)})
+				})
+				socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E})
+				// ledColorResponse(LED_COLOR_E, button_response.button_status.buttons, parseInt(button_response.button_status.led));
+			}
+		})();
         return () => {
             // console.log('Log out')
 			if(socket){

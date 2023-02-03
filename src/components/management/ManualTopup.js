@@ -185,6 +185,15 @@ const ManualTopup = (props) => {
 				preparedData[`stock[to_stock]`] = slotStock.to_stock;
 				preparedData[`stock[product_id]`] = slot.product_id;
 				const button_post = await SERVER_REQ.post(`/api/stocks.json`, preparedData);
+				const button_response = button_post.response;
+				if(button_response.button_status){
+					const led_colour = [];
+					button_response.button_status.map(button => {
+						led_colour.push({[parseInt(button.button)]: parseInt(button.led)})
+					})
+					socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E})
+					// ledColorResponse(LED_COLOR_E, button_response.button_status.buttons, parseInt(button_response.button_status.led));
+				}
 				// eslint-disable-next-line
 				const resp_current_stock = button_post.response.current_stock;
 				fetchLayouts();

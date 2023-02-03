@@ -84,19 +84,13 @@ const Dispensing = () => {
 			if(!is_Dispensing){
 				const response = updateSaleResponse.response;
 				if(response){
-					if(parseInt(response.button_status.led) > 0){
+					if(response.button_status){
 						const led_colour = [];
-						response.button_status.buttons.map(button => {
-							led_colour.push({[parseInt(button)]: parseInt(response.button_status.led)})
+						response.button_status.map(button => {
+							led_colour.push({[parseInt(button.button)]: parseInt(button.led)})
 						})
-						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E});
-						
-						socket.off(LED_COLOR_E).on(LED_COLOR_E, (data) => {
-							const response = JSON.parse(data);
-							if(parseInt(response.status) === 0){
-								ledColorSaveStatus(response.button_status.buttons, response.button_status.led);
-							}
-						});
+						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E})
+						// ledColorResponse(LED_COLOR_E, button_response.button_status.buttons, parseInt(button_response.button_status.led));
 					}
 				}
 			}

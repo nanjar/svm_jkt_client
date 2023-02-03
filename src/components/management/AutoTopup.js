@@ -249,6 +249,15 @@ const AutoTopup = (props) => {
 		// console.log("auto topup post", preparedData);
 		// data sample : preparedData - {[stock[0][slot_id]: 1, stock[0]['to_stock']: 2, stock[0]['product_id']: 3]}
 		const button_put = await SERVER_REQ.put(`/api/stocks/1.json`, preparedData);
+		const button_response = button_put.response;
+		if(button_response.button_status){
+			const led_colour = [];
+			button_response.button_status.map(button => {
+				led_colour.push({[parseInt(button.button)]: parseInt(button.led)})
+			})
+			socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E})
+			// ledColorResponse(LED_COLOR_E, button_response.button_status.buttons, parseInt(button_response.button_status.led));
+		}
 		if (button_put.status === 200) { setIsLoadingActive(false); }
 		// console.log("button_put", button_put);
 		if (button_put.response.success) {
