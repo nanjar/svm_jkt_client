@@ -70,13 +70,13 @@ const MachineShop = () => {
 				// console.log("button response", button_response);
 				
 				
-				if(button_response.button_status && parseInt(button_response.button_status.led) > 0){
+				if(button_response.button_status){
 					const led_colour = [];
-					button_response.button_status.buttons.map(button => {
-						led_colour.push({[parseInt(button)]: parseInt(button_response.button_status.led)})
+					button_response.button_status.map(button => {
+						led_colour.push({[parseInt(button.button)]: parseInt(button.led)})
 					})
 					socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E})
-					ledColorResponse(LED_COLOR_E, button_response.button_status.buttons, parseInt(button_response.button_status.led));
+					// ledColorResponse(LED_COLOR_E, button_response.button_status.buttons, parseInt(button_response.button_status.led));
 				}
 				
 				if(!button_response.success){
