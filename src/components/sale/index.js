@@ -228,7 +228,7 @@ class Sale extends React.Component {
 		const slots = urlParams.get('slots')
 		const firstSlot = slots.split(',')[0]
 		// console.log(`${FORMATTER.api_base_url()}/api/sales/status.json?transaction_id=${transactionId}`);
-		const reqPaymentStatus = await SERVER_REQ.get(`/api/sales/status.json?transaction_id=${transactionId}&slot=${firstSlot}&button_pressed=${product.button_pressed}`);
+		const reqPaymentStatus = await SERVER_REQ.get(`/api/sales/status.json?transaction_id=${transactionId}&slot=${firstSlot}&button_pressed=${product.button}`);
 
 		// console.log(reqPaymentStatus);
 		const response = reqPaymentStatus.response;
