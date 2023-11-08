@@ -93,8 +93,8 @@ const Management = (props) => {
 	return (<div className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">
 		<Container fluid>
 			<Row className="mt-1">
-				<Col lg={6}><span className="text-uppercase custom-t2">SUHU PERANGKAT - {piTemp} &deg;C</span></Col> {/* device/pi temp */}
-				<Col lg={6}><span className="text-uppercase float-end custom-t2">SUHU MESIN - {machineTemp} &deg;C</span></Col> {/* machine temp */}
+				<Col lg={6}><span className="text-uppercase custom-t2 custom-t2-text-600">SUHU PERANGKAT - {piTemp} &deg;C</span></Col> {/* device/pi temp */}
+				<Col lg={6}><span className="text-uppercase float-end custom-t2 custom-t2-text-600">SUHU MESIN - {machineTemp} &deg;C</span></Col> {/* machine temp */}
 			</Row> 
 			<Row>
 				<Col lg={6} className="bg-smvprimary">
@@ -118,7 +118,7 @@ const Management = (props) => {
 
 				<Col lg={6} className="bg-smvprimary">
 					<Link to="/" className="btn btn-lg btn-block set-wh text-uppercase">
-						<h1 className="display-2 set-mtop">KELUAR</h1> {/* logout */}
+						<h1 className="display-2 set-mtop3">KELUAR</h1> {/* logout */}
 					</Link>
 				</Col>
 			</Row>

@@ -21,7 +21,7 @@ const Login = (props) => {
 	
 	useEffect(() => {
 		// redirect home page after 30 seconds 
-		timerId.current = setTimeout(() => { handleTimeout(); }, 30000); 
+		// timerId.current = setTimeout(() => { handleTimeout(); }, 30000); 
 		// console.log("Timer", timerId);
 		return function cleanup() {
 			clearTimeout(timerId.current); 
@@ -138,21 +138,21 @@ const Login = (props) => {
 					</Col>
 				</Row> */}
 
-				<Row className="justify-content-center text-center pt-4">
-					<Col lg={2}>
-						<Button variant="info" className="text-uppercase custom-t1" onClick={handleLoginButtonClick}>MASUK</Button> {/* login */}
+				<Row className="justify-content-center pt-4">
+					<Col lg={3} xl={2}>
+						<Button variant="info" className="w-100 text-uppercase custom-t1" onClick={handleLoginButtonClick}>MASUK</Button> {/* login */}
 					</Col>
 
-					<Col lg={2}>
+					<Col lg={3} xl={2}>
 						<Link to="/">
-							<Button variant="warning" type="button" className="text-center text-uppercase custom-t1">BATAL</Button> {/* cancel */}
+							<Button variant="warning" type="button" className="w-100 text-center text-uppercase custom-t1">BATAL</Button> {/* cancel */}
 						</Link>
 					</Col>
 				</Row>
 
 				<Modal show={showNumpad} size="md" centered className="text-uppercase">
 					<label className="custom-t2" style={{paddingLeft: "90%", cursor: "pointer"}} onClick={handleHideNumpad}>&times;</label>
-					<Modal.Body className="m-3 mt-0">
+					<Modal.Body className="m-2 mt-0">
 						<Row>
 							<input type="password" value={numInput} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} />
 						</Row>

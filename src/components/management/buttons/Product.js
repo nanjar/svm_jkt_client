@@ -11,13 +11,13 @@ const Product = (props) => {
 	return <div>
 		<Row className="justify-content-center mt-3 mb-3">
 			<Col lg={8}> 
-				<h1 className="text-center text-uppercase display-4 mb-4">TOMBOL {tappedButton} - PILIH PRODUK</h1> {/* Button 6 - Choose the product to map */}
+				<h1 className="text-center text-uppercase display-4 mb-4 button-mapping-custom-header-text">TOMBOL {tappedButton} - PILIH PRODUK</h1> {/* Button 6 - Choose the product to map */}
 			</Col>
 			<Col lg={4}> 
-				<Button type="button" className="btn btn-lg btn-warning text-uppercase custom-t2 m-2 p-3" onClick={handleCancelBtn}>
+				<Button type="button" className="btn btn-lg btn-warning text-uppercase custom-t2 m-2 p-3 button-mapping-custom-header-button-text" onClick={handleCancelBtn}>
 					BATAL {/* cancel */}
 				</Button>
-				<Button type="button" className="btn btn-lg btn-info text-uppercase custom-t2 m-2 p-3" onClick={handleSubmitBtn}>
+				<Button type="button" className="btn btn-lg btn-info text-uppercase custom-t2 m-2 p-3 button-mapping-custom-header-button-text" onClick={handleSubmitBtn}>
 					KIRIM {/* submit */}
 				</Button>
 			</Col>

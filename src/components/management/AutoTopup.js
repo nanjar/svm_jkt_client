@@ -289,16 +289,16 @@ const AutoTopup = (props) => {
 	const modalTitleTxt = (isLocal) ? "KONFIRMASI JUMLAH STOK" : "confirm restock quantity";
 		
 	return (  <LoadingOverlay active={isLoadingActive} spinner text='Loading ...'>
-		<div className="vw-100 vh-100 background-Img align-items-center overflow-hidden">
+		<div className="vw-100 vh-100 background-Img align-items-center auto-topup overflow-hidden">
 			<div className="p-2 text-uppercase">
-				<div className="row mb-3">
+				<div className="row mb-1">
 					<div className="col-10">
-						<p className="custom-t2" style={{ paddingLeft: "4vw" }}>{titleTxt}</p> {/* confirm the restocked quantity for slots  */}
+						<p className="custom-t2 custom-t2-header-text" style={{ paddingLeft: "4vw" }}>{titleTxt}</p> {/* confirm the restocked quantity for slots  */}
 						{!isLocal ? <span>1/2/3/ - (1: to stock item count, 2: current item count, 3: max item count)</span> : ""}
 					</div>
 					<div className="col-2">
 						<Button variant="warning" type="button" className="text-uppercase p-3" onClick={handleBthUnlockOnClick}>
-							<h2 className="text-center text-uppercase custom-t3">unlock</h2> {/* unlock */}
+							<h2 className="text-center text-uppercase custom-t3 custom-t3-header-button">unlock</h2> {/* unlock */}
 						</Button>
 					</div>
 				</div>
@@ -368,7 +368,7 @@ const AutoTopup = (props) => {
 						<Row className="justify-content-center">
 							<Col lg={5} className="text-center">
 								<div className="p-1 align-self-center">
-									<img src={`${FORMATTER.api_images()}${productURL}`} className="img-thumbnail border-0" alt={productName} />
+									<img src={`${FORMATTER.api_images()}${productURL}`} className="img-thumbnail border-0 auto-topup-image-popup" alt={productName} />
 									<h1 className="text-center text-uppercase custom-t3">{productName}</h1>
 								</div>
 							</Col>

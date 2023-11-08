@@ -23,7 +23,8 @@ const Home = (props) => {
 	const [buttonResponse, setButtonResponse] = useState(true);
 
 	useEffect(() => {
-		if(window.location.hostname !== "localhost") {
+		
+		if(process.env.NODE_ENV === "production" && window.location.hostname !== "localhost") {
 			history.push('/management/login')
 			return;
 		}

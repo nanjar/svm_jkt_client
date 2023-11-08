@@ -28,7 +28,7 @@ const Dispensing = () => {
 	const {sale_id} = useParams();
 	const {search} = useLocation();
 	const [dispenseResult, setDispenseResult] = useState(4); // change to 0 to check the dispense success, change to other number to check dispense success
-	const [isDispensing, setDespensing] = useState(true); // change to false to see the dispense error or success
+	const [isDispensing, setDespensing] = useState(false); // change to false to see the dispense error or success
 	const [dispensingTimeout, setDispensingTimeout] = useState(false);
 	const [showAlertTimeout, setShowAlertTimeout] = useState(false);
 	const [buttonTimeout, setButtonTimeout] = useState(false);
@@ -51,7 +51,8 @@ const Dispensing = () => {
 		// change slot to numeric
 		// const slot = parseInt(slot_id);
 		const urlParams = new URLSearchParams(search);
-		let slots = urlParams.get('slots').split(",");
+		let slots = urlParams.get('slots')
+		slots = slots ? slots.split(",") : [];
 		let slotDispenseIndex = 0
 		let is_Dispensing = true;
 		// console.log("debugging");
