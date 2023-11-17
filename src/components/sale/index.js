@@ -174,7 +174,7 @@ class Sale extends React.Component {
 			if (this._isMounted) {
 				this.setState({ retry: retry + 1});
 			}
-			// this.requestQrCode();
+			this.requestQrCode();
 		}
 	}
 
