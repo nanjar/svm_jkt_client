@@ -212,22 +212,22 @@ const ManualTopup = (props) => {
 	const slotStock = slotStocks.find(x => parseInt(x.slot_id) === parseInt(slotID))
 
 	return (<LoadingOverlay active={isLoadingActive} spinner text='Loading ...'>
-		<div className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">
+		<div className="vw-100 vh-100 d-flex background-Img overflow-hidden manual-topup">
 			<Container fluid>
-				<Row className="justify-content-center mb-5">
+				<Row className="justify-content-center mb-5 manual-topup-custom-mb-5-heading">
 					<h1 className="text-center text-uppercase display-3">KONFIRMASI JUMLAH PENYETOKAN ULANG</h1> {/* confirm/edit the restocked quantity */}
 				</Row>
 
 				<Row className="justify-content-center pt-5 pb-5 background-Color">
 					<Col lg={5} className="text-center">
 						<div className="p-2 align-self-center">
-							<img src={slot ? `${FORMATTER.api_images()}${slot.image}` : imgURL} className="img-thumbnail border-0" alt={slot ? slot.product_name : ""} />
-							<h1 className="text-center text-uppercase custom-t2">{slot ? slot.product_name : ""}</h1>
+							<img src={slot ? `${FORMATTER.api_images()}${slot.image}` : imgURL} className="w-50 img-thumbnail border-0" alt={slot ? slot.product_name : ""} />
+							<h1 className="text-center text-uppercase custom-t2 custom-t2-text-600">{slot ? slot.product_name : ""}</h1>
 						</div>
 					</Col>
 
 					<Col lg={7} className="align-self-center text-uppercase custom-t2">
-						<Row className="mb-2">
+						<Row className="mb-2 topup-label">
 							<label className="text-uppercase custom-t2">SLOT <span className={"text-uppercase custom-t3 text-danger " + showSpan}>(TIDAK PERLU PENYETOKAN)</span></label><br/>
 							{/* <Col lg={10} className="p-0">
 								<input type="text" onClick={handleShowNumpad} value={slotID} className="form-control border border-1 form-control-lg custom-t1" readOnly={true} placeholder="MASUKKAN NOMOR SLOT" /> enter the slot number
@@ -243,7 +243,7 @@ const ManualTopup = (props) => {
 							</Col>
 						</Row>
 
-						<Row>
+						<Row className="topup-label">
 							<label className="text-uppercase custom-t2">JUMLAH STOK</label><br/> {/* quantity */}
 							<label className="text-uppercase custom-t5">KUANTITAS SEKARANG - {slot ? slot.current_stock : 0}, KUANTITAS MAKSIMAL - {slot ? slot.max_qty : 0}</label><br/> {/* current quantity, max quantity */}
 							<Col lg={2} className="p-0">
@@ -259,7 +259,7 @@ const ManualTopup = (props) => {
 					</Col>
 				</Row>
 
-				<Row className="mt-5">
+				<Row className="mt-5 manual-topup-custom-mb-5-button">
 					<div className="text-center col p-2 align-self-center">
 						<Link to="/management" className="btn btn-lg btn-warning p-3">
 								<h2 className="text-center text-uppercase display-4">BATAL</h2> {/* cancel */}

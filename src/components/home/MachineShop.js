@@ -187,6 +187,7 @@ const MachineShop = () => {
 		<Button className="custom-t2 carousel-button" style={{top: "0", right: "0", opacity: "0", width: "200px", height: "200px"}} onTouchStart={handleMouseDown} onTouchEnd={handleMouseUp} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} data-btn="2">Hidden Button</Button>
 			{
 				(carouselItems.length > 0) ?
+				// this is the part of 
 					<Row className="slide-container">
 						<Slider {...sliderSettings} >
 							{
@@ -222,6 +223,7 @@ const MachineShop = () => {
 					</Row>
 				</Row>
 			}
+			{/* popup for no stock */}
 			<Modal show={showAlert} size="lg" centered>
 				<Modal.Body>
 					<Row className="w-100 justify-content-center text-center">

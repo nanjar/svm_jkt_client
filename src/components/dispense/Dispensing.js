@@ -51,7 +51,8 @@ const Dispensing = () => {
 		// change slot to numeric
 		// const slot = parseInt(slot_id);
 		const urlParams = new URLSearchParams(search);
-		let slots = urlParams.get('slots').split(",");
+		let slots = urlParams.get('slots')
+		slots = slots ? slots.split(",") : [];
 		let slotDispenseIndex = 0
 		let is_Dispensing = true;
 		// console.log("debugging");

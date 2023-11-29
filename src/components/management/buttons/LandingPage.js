@@ -17,13 +17,13 @@ const LandingPage = (props) => {
 
 	// console.log("LP", products);
 
-	return <div>
+	return <div className='button-mapping overflow-hidden'>
 			<Row className="justify-content-center mt-3 mb-3">
 				<Col lg={10}> 
-					<p className="text-uppercase custom-t1" style={{ paddingLeft: "4vw" }}>TEKAN TOMBOL UNTUK PRODUK</p> {/* press button to map */}
+					<p className="text-uppercase custom-t1 button-mapping-custom-header-text" style={{ paddingLeft: "4vw" }}>TEKAN TOMBOL UNTUK PRODUK</p> {/* press button to map */}
 				</Col>
 				<Col lg={2}> 
-					<Button variant="warning" className="text-uppercase custom-t1 p-3" onClick={props.handleCancelBtn}>
+					<Button variant="warning" className="text-uppercase custom-t1 p-3 button-mapping-custom-header-button-text" onClick={props.handleCancelBtn}>
 						BATAL 
 					</Button> {/* cancel */}
 				</Col>
@@ -33,7 +33,7 @@ const LandingPage = (props) => {
 					{
 						products.map((data, index) => (
 							(data.product) ?
-								<Col key={index} lg={3} className="text-uppercase border">
+								<Col key={index} lg={3} className="text-uppercase border text-center">
 									<p className="custom-t2">TOMBOL {data.uuid}</p>
 									<Image
 										src={`${FORMATTER.api_images()}${data.product.image_url}`}

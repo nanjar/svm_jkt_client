@@ -14,7 +14,7 @@ const DispenseSuccess = (props) => {
 			{/* please take your purchase */}
 			<p className="text-center custom-t1">Silahkan ambil pembelian anda</p>
 		</div>
-		<div className="p-2 text-center">
+		<div className="p-2 text-center sale-success-down-600">
 			<img src={img_down} className="border-0" alt="please take your purchase"></img>
 		</div>
 		<div className="p-2 align-self-center">

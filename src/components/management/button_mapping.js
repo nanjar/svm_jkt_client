@@ -19,6 +19,7 @@ class ButtonMapping extends React.Component {
 				image_url: ''
 			},
 			tappedButton: false,
+			// tappedButton: 2,
 			showAckModal: false,
 			showConfirmModal: false,
 			selectedProduct: false,
@@ -72,10 +73,22 @@ class ButtonMapping extends React.Component {
 		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 500, reply_to: 'set_button' });
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		this.startSocket();
+		// console.log(this.state.tappedButton)
+		// const url = `/api/buttons/3/detail.json`;
+		// const button_req = await SERVER_REQ.get(url);
+		// const button_response = button_req.response
+		// const button_product = button_response.detail.product
+		// const unassigned_products = button_response.unassign_products;
+		// this.setState({mappedProduct: button_product, products: unassigned_products, tappedButton: 3}, () =>{
+		// 	console.log(this.state)
+		// 	if( button_product ) {
+		// 		this.setState({showConfirmModal: true});
+		// 	} 
+		// });
 	}
-
+	
 	handleCancelBtn = () => {
 		this.props.history.push('/management')
 	}
@@ -164,7 +177,7 @@ class ButtonMapping extends React.Component {
 		const {tappedButton, mappedProduct={}, showConfirmModal, showAckModal, products, selectedProduct, timeout} = this.state;
 		// console.log(products);
 
-		return ( <div>
+		return ( <div className="overflow-hidden">
 			<IdleTimer
 				ref={ref => { this.idleTimer = ref }}
 				timeout={ timeout }
@@ -181,15 +194,15 @@ class ButtonMapping extends React.Component {
 					<Modal.Body>
 						<Row className="w-100 justify-content-center text-center">
 							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_images()}${mappedProduct.image_url}`} />
-							<p className="text-uppsercase custom-t22">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> <br/>APAKAH INGIN DISUNTING?</p>
+							<p className="text-uppsercase custom-t22 custom-t22-600">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> <br/>APAKAH INGIN DISUNTING?</p>
 						</Row> {/* button 5 is mapped to */}
 
 					</Modal.Body>
 					<Modal.Footer className="text-center">
-						<Button variant="warning" onClick={this.handleModalCancelBtn} className="text-uppercase custom-t2 p-3">
+						<Button variant="warning" onClick={this.handleModalCancelBtn} className="text-uppercase custom-t2 p-3 button-mapping-custom-header-button-text">
 							BATAL {/* cancel */}
 						</Button>
-						<Button variant="info" onClick={this.handleConfirmButtonOnClick} className="text-uppercase custom-t2 p-3">
+						<Button variant="info" onClick={this.handleConfirmButtonOnClick} className="text-uppercase custom-t2 p-3 button-mapping-custom-header-button-text">
 							LANJUT {/* confirm */}
 						</Button> 
 					</Modal.Footer>
@@ -199,12 +212,12 @@ class ButtonMapping extends React.Component {
 					<Modal.Body>
 						<Row className="w-100 justify-content-center text-center">
 							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_images()}${mappedProduct.image_url}`} />
-							<p className="text-uppsercase custom-t22">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> </p>
+							<p className="text-uppsercase custom-t22 custom-t22-600">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> </p>
 						</Row> {/* button 5 is mapped to */}
 
 					</Modal.Body>
 					<Modal.Footer className="text-center">
-						<Button variant="info" onClick={this.handleAckModalButton} className="text-uppercase custom-t2 p-3">
+						<Button variant="info" onClick={this.handleAckModalButton} className="text-uppercase custom-t2 p-3 button-mapping-custom-header-button-text">
 							OK
 						</Button>
 					</Modal.Footer>

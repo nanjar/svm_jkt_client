@@ -30,8 +30,8 @@ class Sale extends React.Component {
 			showCancel: false, // modal's cancel button flag
 			loadingQR: true,
 			showModal: false,
-			imgWidth: "35vw",
-			imgHeight: "60vh",
+			imgWidth: "32vw",
+			imgHeight: "auto",
 			intervalId: false
 		}
 
@@ -95,8 +95,8 @@ class Sale extends React.Component {
 				if (this._isMounted) {
 					this.setState({
 						qrCodeURL: qr.url,
-						imgWidth: "35vw",
-						imgHeight: "60vh",
+						imgWidth: "32vw",
+						imgHeight: "auto",
 						transactionId: reqQrCode.response.transaction_id,
 						checkQrStatus: true,
 						countdown: reqQrCode.response.payment_timeout,
@@ -301,7 +301,7 @@ class Sale extends React.Component {
 
 						<div className="text-center">
 							{countdown === 121 ? "" : <div>QR Code expire in {countdown} second(s)</div>}
-							<button type="button" className="btn btn-primary btn-lg btn-warning custom-t2 text-uppercase cancel-btn-style p-5" onClick={this.handleCancelPayment} >
+							<button type="button" className="btn btn-primary btn-lg btn-warning custom-t2 text-uppercase cancel-btn-style p-5 sale-cancel-600" onClick={this.handleCancelPayment} >
 								BATALKAN PEMBAYARAN {/* cancel payment */}
 							</button>
 						</div>
