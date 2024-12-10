@@ -43,7 +43,6 @@ const MachineShop = () => {
 	}
     useEffect(() => {
         let button_pressed = false;
-<<<<<<< HEAD
 		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 200, reply_to: BUTTON_E })
         socket.on('error', function(){
             console.log('error')
@@ -67,7 +66,6 @@ const MachineShop = () => {
             console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
             history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
         })
-=======
 		console.log("debugging");
 		// window.addEventListener('beforeunload', () => {
 		// 	socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: 'button_pressed' });
@@ -160,7 +158,7 @@ const MachineShop = () => {
 				// ledColorResponse(LED_COLOR_E, button_response.button_status.buttons, parseInt(button_response.button_status.led));
 			}
 		})();
->>>>>>> 074520b24970f426ae9d950e9692db748dfde72e
+		
         return () => {
             // console.log('Log out')
 			if(socket){
