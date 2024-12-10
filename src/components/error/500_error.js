@@ -1,24 +1,15 @@
 import React from "react";
 import '../../App.css';
+import { Container, Row } from "react-bootstrap";
 
-class ISError extends React.Component {
-	render() {
-		return (
-      		<>
-				<div className="vw-100 vh-100 d-flex align-items-center">
-					<div className="container-fluid">
-						<div className="m-3">
-							<div className="row col-12 d-flex flex-column justify-content-center">
-								<div className="p-2 align-self-center mb-2">
-									<h1 className="text-center display-1">Kesalahan yang tidak diduga!</h1>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</>
-    	);
-	}
+const ISError = () => {
+	return <div className="vw-100 vh-100 d-flex align-items-center background-Img">
+		<Container fluid>
+			<Row className="justify-content-center">
+				<p className="text-center text-uppercase custom-t0">Kesalahan yang tidak diduga!</p>
+			</Row>
+		</Container>
+	</div>
 }
 
 export default ISError;

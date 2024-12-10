@@ -10,12 +10,10 @@ import { SocketContext, socket } from "./services/socket";
 // eslint-disable-next-line
 ReactDOM.render(
 	// <React.StrictMode>
-	<SocketContext.Provider value={socket}>
-		<div className="vw-100 vh-100 d-flex align-items-center">
+		<SocketContext.Provider value={socket}>
 			<App />
-		</div>
-	</SocketContext.Provider>,
-	// </React.StrictMode>,
+		</SocketContext.Provider>,
+	// </React.StrictMode>
 	document.getElementById('root')
 );
 

@@ -1,0 +1,332 @@
+import {useState, useEffect} from "react";
+import SERVER_REQ from '../../helpers/Request';
+import FORMATTER from '../../helpers/Formatter';
+import { Link } from 'react-router-dom';
+import '../../App.css';
+import imgURL from '../../assets/static_images/no_image.png';
+import { Container, Row, Col, Modal, Button } from 'react-bootstrap';
+import { useIdleTimer } from 'react-idle-timer';
+import LoadingOverlay from 'react-loading-overlay';
+
+const AutoTopup = (props) => {
+	const isLocal = (window.location.hostname === "localhost") ? true : false;
+	const [slotData, setSlotData] = useState([]);
+	const [isLoadingActive, setIsLoadingActive] = useState(true);
+	const [modifiedSlotData, setModifiedSlotData] = useState([]);
+	const [rawSlotData, setRawSlotData] = useState([]);
+	const [productURL, setProductURL] = useState(imgURL);
+	const [productName, setProductName] = useState("");
+	const [toStockQty, setToStockQty] = useState(0);
+	const [slotId, setSlotId] = useState(0);
+	const [maxQty, setMaxQty] = useState(0);
+	const [toStockData] = useState([]);
+	const [showModal, setShowModal] = useState(false);
+	// const [showAlert, setShowAlert] = useState(false);
+	const [maxNumRestock, setMaxNumRestock] = useState("");
+	const [showSpan, setShowSpan] = useState("d-none");
+	const [currentStock, setCurrentStock] = useState(0);
+
+	useEffect(() => {
+		const url = `${FORMATTER.api_base_url()}/api/topups/layouts.json`; 
+		
+		fetch(url)
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				}
+				throw new Error("Network response was not ok.");
+			})
+			.then(response => {
+				const rawSlots = response.data;
+				let slotList = [];
+
+				rawSlots.forEach(data => {
+					if(!slotList[data.tied]) slotList[data.tied] = []; // for unhandle error at initialization
+					slotList[data.tied].push(data);
+				});
+
+				slotList.forEach(data => {
+					const len = 10 - data.length;
+					let iter = 0;
+					while(len > iter){
+						slotList[data[0].tied].push({
+							slot_id: Date.now().toString(36) + Math.random().toString(36).substring(2), // add dummy unique data for the inactive/free slots of a level, to use it as the key value of the HTML element
+							max_qty: null,
+							tied: null,
+							product_id: null,
+							image: null,
+							product_name: null,
+							current_stock: null,
+							to_stock: null,
+							slot_active: null
+						})
+						iter++;
+					}
+				});
+
+				setSlotData(slotList);
+				setRawSlotData(rawSlots);
+				// console.log(slotList);
+				setIsLoadingActive(false)
+			})
+			.catch(error => console.log(error.message));
+	}, []);
+
+	const duration = 10; // 10 minutes
+
+	let timer = 1000 * 60 * duration; // set timer
+
+	const handleOnAction = (event) => {
+		// console.log("user did something", event);
+		timer = 1000 * 60 * duration; // reset timer
+		// console.log("remaining time 1 ", getRemainingTime());
+	}
+
+	const handleOnActive = (event) => {
+		// console.log("user is active", event);
+		timer = 1000 * 60 * duration; // reset timer
+		// console.log("remaining time 2 ", getRemainingTime());
+	}
+
+	const handleOnIdle = (event) => {
+		// console.log("user is idle", event);
+		// console.log("remaining time 3 ", getRemainingTime());
+		props.history.push("/");
+	}
+
+	const { getRemainingTime } = useIdleTimer({
+		timeout: timer,
+		onIdle: handleOnIdle,
+		onActive: handleOnActive,
+		onAction: handleOnAction
+	});
+
+	const handlePlus = () => {
+		if (parseInt(maxNumRestock) !== parseInt(maxQty)) {
+			if (parseInt(toStockQty) < parseInt(maxNumRestock)) {
+				setToStockQty(parseInt(toStockQty) + 1);
+			} 
+		} else {
+			if (parseInt(toStockQty) <  parseInt(maxQty)) {
+				setToStockQty(parseInt(toStockQty) + 1);
+			} 
+		}
+	}
+
+	const handleMinus = () => {
+		// console.log("debug", toStockQty, currentStock)
+		if (parseInt(toStockQty) > (Math.abs(currentStock) * -1)) {
+			setToStockQty(parseInt(toStockQty) - 1);
+		}
+	}
+
+	const handleBtnSlotOnClick = (event) => {
+		event.preventDefault();
+		let slotId = event.target.getAttribute("data-slotid");
+		rawSlotData.forEach((data, index) => {
+			// console.log(parseInt(data.to_stock) === 0);
+			if (parseInt(data.slot_id) === parseInt(slotId)) {
+				if (parseInt(data.max_qty) === parseInt(data.current_stock)) {
+					// setShowAlert(true);
+					setShowSpan("");
+				} else {
+					setShowSpan("d-none");
+				}
+				// setToStockQty(data.to_stock); // initialise the stocakable quantity. it'll will change on +/- button click
+				setToStockQty(0); // initialise the stocakable quantity. it'll will change on +/- button click
+				setMaxNumRestock(data.to_stock); // set maximum number of restockalble quantity 
+				setSlotId(slotId);
+				setMaxQty(data.max_qty);
+				setProductURL(data.image);
+				setProductName(data.product_name);
+				setShowModal(true);
+			}
+		});
+	} 
+
+	const handleBtnSubConfirmOnClick = (event) => {
+		// console.log("modal clicked");
+		slotData.forEach((rowData, i) => {
+			rowData.forEach((slot, j) => {
+				if (parseInt(slotId) === parseInt(slot.slot_id)) {
+					slot.to_stock = toStockQty;
+				}
+			});
+		});
+		
+		setModifiedSlotData(slotData);
+		setShowModal(false);
+		toStockData.push({slot_id: slotId, tostock_qty: toStockQty});
+	}
+
+	const handleBtnMainConfirmOnClick = async(event) => {
+		setIsLoadingActive(true);
+		// console.log("hello")
+		let preparedData = {};
+		let preparedDataIndex =0;
+
+		// prepare data to post to server
+		slotData.forEach(data => {
+			data.forEach(element => {
+				let x, y, z;
+				x = element.slot_id;
+				y = element.to_stock;
+				z = element.product_id;
+				if (toStockData.length > 0) {
+					toStockData.forEach(tostock => {
+						if (parseInt(tostock.slot_id) === parseInt(element.slot_id) && parseInt(tostock.tostock_qty) !== parseInt(element.slot_id)) { // update the edited quantity of slot for preparedData object
+							if (y) {
+								x = element.slot_id; 
+								y = tostock.tostock_qty;
+								z = element.product_id;
+								preparedData[`stock[${preparedDataIndex}][slot_id]`] = x; 
+								preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
+								preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
+								preparedDataIndex++;
+							}
+						} else {
+							if (y) {
+								preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
+								preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
+								preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
+								preparedDataIndex++;
+							}
+						}
+					});
+				} else {
+					if (y) {
+						preparedData[`stock[${preparedDataIndex}][slot_id]`] = x;
+						preparedData[`stock[${preparedDataIndex}][to_stock]`] = y;
+						preparedData[`stock[${preparedDataIndex}][product_id]`] = z;
+						preparedDataIndex++;
+					}
+				}
+			});
+		});
+
+		// console.log("auto topup post", preparedData);
+		// data sample : preparedData - {[stock[0][slot_id]: 1, stock[0]['to_stock']: 2, stock[0]['product_id']: 3]}
+		const button_put = await SERVER_REQ.put(`/api/stocks/1.json`, preparedData);
+		if (button_put.status === 200) { setIsLoadingActive(false); }
+		// console.log("button_put", button_put);
+		if (button_put.response.success) {
+			props.history.push("/management")
+		}
+	}
+
+	const handleModalClose = () => {
+		setShowModal(false);
+	}
+
+	// const handleButtonOk = () => {
+	// 	setShowAlert(false);
+	// }
+
+	const cancelTxt = (isLocal) ? "batal" : "cancel";
+	const confirmTxt = (isLocal) ? "lanjut" : "confirm";
+	const titleTxt = (isLocal) ? "KONFIRMASI UNTUK JUMLAH STOK" : "restock quantity for slots";
+	const quantityTxt = (isLocal) ? "jumlah" : "quantity";
+	const alertTxt = (isLocal) ? "tidak perlu penyetokan" : "no need to stock";
+	const modalTitleTxt = (isLocal) ? "KONFIRMASI JUMLAH STOK" : "confirm restock quantity";
+		
+	return (  <LoadingOverlay active={isLoadingActive} spinner text='Loading ...'>
+		<div className="vw-100 vh-100 d-flex align-items-center background-Img overflow-hidden">
+			<Container fluid className="text-uppercase">
+				<Row className="justify-content-center">
+					<p className="text-center custom-t2">{titleTxt}</p> {/* confirm the restocked quantity for slots  */}
+					{!isLocal ? <span>1/2/3/ - (1: to stock item count, 2: current item count, 3: max item count)</span> : ""}
+				</Row>
+				{
+					(modifiedSlotData.length === 0) ? 
+					slotData.map((rowData, index) => (
+						<Row key={index} className="justify-content-center background-Color">
+							{
+								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
+							}
+						</Row>
+					)) : modifiedSlotData.map((rowData, index) => (
+						<Row key={index} className="justify-content-center background-Color">
+							{
+								rowData.map(data => (<Col key={data.slot_id} id={'cs_' + data.slot_id} onClick={handleBtnSlotOnClick} className={(data.tied && data.max_qty !== 0) ? "col align-self-center text-center border border-1 bg-slot btn-slot" : "col align-self-center text-center border border-1 bg-slot btn-slot disable-div"} data-slotid={data.slot_id} >{((!isLocal) ? (data.product_name ? data.product_name : <span>&nbsp;</span>) : "")}<p className={"custom-t3" + ((isLocal) ? " mt-3 mb-3" : "")} data-slotid={data.slot_id}>{(data.slot_active ? (((data.max_qty > data.current_stock) || (data.max_qty === 0 && data.slot_active) || (data.max_qty === data.current_stock)) ? ((data.to_stock) ? data.to_stock : 0) + "/" + ((data.current_stock) ? data.current_stock : 0) + "/" + ((data.max_qty) ? data.max_qty : 0) : "-") : "-")}</p></Col>))
+							}
+						</Row>
+					))
+				}
+				<Row className={"justify-content-center" + ((isLocal) ? " mt-5" : " mt-1")}>
+					<div className="text-center col p-2 align-self-center">
+						<Link to="/management" className="btn btn-lg btn-warning p-3">
+							<h2 className="text-center text-uppercase display-4">{cancelTxt}</h2> {/* cancel */}
+						</Link>
+					</div>
+
+					<div className="text-center col p-2 align-self-center">
+						<button type="button" className="btn btn-lg btn-info text-uppercase font-weight-bold p-3" onClick={handleBtnMainConfirmOnClick}>
+							<h2 className="text-center text-uppercase display-4">{confirmTxt}</h2> {/* confirm */}
+						</button>
+					</div>
+				</Row>
+
+				<Modal show={showModal} size="xl" centered>
+					<Modal.Header className="modal-background">
+						<Modal.Title className="custom-t2 text-uppercase">
+							{modalTitleTxt} {/* confirm restocked quantity */}
+						</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<Row className="justify-content-center">
+							<Col lg={5} className="text-center">
+								<div className="p-1 align-self-center">
+									<img src={`${FORMATTER.api_images()}${productURL}`} className="img-thumbnail border-0" alt={productName} />
+									<h1 className="text-center text-uppercase custom-t3">{productName}</h1>
+								</div>
+							</Col>
+
+							<Col lg={7} className="align-self-center text-uppercase custom-t2">
+								<Row>
+									<label className="text-uppercase custom-t2">{quantityTxt}</label><span className={"text-uppercase custom-t3 text-danger " + showSpan}>{alertTxt}</span><br/> {/* quantity */}
+									<Col lg={2} className="p-0">
+										<input type="button" value="-" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t2" onClick={handleMinus} />
+									</Col>
+									<Col lg={6} className="p-0">
+										<input type="number" value={toStockQty} className="form-control border border-1 form-control-lg custom-t2" readOnly={true} />
+									</Col>
+									<Col lg={2} className="p-0">
+										<input type="button" value="+" className="form-control btn border border-1 form-control-lg font-weight-bold custom-t2" onClick={handlePlus} />
+									</Col>
+								</Row>
+							</Col>
+						</Row>
+					</Modal.Body>
+					<Modal.Footer className="text-center">
+						<div className="text-center">
+							<Button variant="warning" type="button" className="text-uppercase p-3" onClick={handleModalClose}>
+								<h2 className="text-center text-uppercase custom-t3">{cancelTxt}</h2> {/* cancel */}
+							</Button>
+						</div>
+
+						<div className="text-center">
+							<Button variant="info" type="button" className="text-uppercase p-3" onClick={handleBtnSubConfirmOnClick}>
+								<h2 className="text-center text-uppercase custom-t3">{confirmTxt}</h2> {/* confirm */}
+							</Button>
+						</div>
+					</Modal.Footer>
+				</Modal>
+
+				{/* <Modal show={showAlert} size="xl" centered>
+					<Modal.Body>
+						<p className="custom-t2 text-uppercase">slotnya penuh</p> {/* slot is full */}
+					{/* </Modal.Body>
+					<Modal.Footer className="text-center">
+						<div className="text-center">
+							<button type="button" onClick={handleButtonOk} className="btn btn-lg btn-info text-uppercase font-weight-bold ">
+								<h2 className="text-center text-uppercase custom-t2">OK</h2>
+							</button>
+						</div>
+					</Modal.Footer>
+				</Modal> */} 
+			</Container>
+		</div>
+	</LoadingOverlay>);
+}
+
+export default AutoTopup;

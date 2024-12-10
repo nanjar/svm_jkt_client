@@ -1,10 +1,13 @@
 import React from "react";
 import SERVER_REQ from '../../helpers/Request';
+import FORMATTER from '../../helpers/Formatter';
 import { SocketContext } from '../../services/socket';
 import LandingPage from "./buttons/LandingPage";
 import Product from './buttons/Product';
 import '../../App.css';
 import { Button, Container, Image, Modal, Row } from 'react-bootstrap';
+import IdleTimer from 'react-idle-timer';
+
  
 class ButtonMapping extends React.Component {
 	constructor(props) {
@@ -16,11 +19,15 @@ class ButtonMapping extends React.Component {
 				image_url: ''
 			},
 			tappedButton: false,
-			showModal: false,
+			// tappedButton: 2,
+			showAckModal: false,
+			showConfirmModal: false,
 			selectedProduct: false,
-			modalTextPostFix: "Do you want to Edit?",
-			confirmButtonText: "confirm"
+			timeout: 1000 * 60 * 10,
+            isTimedOut: false
 		}
+		
+		this.idleTimer = null;
 		this.handleCancelBtn = this.handleCancelBtn.bind(this);
 		this.handleModalCancelBtn = this.handleModalCancelBtn.bind(this);
 		this.handleOnRadioChange = this.handleOnRadioChange.bind(this);
@@ -28,13 +35,15 @@ class ButtonMapping extends React.Component {
 		this.handleConfirmButtonOnClick  = this.handleConfirmButtonOnClick.bind(this);
 		this.startSocket = this.startSocket.bind(this);
 		this.stopSocket = this.stopSocket.bind(this);
+		this.handleAckModalButton = this.handleAckModalButton.bind(this);
 	}
 
 	startSocket = () => {
 		const self=this;
 		let button_pressed = false;
-
-		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 500, reply_to: 'set_button' });
+		if(window.location.hostname !== "localhost" )
+			return
+		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 1000, reply_to: 'set_button' });
 		this.context.on('set_button', (data) => {
 			data = JSON.parse(data);
 			if(button_pressed) return;
@@ -42,52 +51,51 @@ class ButtonMapping extends React.Component {
 			self.context.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 500, reply_to: 'set_button' });
 			const button = data.button_no;
 			self.setState({ tappedButton: button }, async () => {
-				const url = `${process.env.REACT_APP_API}/api/buttons/${button}/detail.json`;
+				const url = `/api/buttons/${button}/detail.json`;
 				const button_req = await SERVER_REQ.get(url);
 				const button_response = button_req.response
 				const button_product = button_response.detail.product
 				const unassigned_products = button_response.unassign_products;
 				this.setState({mappedProduct: button_product, products: unassigned_products}, () =>{
 					if( button_product ) {
-						this.setState({showModal: true})
+						this.setState({showConfirmModal: true});
 					} 
 				});
-				console.log(button_req)
+				// console.log(button_req)
 			})
 		})
 	}
 
 	stopSocket = () => {
+		if(window.location.hostname !== "localhost" )
+			return
 		this.context.offAny('set_button');
 		this.context.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 500, reply_to: 'set_button' });
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		this.startSocket();
-		// const self=this;
-		// const button = 6;
-		// self.setState({ tappedButton: button }, async () => {
-		// 	const url = `http://vending.smartvending.com/api/buttons/${button}/detail.json`;
-		// 	const button_req = await SERVER_REQ.get(url);
-		// 	const button_response = button_req.response
-		// 	const button_product = button_response.detail.product
-		// 	const unassigned_products = button_response.unassign_products;
-		// 	this.setState({mappedProduct: button_product, products: unassigned_products}, () =>{
-		// 		if( button_product ) {
-		// 			this.setState({showModal: true})
-		// 		} 
-		// 	});
-		// 	console.log(button_req)
-		// })
+		// console.log(this.state.tappedButton)
+		// const url = `/api/buttons/3/detail.json`;
+		// const button_req = await SERVER_REQ.get(url);
+		// const button_response = button_req.response
+		// const button_product = button_response.detail.product
+		// const unassigned_products = button_response.unassign_products;
+		// this.setState({mappedProduct: button_product, products: unassigned_products, tappedButton: 3}, () =>{
+		// 	console.log(this.state)
+		// 	if( button_product ) {
+		// 		this.setState({showConfirmModal: true});
+		// 	} 
+		// });
 	}
-
+	
 	handleCancelBtn = () => {
 		this.props.history.push('/management')
 	}
 
 	handleModalCancelBtn = () => {
 		this.setState({
-			showModal: false, 
+			showConfirmModal: false, 
 			tappedButton: false,
 			selectedProduct: false,
 			mappedProduct: {
@@ -96,7 +104,7 @@ class ButtonMapping extends React.Component {
 			}
 		}, () => {
 			this.startSocket();
-		})
+		});
 	}
 	
 	handleOnRadioChange = (e) => {
@@ -106,63 +114,116 @@ class ButtonMapping extends React.Component {
 
 	handleSubmitBtn = async () => {
 		const {tappedButton, selectedProduct} = this.state;
-		console.log(tappedButton, selectedProduct);
-		const button_post = await SERVER_REQ.put(`${process.env.REACT_APP_API}/api/buttons//${tappedButton}.json`, {'button[product_id]': selectedProduct});
+		// console.log(tappedButton, selectedProduct);
+		const button_post = await SERVER_REQ.put(`/api/buttons/${tappedButton}.json`, {'button[product_id]': selectedProduct});
 		if (button_post.response.success) {
-			const button_get =  await SERVER_REQ.get(`${process.env.REACT_APP_API}/api/buttons/${tappedButton}/detail.json`);
+			const button_get =  await SERVER_REQ.get(`/api/buttons/${tappedButton}/detail.json`);
 			if (button_get.response.detail.product) {
 				const button_product = button_get.response.detail.product;
 				this.setState({ mappedProduct: button_product}, () => {
 					if( button_product ) {
 						this.setState({
-							showModal: true,
-							modalTextPostFix: "",
-							confirmButtonText: "ok",
+							showAckModal: true
 						})
 					} 
 				});
 			}
-			console.log("Get " + button_get);
+			// console.log("Get " + button_get);
 		}
-		console.log("Post " + button_post);
+		// console.log("Post " + button_post);
 	}
 
 	handleConfirmButtonOnClick = () => {
-		const btnText = this.state.confirmButtonText;
-		this.setState({ showModal: false });
-		if (btnText === "ok") this.handleModalCancelBtn();
+		this.setState({ 
+			showConfirmModal: false
+		});
 	}
 
-	componentWillUnmount(){
+	handleAckModalButton = () => {
+		this.setState({
+			showAckModal: false, 
+			tappedButton: false,
+			selectedProduct: false,
+			mappedProduct: {
+				name: '',
+				image_url: ''
+			}
+		}, () => {
+			this.startSocket();
+		});
+	}
+
+	componentWillUnmount() {
 		this.stopSocket();
 	}
 
+	handleOnAction = (e) => {
+		// console.log('time remaining action', this.idleTimer.getRemainingTime())
+		this.setState({ timeout: 1000 * 60 * 10 });
+	}
+	 
+	handleOnActive = (e) => {
+		// console.log('time remaining active', this.idleTimer.getRemainingTime())
+		this.setState({ timeout: 1000 * 60 * 10 });
+	}
+	
+	handleOnIdle = (e) => {
+		if (this.idleTimer.getRemainingTime() === 0) {
+			this.props.history.push('/');
+		}
+	}
+
 	render() {
-		const {tappedButton, mappedProduct={}, showModal, products, selectedProduct, modalTextPostFix, confirmButtonText} = this.state;
-		console.log(products);
+		const {tappedButton, mappedProduct={}, showConfirmModal, showAckModal, products, selectedProduct, timeout} = this.state;
+		// console.log(products);
 
-		return (
-			<Container fluid>
-				{tappedButton ? <Product products={products} selectedProduct={selectedProduct} handleCancelBtn={this.handleModalCancelBtn} handleOnRadioChange={this.handleOnRadioChange} handleSubmitBtn={this.handleSubmitBtn} /> : <LandingPage handleCancelBtn={this.handleCancelBtn} />}
+		return ( <div className="overflow-hidden">
+			<IdleTimer
+				ref={ref => { this.idleTimer = ref }}
+				timeout={ timeout }
+				onActive={this.handleOnActive}
+				onIdle={this.handleOnIdle}
+				onAction={this.handleOnAction}
+				debounce={250}
+			/>
 
-				<Modal show={showModal} size="lg" centered>
+			<Container fluid className="overflow-hidden">
+				{tappedButton ? <Product tappedButton={tappedButton} products={products} selectedProduct={selectedProduct} handleCancelBtn={this.handleModalCancelBtn} handleOnRadioChange={this.handleOnRadioChange} handleSubmitBtn={this.handleSubmitBtn} /> : <LandingPage handleCancelBtn={this.handleCancelBtn} />}
+
+				<Modal show={showConfirmModal} size="lg" centered>
 					<Modal.Body>
 						<Row className="w-100 justify-content-center text-center">
-							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${process.env.REACT_APP_API}${mappedProduct.image_url}`} />
-							<p className="text-uppsercase custom-t2">This button is mapped to {mappedProduct.name}. {modalTextPostFix}</p>
-						</Row>
+							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_images()}${mappedProduct.image_url}`} />
+							<p className="text-uppsercase custom-t22 custom-t22-600">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> <br/>APAKAH INGIN DISUNTING?</p>
+						</Row> {/* button 5 is mapped to */}
+
 					</Modal.Body>
 					<Modal.Footer className="text-center">
-						<Button variant="warning" onClick={this.handleModalCancelBtn} className="text-uppercase custom-t2">
-							cancel
+						<Button variant="warning" onClick={this.handleModalCancelBtn} className="text-uppercase custom-t2 p-3 button-mapping-custom-header-button-text">
+							BATAL {/* cancel */}
 						</Button>
-						<Button variant="info" onClick={this.handleConfirmButtonOnClick} className="text-uppercase custom-t2">
-							{confirmButtonText}
+						<Button variant="info" onClick={this.handleConfirmButtonOnClick} className="text-uppercase custom-t2 p-3 button-mapping-custom-header-button-text">
+							LANJUT {/* confirm */}
+						</Button> 
+					</Modal.Footer>
+				</Modal>
+
+				<Modal show={showAckModal} size="lg" centered>
+					<Modal.Body>
+						<Row className="w-100 justify-content-center text-center">
+							<Image className="thumbnail product-thumbnail" alt={mappedProduct.name} src={`${FORMATTER.api_images()}${mappedProduct.image_url}`} />
+							<p className="text-uppsercase custom-t22 custom-t22-600">TOMBOL {tappedButton} DIPETAKAN UNTUK : <strong>{mappedProduct.name}</strong> </p>
+						</Row> {/* button 5 is mapped to */}
+
+					</Modal.Body>
+					<Modal.Footer className="text-center">
+						<Button variant="info" onClick={this.handleAckModalButton} className="text-uppercase custom-t2 p-3 button-mapping-custom-header-button-text">
+							OK
 						</Button>
 					</Modal.Footer>
 				</Modal>
 			</Container>
-		);
+		</div>);
 	}
 }
 

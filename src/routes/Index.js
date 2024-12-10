@@ -1,17 +1,16 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Home from "../components/home/Index";
+import Home from "../components/home/index";
 
 import Sale from "../components/sale/index";
 import SaleSucces from "../components/sale/success";
 
 import DispenseError from "../components/dispense/dispense_error";
-import DispenseNoStock from "../components/dispense/no_stock";
 import DispenseSuccess from "../components/dispense/dispense_success";
 import Dispensing from '../components/dispense/Dispensing';
 
-import ManagementLogin from "../components/management/Login";
-import ManagementIndex from "../components/management/Index";
+import ManagementLogin from "../components/management/login";
+import ManagementIndex from "../components/management/index";
 import ManagementAutoTopup from "../components/management/AutoTopup";
 import ManagementManualTopup from "../components/management/ManualTopup";
 import ManagementButtonConfig from "../components/management/button_mapping";
@@ -30,9 +29,8 @@ export default (
 		<Route path="/sales/success" exact component={SaleSucces} />
 
 		{/* Dispense */}
-		<Route path="/dispense/:slot_id" exact component={Dispensing} />
+		<Route path="/dispense/:sale_id" exact component={Dispensing} />
 		<Route path="/dispense/error" exact component={DispenseError} />
-		<Route path="/dispense/no_stock" exact component={DispenseNoStock} />
 		<Route path="/dispense/success" exact component={DispenseSuccess} />
 
 		{/* Management */}

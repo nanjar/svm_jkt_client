@@ -1,12 +1,14 @@
-import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Container, Row } from 'react-bootstrap';
+import React, { useContext, useEffect, useState } from "react";
+import { useHistory, useParams, useLocation } from "react-router-dom";
+import { Container, Row, Modal } from 'react-bootstrap';
+import SERVER_REQ from '../../helpers/Request';
 import { SocketContext } from "../../services/socket";
-import LoadingImage from '../../assets/static_images/success.gif';
 import DispenseSuccess from "./dispense_success";
 import DispenseError from "./dispense_error";
-import {SERVER_REQ} from '../../helpers';
+
 const DISPENSE_E = "dispense";
+const DISPENSE_E_LOGS = "dispense-logs"
+const BUTTON_E = "button_pressed";
 
 const DISPENSE_CODE_TEXT = {
     0: "Success",
@@ -18,56 +20,184 @@ const DISPENSE_CODE_TEXT = {
     6: "Ack is needed",
     7: "Invalid motor steps",
     8: "Machine no response",
-    9: "Unknown failure"
+    9: "Slot is empty",
+	255: "Unknown failure"
 }
 
 const Dispensing = () => {
-	const {slot_id} = useParams();
+	const {sale_id} = useParams();
+	const {search} = useLocation();
 	const [dispenseResult, setDispenseResult] = useState(4); // change to 0 to check the dispense success, change to other number to check dispense success
 	const [isDispensing, setDespensing] = useState(true); // change to false to see the dispense error or success
+	const [dispensingTimeout, setDispensingTimeout] = useState(false);
+	const [showAlertTimeout, setShowAlertTimeout] = useState(false);
+	const [buttonTimeout, setButtonTimeout] = useState(false);
+	const [showAlert, setShowAlert] = useState(false);
 	const socket = useContext(SocketContext);
+	const history = useHistory()
+	const activate_button = () => {
+		console.log("command-sent", JSON.stringify({ command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E }))
+		socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
+	}
+	let is_dispensing = false;
+	const LED_COLOR_E =  "set-led-color-dispense";
+	const ledColorSaveStatus = (buttons, led) => {
+		const url = `/api/buttons/led.json?status=${led}&buttons=${buttons}`;
+		SERVER_REQ.get(url);
+	}
 	useEffect(()=>{
+		if(is_dispensing) return;
+		is_dispensing = true;
 		// change slot to numeric
-		const slot = parseInt(slot_id);
+		// const slot = parseInt(slot_id);
+		const urlParams = new URLSearchParams(search);
+		let slots = urlParams.get('slots')
+		slots = slots ? slots.split(",") : [];
+		let slotDispenseIndex = 0
+		let is_Dispensing = true;
+		// console.log("debugging");
 		
-		socket.emit('vendingv1-indo', {"command":"single_dispense","slot":slot-1,"reply_to": DISPENSE_E});
-
-		socket.on(DISPENSE_E, (data) => {
+		socket.emit("ui-logs", {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E_LOGS})
+		socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
+		const dispense_event = async (data) => {
 			const {type, slot=false, status=false} = JSON.parse(data);
-			console.log(!(["single_dispense_response", "multiple_dispense_response"].includes(type)), type)
 			if ( !(["single_dispense_response", "multiple_dispense_response"].includes(type)) )
 				return;
-				
-			setDespensing(false);
-			setDispenseResult(status);
-			// :dispense_code, :dispense_status
-			console.log({"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status]});
-			// SERVER_REQ.post('/api/sales/1.json', {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status]})
-			// received_dispense = true
-			console.log(type, slot, status)
-		})
-		return () => {
-			socket.offAny(DISPENSE_E)
-		}
-	}, [])
-	return (
-		<Container fluid>
-			{
-				isDispensing 
-				? 
-					<Row className="justify-content-center text-uppercase m-3">
-						<div className="p-2 align-self-center mb-3">
-							<p className="text-center custom-t0">Payment Success</p>
-							<p className="text-center custom-t4">Machine is dispensing your product ...</p>
-						</div>
-						<div className="p-2 text-center mb-3">
-							<img src={LoadingImage} className="img-thumbnail border-0" alt="Loading..."></img>
-						</div>
-					</Row>
-				:
-					dispenseResult !== 0  ? <DispenseError /> : <DispenseSuccess />
+			console.log(`slot dispense index => ${slotDispenseIndex} => ${slots[slotDispenseIndex]}`)
+			if( parseInt(status) !== 0){
+				slotDispenseIndex += 1
+				if(slotDispenseIndex < slots.length){
+					is_Dispensing = true;
+					socket.emit("ui-logs",{"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E_LOGS})
+					socket.emit('vendingv1-indo', {"command":"single_dispense","slot": parseInt(slots[slotDispenseIndex]),"reply_to": DISPENSE_E});
+				}else{
+					is_Dispensing = false;
+					setDespensing(false);
+					setDispenseResult(status);
+				}
+			}else{
+				is_Dispensing = false
+				setDespensing(false);
+				setDispenseResult(status);
 			}
-		</Container>);
+			// :dispense_code, :dispense_status
+			const updateSaleResponse = await SERVER_REQ.put(`/api/sales/${sale_id}.json`, {"sale[dispense_code]": status, "sale[dispense_status]": DISPENSE_CODE_TEXT[status], "sale[dispense_belt]": slot});
+			if(!is_Dispensing){
+				const response = updateSaleResponse.response;
+				if(response){
+					if(response.button_status){
+						const led_colour = [];
+						response.button_status.map(button => {
+							led_colour.push({[parseInt(button.button)]: parseInt(button.led)})
+						})
+						socket.emit('vendingv1-indo', {command: 'set_led_button_colour', led_colour, reply_to: LED_COLOR_E})
+						// ledColorResponse(LED_COLOR_E, button_response.button_status.buttons, parseInt(button_response.button_status.led));
+					}
+				}
+			}
+		}
+		socket.off(DISPENSE_E).on(DISPENSE_E, dispense_event);
+		return () => {
+			clearTimeout(dispensingTimeout);
+			clearTimeout(showAlertTimeout);
+			clearTimeout(buttonTimeout);
+			setDispensingTimeout(false);
+			setShowAlertTimeout(false);
+			setButtonTimeout(false);
+			socket.off(DISPENSE_E);	
+		}
+		// eslint-disable-next-line
+	}, []);
+	useEffect(() => {
+		if(!isDispensing) {
+			setDispensingTimeout(setTimeout(function() { window.location.href="/";  console.log("inTimeout") }, 12000));
+		}
+	},[isDispensing])
+
+	useEffect(() => {
+		var button_pressed = false;
+		if(socket && parseInt(dispenseResult) === 0){
+			// socket.emit('vendingv1-indo', { command: 'button_poll', action: 'start', interval: 50, reply_to: BUTTON_E });
+			activate_button();
+			const button_event = async (data) => {
+				socket.emit("ui-logs",{ command: 'button_poll', action: 'stop', interval: 300, reply_to: BUTTON_E })
+				socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 300, reply_to: BUTTON_E });
+				data = JSON.parse(data);
+				// console.log(data);
+				if(button_pressed)
+					return;
+				button_pressed = true;
+				if (button_pressed) { setShowAlert(false); } // close EmptyStockModal at the button pressed
+				const button = data.button_no
+				if(button === 0 )
+					return;
+				// console.log('pressed')
+				const button_req = await SERVER_REQ.get(`/api/buttons/${button}.json`);
+				// console.log(button_req);
+				const button_response = button_req.response
+				// console.log("button response", button_response);
+				if(!button_response.success){
+					button_pressed=false;
+					setShowAlert(true); // out of stock alert
+					setShowAlertTimeout(setTimeout(function(){ setShowAlert(false); console.log("inTimeout") }, 5000));
+					setButtonTimeout(setTimeout( () => activate_button(), 500));
+					return;
+				} 
+				// clearTimeout(dispensingTimeout);
+				// setDispensingTimeout(false);
+				const button_detail = button_req.response.data;
+				
+				const product_detail = {name: button_detail.product.name, url: button_detail.product.image_url, slots: button_detail.slot_available}
+				console.log("Product Details", product_detail);
+				const url_params = new URLSearchParams(product_detail);
+				socket.off(BUTTON_E)
+				// console.log(button_detail, `/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`);
+				history.push(`/sales/${button_detail.product.id}/${button_detail.price}?${url_params}`)
+			}
+			socket.off(BUTTON_E).on(BUTTON_E, button_event);
+		}
+		return () => {
+			clearTimeout(dispensingTimeout);
+			clearTimeout(showAlertTimeout);
+			clearTimeout(buttonTimeout);
+			setDispensingTimeout(false);
+			setShowAlertTimeout(false);
+			setButtonTimeout(false);
+			socket.off(BUTTON_E);
+			socket.emit('vendingv1-indo', { command: 'button_poll', action: 'stop', interval: 50, reply_to: BUTTON_E });
+		}
+		// eslint-disable-next-line
+	},[dispenseResult]);
+
+	return (
+		<div className="vw-100 vh-100 d-flex align-items-center background-ImgWithLogo overflow-hidden">
+			<Container fluid>
+				{
+					isDispensing 
+					? 
+						<Row className="justify-content-center text-uppercase m-3">
+							<div className="container p-2 text-center mt-5 mb-3 payment-success-div">
+								<p className='custom-t2 payment-success-div-text'>PEMBAYARAN BERHASIL</p>
+								<p className='custom-t3 payment-success-div-text'>MESIN SEDANG MENYIAPKAN PRODUK ANDA</p>
+								{/*
+									payment success - PEMBAYARAN BERHASIL
+									machine is dispensing your product - MESIN SEDANG MENYIAPKAN PRODUK ANDA
+								*/}
+							</div>
+						</Row>
+					:
+						dispenseResult !== 0  ? <DispenseError dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout} /> : <DispenseSuccess dispensingTimeout={dispensingTimeout} setDispensingTimeout={setDispensingTimeout} />
+				}
+			</Container>
+			
+			<Modal show={showAlert} size="lg" centered>
+				<Modal.Body>
+					<Row className="w-100 justify-content-center text-center">
+						<p className="text-uppsercase custom-t2">MAAF STOK TIDAK TERSEDIA</p>
+					</Row>
+				</Modal.Body>
+			</Modal>
+		</div>);
 }
 
 export default Dispensing;

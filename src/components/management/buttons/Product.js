@@ -1,25 +1,38 @@
-import { Button, Container, Image, Row, Col } from 'react-bootstrap';
+import React from 'react';
+import { Button, Image, Row, Col } from 'react-bootstrap';
+import FORMATTER from '../../../helpers/Formatter';
 
 const Product = (props) => {
-	const {products, handleCancelBtn, selectedProduct, handleOnRadioChange = () => {}, handleSubmitBtn = () => {}} = props;
+	const {products, tappedButton, handleCancelBtn, selectedProduct, handleOnRadioChange = () => {}, handleSubmitBtn = () => {}} = props;
 	// const [confirmBtn, setConfirmBtn] = useState(false);
 	// function handleConfirmBtn(){
 	//     setConfirmBtn(true);
 	// }
-	return <Container fluid className="m-3">
-		<Row className="justify-content-center">
-			<h1 className="text-center text-uppercase display-4 mb-4">Choose the product to map</h1>
+	return <div>
+		<Row className="justify-content-center mt-3 mb-3">
+			<Col lg={8}> 
+				<h1 className="text-center text-uppercase display-4 mb-4 button-mapping-custom-header-text">TOMBOL {tappedButton} - PILIH PRODUK</h1> {/* Button 6 - Choose the product to map */}
+			</Col>
+			<Col lg={4}> 
+				<Button type="button" className="btn btn-lg btn-warning text-uppercase custom-t2 m-2 p-3 button-mapping-custom-header-button-text" onClick={handleCancelBtn}>
+					BATAL {/* cancel */}
+				</Button>
+				<Button type="button" className="btn btn-lg btn-info text-uppercase custom-t2 m-2 p-3 button-mapping-custom-header-button-text" onClick={handleSubmitBtn}>
+					KIRIM {/* submit */}
+				</Button>
+			</Col>
 		</Row>
-		<Row>
-			{
-				products.map((product, index) => (
-						<Col key={index} className="radio-product m-3">
-							<input type="radio" id={product.id} data-name={product.name} data-url={`${process.env.REACT_APP_API}${product.image_url}`} name="radioProduct" onChange={handleOnRadioChange}/>
+		<div className="scroll-div">
+			<Row>
+				{
+					products.map((product, index) => (
+						<Col key={index} lg={3} className="radio-product m-2">
+							<input type="radio" id={product.id} data-name={product.name} data-url={`${FORMATTER.api_images()}${product.image_url}`} name="radioProduct" onChange={handleOnRadioChange}/>
 							<label id={"lbl-" + product.id} className={`radio-img mb-4 ${selectedProduct === product.id ? 'card-checked' : ''}`} htmlFor={product.id}> 
 								<div id={"card_" + index} className="card">
 									<div className="card-body text-center">
 										<Image
-												src={`${process.env.REACT_APP_API}${product.image_url}`}
+												src={`${FORMATTER.api_images()}${product.image_url}`}
 												className="btn-thumbnail mt-3"
 												alt={product.name}
 										/>
@@ -28,18 +41,21 @@ const Product = (props) => {
 								</div>
 							</label>
 						</Col>
-				))
-			}
-		</Row>
-		<div className="text-center mt-4">
+					))
+				}
+			</Row>
+		</div>
+		{/* <Row className="text-center mt-4">
+			<Col lg={{ span: 4, offset: 8 }}> 
 				<Button type="button" className="btn btn-lg btn-warning text-uppercase custom-t2 m-2" onClick={handleCancelBtn}>
-					Cancel
+					BATAL {/* cancel 
 				</Button>
 				<Button type="button" className="btn btn-lg btn-info text-uppercase custom-t2 m-2" onClick={handleSubmitBtn}>
-					Submit
+					KIRIM {/* submit 
 				</Button>
-		</div>
-	</Container>;
+			</Col>
+		</Row> */}
+	</div>;
 }
 
 export default Product;

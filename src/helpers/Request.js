@@ -1,6 +1,7 @@
 export default class Request{
     static config(){
         return {
+            mode: 'cors'
             // headers: {
             //     'Content-Type': 'application/json'
             // }
@@ -10,8 +11,15 @@ export default class Request{
     static formatURL(url, data={}){
         const params = new URLSearchParams(data)
         let params_delimeter = '?';
-        if(!url.includes('http'))
-            url = `${process.env.REACT_APP_API}${url}`
+        if(!url.includes('http')){
+            if(process.env.REACT_APP_API){
+                url = `${process.env.REACT_APP_API}${url}`;
+            }else{
+                const {hostname, protocol, port} = window.location;
+                url = `${protocol}//${hostname}:${port}/api${url}`;
+            }
+        }
+
         if(url.includes('?'))
             params_delimeter = '&';
         url += params_delimeter + params;
