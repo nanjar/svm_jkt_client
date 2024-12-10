@@ -32,14 +32,18 @@ const Home = (props) => {
 		fetchHome();
 		socket.off('machine_temperature_update').on('machine_temperature_update', (data) => {
             data = JSON.parse(data);
-			SERVER_REQ.get('/api/health.json', { vending: buttonResponse ? 2 : 1, vending_temp: data.value });
+			const temperature = parseFloat(data?.value || 0);
+			let vending_status = buttonResponse ? "E1" : "OK";
+			if(temperature >= 255 || temperature <= -255) vending_status = "E3"
+			SERVER_REQ.get('/api/health.json', { vending: vending_status, vending_temp: data?.value });
 		})
 
 		socket.off('button_status').on('button_status', (data) => {
 			const response = JSON.parse(data);
 			const isButtonActive = parseInt(response.status) !== 1;
 			setButtonResponse(isButtonActive);
-			SERVER_REQ.get('/api/health.json', { vending: isButtonActive ? 2 : 1, status: 1 });
+			let vending_status = isButtonActive ? "E1" : "OK";
+			SERVER_REQ.get('/api/health.json', { vending: vending_status, status: 1 });
 			// if(!isButtonActive){
 			// 	SERVER_REQ.get('/api/health.json', { vending: 1, status: 1 });
 			// }
